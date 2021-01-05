@@ -1,53 +1,51 @@
-const express=require('express');
-const cors=require('cors');
-const app=express();
+const express = require("express");
+const cors = require("cors");
+const app = express();
+const bodyParser = require("body-parser");
 
-const userRoutes=require('./routes/user');
-const pubRoutes=require('./routes/publication');
-const commRoutes=require('./routes/comment');
-const likeRoutes=require('./routes/like');
+const userRoutes = require("./routes/user");
+const pubRoutes = require("./routes/publication");
+const commRoutes = require("./routes/comment");
+const likeRoutes = require("./routes/like");
 
 // Models
-const { user } = require('./models');
-const { publication } = require('./models');
-const { comment } = require('./models');
-const { like } = require('./models');
+const { user } = require("./models");
+const { publication } = require("./models");
+const { comment } = require("./models");
+const { like } = require("./models");
 
 //association tables user/publication
 publication.belongsTo(user);
-module.exports={ user,publication};
+module.exports = { user, publication };
 
 //association tables user/comment et pub/comment
 comment.belongsTo(user);
-module.exports={ user,comment};
+module.exports = { user, comment };
 comment.belongsTo(publication);
-module.exports={ publication,comment};
+module.exports = { publication, comment };
 
 //association tables like/pub et like/user
 like.belongsTo(user);
-module.exports={ user,like};
+module.exports = { user, like };
 like.belongsTo(publication);
-module.exports={ publication,like};
+module.exports = { publication, like };
 
-app.use(cors());    // Security CORS
-
+app.use(cors()); // Security CORS
+app.use(bodyParser.json());
 
 // **** REQUETE ****
 
 //  * User authentification
-app.use('/api/auth',userRoutes);
+app.use("/api/auth", userRoutes);
 
 // * Publications
-app.use('/api/pub',pubRoutes);
+app.use("/api/pub", pubRoutes);
 
 // * Comments
-app.use('/api/pub/:id/comm',commRoutes);
+app.use("/api/pub/:id/comm", commRoutes);
 
 // * Likes
-app.use('/api/pub/:id/like',likeRoutes);
-
-
-
+app.use("/api/pub/:id/like", likeRoutes);
 
 // app.get('/select',(req,res)=>{
 //     user.findAll()
@@ -59,19 +57,16 @@ app.use('/api/pub/:id/like',likeRoutes);
 //     });
 // });
 
-app.get('/pub',(req,res)=>{
-    publication.findAll()
-    .then((pubs)=>{
-        res.send(pubs);
-    })
-    .catch((err)=>{
-        console.log(err);
-    });
-}); 
-
-
-
-
+app.get("/pub", (req, res) => {
+	publication
+		.findAll()
+		.then((pubs) => {
+			res.send(pubs);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+});
 
 // app.get('/select/lou',(req,res)=>{
 //     user.findAll({ where:{ prenom:"Louise"}})
@@ -81,7 +76,7 @@ app.get('/pub',(req,res)=>{
 //     .catch((err)=>{
 //         console.log(err);
 //     });
-    
+
 // });
 
 // app.get('/insert',(req,res)=>{
@@ -101,4 +96,4 @@ app.get('/pub',(req,res)=>{
 //     res.send("delete");
 // });
 
-module.exports=app;
+module.exports = app;

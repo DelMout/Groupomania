@@ -14,20 +14,33 @@ exports.getAllUser=(req,res)=>{
 
 
 exports.signup=(req,res)=>{
+    console.log(req.body);
+    let nom=req.body.nom;      // TODO : Aller chercher les saisies
+    let prenom=req.body.prenom;
+    let email=req.body.email;
+    let password=req.body.password;
+    let service=req.body.service;
+    let description=req.body.description
+    // let nom="Baba";      // TODO : Aller chercher les saisies
+    // let prenom="Joe";
+    // let email="Bjoe@groupomania.fr";
+    // let password="jjj";
+    // let service="RH";
+    // let description="tout me plait !"
     const newUser=new user({
-        nom:'Dutrou',       // TODO : Aller chercher les saisies
-        prenom:'Harold',
-        email:'haha@email.fr',
-        password:'hhh',
-        service:'Maintenance',
-        description:'Parachutime !'
+        nom:nom,       // TODO : Aller chercher les saisies
+        prenom:prenom,
+        email:email,
+        password:password,
+        service:service,
+        description:description
     });
     newUser.save()
     .then(()=>{
         res.send('user created');
     })
     .catch((err)=>{
-        console.log(err);
+        res.send(err);
     });
 };
 
