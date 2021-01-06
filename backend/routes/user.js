@@ -13,6 +13,9 @@ router.post("/signup", userCtrl.signup);
 // * Login
 router.post("/login", userCtrl.login);
 
+// * Demand Modify user datas
+router.get("/modif/:id", userCtrl.demandmodif);
+
 // * Modify user datas
 router.put("/modif", userCtrl.modif);
 

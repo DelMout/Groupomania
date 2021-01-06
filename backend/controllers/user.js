@@ -52,11 +52,12 @@ exports.login = (req, res) => {
 	// const email_saisi = "emi@groupomania.fr"; // TODO : Aller chercher les saisies
 	// const password_saisi = "eee";
 	user.findAll({ where: { email: email_saisi } })
-		.then((obj) => {
-			const pass = obj[0].password;
+		.then((rep) => {
+			const obj = rep[0];
+			const pass = obj.password;
 			if (pass === password_saisi) {
-				console.log("OK pour tout");
-				res.send("OK pour tout");
+				console.log("OK pour tout" + obj);
+				res.send(obj);
 			} else {
 				console.log("c pas bon !!");
 				res.send("Password not OK");
@@ -68,10 +69,28 @@ exports.login = (req, res) => {
 		});
 };
 
+// * Demand modify (click button)
+exports.demandmodif = (req, res) => {
+	const userId = req.params.id;
+	// const userId = req.params.id;
+	user.findAll({ where: { id: userId } })
+		.then((rep) => {
+			const obj = rep[0];
+			res.send(obj);
+		})
+		.catch((err) => {
+			console.log(err);
+			res.send(err);
+		});
+};
+
 // * Modify
 exports.modif = (req, res) => {
+	const userId = "42";
+	// const userId = req.params.id;
+
 	const attIn = "Standard"; // TODO : Autoriser à modifier tous paramètres SAUF email !
-	user.update({ service: attIn }, { where: { id: 4 } }) // TODO : Id de la personne qui modifie
+	user.update({ service: attIn }, { where: { id: userId } }) // TODO : Id de la personne qui modifie
 		.then(() => {
 			res.send("user modified !");
 		})

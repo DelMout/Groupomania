@@ -26,10 +26,13 @@ POST http://localhost:3001/api/auth/login
 content-type: application/json
 
 {
-    "password": "sss",
-    "email": "sel@groupomania.fr"
+    "password": "sts",
+    "email": "seli@groupomania.fr"
 }
 
 ######
 
 POST http://localhost:3001/api/auth/login 
+######
+
+GET http://localhost:3001/api/auth/modif/31

@@ -3,7 +3,7 @@ import { createStore } from "vuex";
 export default createStore({
 	state: {
 		totalFromVuex: 12,
-		currentUserId: "",
+		currentUserId: 5,
 		// info: "RAS",
 		// savePrenom: "Norbert",
 		// saveNom: "DuSchnok",

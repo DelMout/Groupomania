@@ -6,15 +6,22 @@
 		<div>
 			<h1 v-if="newUser">Merci de renseigner le formulaire ci-dessous</h1>
 			<h2>{{ theInfo }}</h2>
-			<p v-if="newUser">Prénom * : <input type="text" v-model="prenom" /></p>
-			<p v-if="newUser">Nom * : <input type="text" v-model="nom" /></p>
-			<p>Email* : <input type="text" v-model="email" /></p>
-			<p v-if="newUser">Service * : <input type="text" v-model="service" /></p>
-			<p>Mot de passe * : <input type="text" v-model="password" /></p>
-			<p v-if="newUser">Description : <input type="text" v-model="description" /></p>
+			<p v-if="newUser">Prénom : <input type="text" v-model="prenom" /></p>
+			<p v-if="newUser">Nom : <input type="text" v-model="nom" /></p>
+			<p v-if="affEmail">Email : <input type="text" v-model="email" /></p>
+			<p v-if="newUser">Service : <input type="text" v-model="service" /></p>
+			<p>Mot de passe : <input type="text" v-model="password" /></p>
+			<p v-if="newUser">
+				Description (optionnel) : <input type="text" v-model="description" />
+			</p>
 			<button v-if="!newUser" v-on:click="loginUser">Entrer sur le GroupoRéseau !</button
-			><button v-if="newUser" v-on:click="createUser">Valider</button><br />
-			<button v-if="!newUser" v-on:click="modifUser">Modifier mon compte</button
+			><button v-if="valider" v-on:click="createUser">Valider</button><br /><button
+				v-if="!affEmail"
+				v-on:click="modifUser"
+			>
+				Valider les modifications</button
+			><br />
+			<button v-if="!newUser" v-on:click="demandModifUser">Modifier mon compte</button
 			><button v-if="!newUser" v-on:click="deleteUser">Supprimer mon compte</button>
 			<p v-if="!newUser">
 				Pas encore de compte ? <button v-on:click="wantCreate">Créer un compte</button>
@@ -37,12 +44,15 @@ export default {
 			password: "",
 			description: "",
 			newUser: false,
+			affEmail: true,
+			valider: false,
 		};
 	},
 	methods: {
 		//* CREATE a new USER
 		wantCreate: function() {
 			this.newUser = true;
+			this.valider = true;
 		},
 		createUser: function() {
 			console.log("g bien recu la requete!");
@@ -59,8 +69,8 @@ export default {
 				.then((resp) => {
 					console.log(resp.data);
 					this.theInfo = "Compte créé !!";
-					this.$store.state.currentUserEmail = resp.data.id;
-					console.log("currentUserId = " + this.$store.state.currentUserEmail);
+					this.$store.state.currentUserId = resp.data.id;
+					console.log("currentUserId = " + this.$store.state.currentUserId);
 					// TODO : transfert vers page du réseau !
 				})
 				.catch((erreur) => console.log(erreur));
@@ -76,27 +86,49 @@ export default {
 				.then((resp) => {
 					const connection = resp.data;
 					console.log(connection);
-					if (connection === "OK pour tout") {
-						this.theInfo = "Email + mot de passe OK !!";
+					if (connection === "Password not OK") {
+						this.theInfo = "Mot de passe incorrect !! !!";
 					} else if (connection === "Email not OK") {
 						this.theInfo = "Email incorrect !!";
 					} else {
-						this.theInfo = "Mot de passe incorrect !!";
+						this.theInfo = "Email et Mot de passe corrects !!";
+						this.$store.state.currentUserId = resp.data.id;
+						console.log("id =" + resp.data.id);
+						// TODO : transfert vers page du réseau !
+						// TODO  : ...avec bouton modifier compte / supprimer compte accessibles !
 					}
-					// TODO : transfert vers page du réseau !
 				})
 				.catch((erreur) => console.log(erreur));
 		},
+		//* DEMAND modification  USER datas
+		demandModifUser: function() {
+			console.log("g bien recu la requete pour DEMANDE de modif!");
+			this.newUser = true;
+			this.affEmail = false;
+			axios
+				.get("http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId)
+				.then((resp) => {
+					console.log(resp.data);
+					this.prenom = resp.data.prenom;
+					this.nom = resp.data.nom;
+					this.service = resp.data.service;
+					this.description = resp.data.description;
+					console.log(this.$store.state.currentUserId);
+				})
+				.catch((erreur) => console.log(erreur));
+		},
+
 		//* MODIFY a USER
 		modifUser: function() {
 			console.log("g bien recu la requete pour modif!");
+
 			axios
 				.put("http://localhost:3001/api/auth/modif", {
 					email: this.email,
 					password: this.password,
 				})
-				.then((reponse) => {
-					console.log(reponse);
+				.then((resp) => {
+					console.log(resp);
 				})
 				.catch((erreur) => console.log(erreur));
 		},
