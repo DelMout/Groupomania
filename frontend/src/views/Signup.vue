@@ -1,14 +1,25 @@
 <template>
 	<div>
-		<h1>Merci de renseigner le formulaire ci-dessous</h1>
-		<h2>Info : {{ theInfo }}</h2>
-		<p>Prénom* : <input type="text" v-model="prenom" /></p>
-		<p>Nom* : <input type="text" v-model="nom" /></p>
-		<p>Email* : <input type="text" v-model="email" /></p>
-		<p>Service* : <input type="text" v-model="service" /></p>
-		<p>Mot de passe* : <input type="text" v-model="password" /></p>
-		<p>Description : <input type="text" v-model="description" /></p>
-		<button v-on:click="createUser">Save !</button>
+		<h1 v-if="!newUser">
+			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
+		</h1>
+		<div>
+			<h1 v-if="newUser">Merci de renseigner le formulaire ci-dessous</h1>
+			<h2>{{ theInfo }}</h2>
+			<p v-if="newUser">Prénom * : <input type="text" v-model="prenom" /></p>
+			<p v-if="newUser">Nom * : <input type="text" v-model="nom" /></p>
+			<p>Email* : <input type="text" v-model="email" /></p>
+			<p v-if="newUser">Service * : <input type="text" v-model="service" /></p>
+			<p>Mot de passe * : <input type="text" v-model="password" /></p>
+			<p v-if="newUser">Description : <input type="text" v-model="description" /></p>
+			<button v-if="!newUser" v-on:click="loginUser">Entrer sur le GroupoRéseau !</button
+			><button v-if="newUser" v-on:click="createUser">Valider</button><br />
+			<button v-if="!newUser" v-on:click="modifUser">Modifier mon compte</button
+			><button v-if="!newUser" v-on:click="deleteUser">Supprimer mon compte</button>
+			<p v-if="!newUser">
+				Pas encore de compte ? <button v-on:click="wantCreate">Créer un compte</button>
+			</p>
+		</div>
 	</div>
 </template>
 
@@ -18,16 +29,21 @@ export default {
 	name: "Signup",
 	data() {
 		return {
-			theInfo: "Lalalala !",
-			prenom: "Evelyne",
-			nom: "Maison",
-			email: "eve@groupomania.fr",
-			service: "R&D",
-			password: "eee",
-			description: "De la suite dans les idées",
+			theInfo: "",
+			prenom: "",
+			nom: "",
+			email: "",
+			service: "",
+			password: "",
+			description: "",
+			newUser: false,
 		};
 	},
 	methods: {
+		//* CREATE a new USER
+		wantCreate: function() {
+			this.newUser = true;
+		},
 		createUser: function() {
 			console.log("g bien recu la requete!");
 			this.theInfo = "Fonction exécutée !!";
@@ -40,10 +56,61 @@ export default {
 					password: this.password,
 					description: this.description,
 				})
+				.then((resp) => {
+					console.log(resp.data);
+					this.theInfo = "Compte créé !!";
+					this.$store.state.currentUserEmail = resp.data.id;
+					console.log("currentUserId = " + this.$store.state.currentUserEmail);
+					// TODO : transfert vers page du réseau !
+				})
+				.catch((erreur) => console.log(erreur));
+		},
+		//* LOGIN a USER
+		loginUser: function() {
+			console.log("g bien recu la requete pour login!");
+			axios
+				.post("http://localhost:3001/api/auth/login", {
+					email: this.email,
+					password: this.password,
+				})
+				.then((resp) => {
+					const connection = resp.data;
+					console.log(connection);
+					if (connection === "OK pour tout") {
+						this.theInfo = "Email + mot de passe OK !!";
+					} else if (connection === "Email not OK") {
+						this.theInfo = "Email incorrect !!";
+					} else {
+						this.theInfo = "Mot de passe incorrect !!";
+					}
+					// TODO : transfert vers page du réseau !
+				})
+				.catch((erreur) => console.log(erreur));
+		},
+		//* MODIFY a USER
+		modifUser: function() {
+			console.log("g bien recu la requete pour modif!");
+			axios
+				.put("http://localhost:3001/api/auth/modif", {
+					email: this.email,
+					password: this.password,
+				})
 				.then((reponse) => {
 					console.log(reponse);
-					this.theInfo = "Compte créé !!";
-				});
+				})
+				.catch((erreur) => console.log(erreur));
+		},
+		deleteUser: function() {
+			console.log("g bien recu la requete pour delete!");
+			axios
+				.delete("http://localhost:3001/api/auth/modif", {
+					email: this.email,
+					password: this.password,
+				})
+				.then((reponse) => {
+					console.log(reponse);
+				})
+				.catch((erreur) => console.log(erreur));
 		},
 	},
 };
