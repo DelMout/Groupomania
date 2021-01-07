@@ -12,7 +12,7 @@ const { user } = require("../models");
 // };
 
 exports.signup = (req, res) => {
-	let nom = req.body.nom; // TODO : Aller chercher les saisies
+	let nom = req.body.nom;
 	let prenom = req.body.prenom;
 	let email = req.body.email;
 	let password = req.body.password;
@@ -47,10 +47,8 @@ exports.signup = (req, res) => {
 // * Login
 // TODO : LOGIN à compléter
 exports.login = (req, res) => {
-	const email_saisi = req.body.email; // TODO : Aller chercher les saisies
+	const email_saisi = req.body.email;
 	const password_saisi = req.body.password;
-	// const email_saisi = "emi@groupomania.fr"; // TODO : Aller chercher les saisies
-	// const password_saisi = "eee";
 	user.findAll({ where: { email: email_saisi } })
 		.then((rep) => {
 			const obj = rep[0];
@@ -72,7 +70,6 @@ exports.login = (req, res) => {
 // * Demand modify (click button)
 exports.demandmodif = (req, res) => {
 	const userId = req.params.id;
-	// const userId = req.params.id;
 	user.findAll({ where: { id: userId } })
 		.then((rep) => {
 			const obj = rep[0];
@@ -86,11 +83,22 @@ exports.demandmodif = (req, res) => {
 
 // * Modify
 exports.modif = (req, res) => {
-	const userId = "42";
-	// const userId = req.params.id;
+	let nom = req.body.nom;
+	let prenom = req.body.prenom;
+	let password = req.body.password;
+	let service = req.body.service;
+	let description = req.body.description;
 
-	const attIn = "Standard"; // TODO : Autoriser à modifier tous paramètres SAUF email !
-	user.update({ service: attIn }, { where: { id: userId } }) // TODO : Id de la personne qui modifie
+	user.update(
+		{
+			nom: nom,
+			prenom: prenom,
+			password: password,
+			service: service,
+			description: description,
+		},
+		{ where: { id: req.params.id } }
+	)
 		.then(() => {
 			res.send("user modified !");
 		})

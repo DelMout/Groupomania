@@ -36,3 +36,15 @@ POST http://localhost:3001/api/auth/login
 ######
 
 GET http://localhost:3001/api/auth/modif/31
+######
+
+PUT http://localhost:3001/api/auth/modif
+content-type: application/json
+
+{
+    "nom": "Modifé",
+    "prenom": "modif Prénom",
+    "password": "modif",
+    "service": "service modif", 
+    "description":"modif aussi"
+}

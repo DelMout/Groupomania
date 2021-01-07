@@ -17,6 +17,6 @@ router.post("/login", userCtrl.login);
 router.get("/modif/:id", userCtrl.demandmodif);
 
 // * Modify user datas
-router.put("/modif", userCtrl.modif);
+router.put("/modif/:id", userCtrl.modif);
 
 module.exports = router;

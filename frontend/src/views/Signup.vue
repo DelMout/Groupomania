@@ -57,6 +57,7 @@ export default {
 		createUser: function() {
 			console.log("g bien recu la requete!");
 			this.theInfo = "Fonction exécutée !!";
+			this.newUser = false;
 			axios
 				.post("http://localhost:3001/api/auth/signup", {
 					prenom: this.prenom,
@@ -123,15 +124,19 @@ export default {
 			console.log("g bien recu la requete pour modif!");
 
 			axios
-				.put("http://localhost:3001/api/auth/modif", {
-					email: this.email,
+				.put("http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId, {
+					prenom: this.prenom,
+					nom: this.nom,
+					service: this.service,
 					password: this.password,
+					description: this.description,
 				})
 				.then((resp) => {
 					console.log(resp);
 				})
 				.catch((erreur) => console.log(erreur));
 		},
+		//* DELETE a USER
 		deleteUser: function() {
 			console.log("g bien recu la requete pour delete!");
 			axios
