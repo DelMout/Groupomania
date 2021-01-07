@@ -106,3 +106,15 @@ exports.modif = (req, res) => {
 			console.log(err);
 		});
 };
+
+// * Delete user
+exports.delete = (req, res) => {
+	user.destroy({ where: { id: req.params.id } })
+		.then(() => {
+			res.send("user deleted");
+		})
+		.catch((err) => {
+			console.log(err);
+			res.send(err);
+		});
+};

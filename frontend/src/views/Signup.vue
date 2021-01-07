@@ -140,49 +140,13 @@ export default {
 		deleteUser: function() {
 			console.log("g bien recu la requete pour delete!");
 			axios
-				.delete("http://localhost:3001/api/auth/modif", {
-					email: this.email,
-					password: this.password,
-				})
-				.then((reponse) => {
-					console.log(reponse);
+				.delete("http://localhost:3001/api/auth/delete/" + this.$store.state.currentUserId)
+				.then((resp) => {
+					console.log(resp);
+					this.theInfo = "Votre compte a été supprimé !";
 				})
 				.catch((erreur) => console.log(erreur));
 		},
 	},
 };
-
-// export default {
-// 	name: "Signup",
-// 	data() {
-// 		return {
-// 			theInfo: RAS,
-
-// 			// prenom: "Evelyne",
-// 			// nom: "Maison",
-// 			// email: "eve@groupomania.fr",
-// 			// service: "R&D",
-// 			// password: "eee",
-// 			// description: "De la suite dans les idées",
-// 			// prenom: this.$store.state.savePrenom,
-// 			// nom: this.$store.state.saveNom,
-// 			// email: this.$store.state.saveEmail,
-// 			// service: this.$store.state.saveService,
-// 			// password: this.$store.state.savePassword,
-// 			// description: this.$store.state.saveDescription,
-// 		};
-// 	},
-// 	// 	methods: {
-// 	// 		// createUser() {
-// 	// 		// 	fetch("http://localhost:3001/api/auth.signup")
-// 	// 		// 		.then((resp) => {
-// 	// 		// 			return resp.json();
-// 	// 		// 		})
-// 	// 		// 		.then((obj) => {
-// 	// 		// 			this.theInfo = obj[0];
-// 	// 		// 		});
-// 	// 		// },
-// 	// 	},
-// };
-//
 </script>

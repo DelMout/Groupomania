@@ -19,4 +19,7 @@ router.get("/modif/:id", userCtrl.demandmodif);
 // * Modify user datas
 router.put("/modif/:id", userCtrl.modif);
 
+// * Delete user
+router.delete("/delete/:id", userCtrl.delete);
+
 module.exports = router;

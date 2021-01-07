@@ -1,17 +1,11 @@
 
 
 GET http://localhost:3001/api/auth/signup 
-
-
 ####
 GET http://localhost:3001/api/pub/3
-
-
 ######
-
 POST http://localhost:3001/api/auth/signup 
 content-type: application/json
-
 {
     "nom": "Poivre",
     "prenom": "Seline",
@@ -21,26 +15,20 @@ content-type: application/json
     "description":""
 }
 ######
-
 POST http://localhost:3001/api/auth/login 
 content-type: application/json
-
 {
     "password": "sts",
     "email": "seli@groupomania.fr"
 }
 
 ######
-
 POST http://localhost:3001/api/auth/login 
 ######
-
 GET http://localhost:3001/api/auth/modif/31
 ######
-
 PUT http://localhost:3001/api/auth/modif
 content-type: application/json
-
 {
     "nom": "Modifé",
     "prenom": "modif Prénom",
@@ -48,3 +36,5 @@ content-type: application/json
     "service": "service modif", 
     "description":"modif aussi"
 }
+######
+DELETE http://localhost:3001/api/auth/delete/73
