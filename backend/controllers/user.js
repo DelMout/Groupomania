@@ -12,20 +12,13 @@ const { user } = require("../models");
 // };
 
 exports.signup = (req, res) => {
-	let nom = req.body.nom;
-	let prenom = req.body.prenom;
-	let email = req.body.email;
-	let password = req.body.password;
-	let service = req.body.service;
-	let description = req.body.description;
-
 	const newUser = new user({
-		nom: nom,
-		prenom: prenom,
-		email: email,
-		password: password,
-		service: service,
-		description: description,
+		nom: req.body.nom,
+		prenom: req.body.prenom,
+		email: req.body.email,
+		password: req.body.password,
+		service: req.body.service,
+		description: req.body.description,
 	});
 	newUser
 		.save()
@@ -40,12 +33,22 @@ exports.signup = (req, res) => {
 				});
 		})
 		.catch((err) => {
-			res.send(err);
+			if (err.name == "SequelizeUniqueConstraintError") {
+				res.status(401).send("email already used");
+			} else if (err.name == "SequelizeValidationError") {
+				if (err.errors[0].path == "email") {
+					res.status(401).send("Not format email");
+					// TODO : erreur qd password pas assez fort, qd email erroné, qd manque une entrée.
+				} else if (err.errors[0].validatorKey == "notEmpty") {
+					res.status(401).send(err.errors[0].path + " is empty"); // for firstname, lastname, service and password
+				}
+			} else {
+				res.status(401).send(err);
+			}
 		});
 };
 
 // * Login
-// TODO : LOGIN à compléter
 exports.login = (req, res) => {
 	const email_saisi = req.body.email;
 	const password_saisi = req.body.password;

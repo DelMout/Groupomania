@@ -30,6 +30,11 @@ const routes = [
 		name: "Publication",
 		component: () => import(/* webpackChunkName: "publication" */ "../views/Publication.vue"),
 	},
+	{
+		path: "/publier",
+		name: "Publier",
+		component: () => import(/* webpackChunkName: "publier" */ "../views/Publier.vue"),
+	},
 ];
 
 const router = createRouter({

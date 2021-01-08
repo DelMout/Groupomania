@@ -1,4 +1,4 @@
-const { publication } = require('../models');
+const { publication } = require("../models");
 
 // * Get all publications
 // exports.getAllPub=(req,res)=>{
@@ -12,54 +12,59 @@ const { publication } = require('../models');
 // };
 
 // * Create a publication
-exports.createPub=(req,res)=>{
-    const pub=new publication({
-        titre:'Essai !',            //TODO : Aller chercher les saisies
-        texte_pub:"blablabla bla bla...",
-        userId:2,   //TODO : Id de la personne connectée
-    });
-    pub.save()   
-        .then((pub)=>{
-            res.send(pub);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
+exports.createPub = (req, res) => {
+	const newPub = new publication({
+		titre: req.body.titre,
+		texte_pub: req.body.contenu,
+		userId: req.params.id,
+	});
+	newPub
+		.save()
+		.then((pub) => {
+			res.send(pub);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 // * Select a publication
-exports.getPub=(req,res)=>{
-    publication.findAll({ where:{ id:req.params.id }})
-        .then((pub)=>{
-            res.send(pub);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
+exports.getPub = (req, res) => {
+	publication
+		.findAll({ where: { id: req.params.id } })
+		.then((pub) => {
+			res.send(pub);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 // * Select publications by userId
-exports.getPubByUser=(req,res)=>{
-    publication.findAll({ where:{ userId:req.params.id }})
-        .then((pub)=>{
-            res.send(pub);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
+exports.getPubByUser = (req, res) => {
+	publication
+		.findAll({ where: { userId: req.params.id } })
+		.then((pub) => {
+			res.send(pub);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 // * Delete a publication
-exports.deletePub=(req,res)=>{
-    publication.findAll({ where:{ id:req.params.id }})
-        .then((pub)=>{
-            publication.destroy({where:{id:req.params.id}})
-            .then(()=>res.send('publication deleted'))
-            .catch((err)=>{
-                console.log(err);
-            });
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
+exports.deletePub = (req, res) => {
+	publication
+		.findAll({ where: { id: req.params.id } })
+		.then((pub) => {
+			publication
+				.destroy({ where: { id: req.params.id } })
+				.then(() => res.send("publication deleted"))
+				.catch((err) => {
+					console.log(err);
+				});
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };

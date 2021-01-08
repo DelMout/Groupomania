@@ -6,17 +6,19 @@ GET http://localhost:3001/api/pub/3
 ######
 POST http://localhost:3001/api/auth/signup 
 content-type: application/json
+
 {
-    "nom": "Poivre",
-    "prenom": "Seline",
-    "service": "Achats",
-    "password": "sss",
-    "email": "seli@groupomania.fr",
-    "description":""
+    "nom": "fff",
+    "prenom":"sfgdfg",
+    "email": "nous@groupo.fr",
+    "service": "cc",
+    "description":"",
+    "password": "fff"  
 }
 ######
 POST http://localhost:3001/api/auth/login 
 content-type: application/json
+
 {
     "password": "sts",
     "email": "seli@groupomania.fr"
@@ -29,6 +31,7 @@ GET http://localhost:3001/api/auth/modif/31
 ######
 PUT http://localhost:3001/api/auth/modif
 content-type: application/json
+
 {
     "nom": "Modifé",
     "prenom": "modif Prénom",
@@ -37,4 +40,14 @@ content-type: application/json
     "description":"modif aussi"
 }
 ######
-DELETE http://localhost:3001/api/auth/delete/73
+DELETE http://localhost:3001/api/auth/delete/72
+######
+POST http://localhost:3001/api/pub/17
+content-type: application/json
+
+{
+    "titre": "Un autre essai",
+    "contenu": "Est que cela fonctionne ?"
+}
+######
+POST http://localhost:3001/api/pub/

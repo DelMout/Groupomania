@@ -3,6 +3,7 @@
 		<div id="nav">
 			<router-link to="/">Home</router-link> | <router-link to="/about">About</router-link> |
 			<router-link to="/publi">Les publications</router-link> |
+			<router-link to="/publier">Créer une publication</router-link> |
 			<router-link to="/signup">Créer son compte</router-link>
 		</div>
 		<router-view />

@@ -46,6 +46,12 @@ export default {
 			newUser: false,
 			affEmail: true,
 			valider: false,
+			informations: ["prénom", "nom", "email", "service", "mot de passe", "description"],
+			paramUser: [
+				{ donnee: this.prenom, param: "prénom" },
+				{ donnee: this.nom, param: "nom" },
+			],
+			notFilled: [],
 		};
 	},
 	methods: {
@@ -56,8 +62,18 @@ export default {
 		},
 		createUser: function() {
 			console.log("g bien recu la requete!");
-			this.theInfo = "Fonction exécutée !!";
-			this.newUser = false;
+			this.theInfo = "Fonction lancée !!";
+			this.paramUser.forEach((p) => {
+				// this.notFilled.push(p.param);
+				this.notFilled.push(p.param);
+			});
+			console.log(this.notFilled);
+			// if (this.prenom == "") {
+			// 	this.theInfo = "Merci de renseigner votre prénom";
+			// } else if (this.nom == "") {
+			// 	this.theInfo = "Merci de renseigner votre nom";
+			// }
+
 			axios
 				.post("http://localhost:3001/api/auth/signup", {
 					prenom: this.prenom,
@@ -68,13 +84,21 @@ export default {
 					description: this.description,
 				})
 				.then((resp) => {
+					this.newUser = false;
 					console.log(resp.data);
 					this.theInfo = "Compte créé !!";
 					this.$store.state.currentUserId = resp.data.id;
 					console.log("currentUserId = " + this.$store.state.currentUserId);
 					// TODO : transfert vers page du réseau !
 				})
-				.catch((erreur) => console.log(erreur));
+				.catch((err) => {
+					if ((err.response.data = "email already used")) {
+						this.theInfo = "Un compte contient déjà cet email !";
+					} else if ((err.response.data = "firstname not filled")) {
+						this.theInfo = "Merci de renseigner un prénom.";
+					} // TODO ici les autres erreurs de création (password pas assez fort, cellule non renseignée...)
+					console.log("c pas bon ! " + err.response.data);
+				});
 		},
 		//* LOGIN a USER
 		loginUser: function() {
