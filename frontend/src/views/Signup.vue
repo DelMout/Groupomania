@@ -47,11 +47,14 @@ export default {
 			affEmail: true,
 			valider: false,
 			informations: ["prénom", "nom", "email", "service", "mot de passe", "description"],
-			paramUser: [
-				{ donnee: this.prenom, param: "prénom" },
-				{ donnee: this.nom, param: "nom" },
-			],
-			notFilled: [],
+			paramUser: {
+				prenom: "prénom",
+				nom: "nom",
+				email: "email",
+				service: "service",
+				description: "description",
+				password: "mot de passe",
+			},
 		};
 	},
 	methods: {
@@ -63,11 +66,6 @@ export default {
 		createUser: function() {
 			console.log("g bien recu la requete!");
 			this.theInfo = "Fonction lancée !!";
-			this.paramUser.forEach((p) => {
-				// this.notFilled.push(p.param);
-				this.notFilled.push(p.param);
-			});
-			console.log(this.notFilled);
 			// if (this.prenom == "") {
 			// 	this.theInfo = "Merci de renseigner votre prénom";
 			// } else if (this.nom == "") {
@@ -92,10 +90,13 @@ export default {
 					// TODO : transfert vers page du réseau !
 				})
 				.catch((err) => {
-					if ((err.response.data = "email already used")) {
+					if (err.response.data.validatorKey === "notEmpty") {
+						this.theInfo =
+							"Merci de compléter votre " + this.paramUser[err.response.data.path];
+					} else if (err.response.data === "email already used") {
 						this.theInfo = "Un compte contient déjà cet email !";
-					} else if ((err.response.data = "firstname not filled")) {
-						this.theInfo = "Merci de renseigner un prénom.";
+					} else if (err.response.data === "Not format email") {
+						this.theInfo = "Il ne s'agit pas d'un format email";
 					} // TODO ici les autres erreurs de création (password pas assez fort, cellule non renseignée...)
 					console.log("c pas bon ! " + err.response.data);
 				});

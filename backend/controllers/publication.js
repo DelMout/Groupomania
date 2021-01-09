@@ -1,15 +1,16 @@
 const { publication } = require("../models");
 
 // * Get all publications
-// exports.getAllPub=(req,res)=>{
-//     publication.findAll()
-//     .then((pub)=>{
-//         res.send(pub);
-//     })
-//     .catch((err)=>{
-//         console.log(err);
-//     });
-// };
+exports.getAllPub = (req, res) => {
+	publication
+		.findAll()
+		.then((pub) => {
+			res.send(pub);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
 
 // * Create a publication
 exports.createPub = (req, res) => {

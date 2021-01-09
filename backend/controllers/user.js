@@ -33,14 +33,16 @@ exports.signup = (req, res) => {
 				});
 		})
 		.catch((err) => {
-			if (err.name == "SequelizeUniqueConstraintError") {
+			if (err.errors[0].validatorKey == "notEmpty") {
+				res.status(401).send(err.errors[0]);
+			} else if (err.name == "SequelizeUniqueConstraintError") {
 				res.status(401).send("email already used");
 			} else if (err.name == "SequelizeValidationError") {
 				if (err.errors[0].path == "email") {
 					res.status(401).send("Not format email");
 					// TODO : erreur qd password pas assez fort, qd email erroné, qd manque une entrée.
 				} else if (err.errors[0].validatorKey == "notEmpty") {
-					res.status(401).send(err.errors[0].path + " is empty"); // for firstname, lastname, service and password
+					res.status(401).send(err.errors[0]);
 				}
 			} else {
 				res.status(401).send(err);

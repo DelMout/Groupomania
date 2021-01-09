@@ -4,7 +4,10 @@ const router = express.Router();
 const pubCtrl = require("../controllers/publication");
 
 // * Create a publication
-router.post("/:id", pubCtrl.createPub);
+router.post("/create/:id", pubCtrl.createPub);
+
+// * Select all publications
+router.get("/", pubCtrl.getAllPub);
 
 // * Select a publication
 router.get("/:id", pubCtrl.getPub);

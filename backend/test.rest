@@ -9,11 +9,11 @@ content-type: application/json
 
 {
     "nom": "fff",
-    "prenom":"sfgdfg",
-    "email": "nous@groupo.fr",
+    "prenom":"dfd",
+    "email": "fd@.fd",
     "service": "cc",
     "description":"",
-    "password": "fff"  
+    "password": ""  
 }
 ######
 POST http://localhost:3001/api/auth/login 
@@ -42,12 +42,14 @@ content-type: application/json
 ######
 DELETE http://localhost:3001/api/auth/delete/72
 ######
-POST http://localhost:3001/api/pub/17
+POST http://localhost:3001/api/pub/14
 content-type: application/json
 
 {
-    "titre": "Un autre essai",
+    "titre": "1er essai",
     "contenu": "Est que cela fonctionne ?"
 }
 ######
 POST http://localhost:3001/api/pub/
+######
+GET http://localhost:3001/api/pub/user/7
