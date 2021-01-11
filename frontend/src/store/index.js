@@ -4,6 +4,9 @@ export default createStore({
 	state: {
 		totalFromVuex: 12,
 		currentUserId: 5,
+		currentLikes: 1,
+		currentComments: 1,
+		// theWarning: "",
 		// info: "RAS",
 		// savePrenom: "Norbert",
 		// saveNom: "DuSchnok",

@@ -42,10 +42,10 @@ app.use("/api/auth", userRoutes);
 app.use("/api/pub", pubRoutes);
 
 // * Comments
-app.use("/api/pub/:id/comm", commRoutes);
+app.use("/api/pub", commRoutes);
 
 // * Likes
-app.use("/api/pub/:id/like", likeRoutes);
+app.use("/api/pub", likeRoutes);
 
 // app.get('/select',(req,res)=>{
 //     user.findAll()

@@ -42,14 +42,29 @@ content-type: application/json
 ######
 DELETE http://localhost:3001/api/auth/delete/72
 ######
-POST http://localhost:3001/api/pub/14
+POST http://localhost:3001/api/pub/create/15
 content-type: application/json
 
 {
-    "titre": "1er essai",
-    "contenu": "Est que cela fonctionne ?"
+    "titre": "Essai non user",
+    "contenu": "Voir si ça marche avec user non existant"
 }
 ######
 POST http://localhost:3001/api/pub/
 ######
 GET http://localhost:3001/api/pub/user/7
+######
+GET http://localhost:3001/api/pub/4
+######
+POST http://localhost:3001/api/pub/1/like/7
+######
+GET http://localhost:3001/api/pub/1/like/
+######
+POST http://localhost:3001/api/pub/4/comm/11
+content-type: application/json
+
+{
+    "texte": "Moi, je suis là uniquement pour faire un 2e commentaire !"
+}
+######
+GET http://localhost:3001/api/pub/4/comm/

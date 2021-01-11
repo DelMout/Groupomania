@@ -2,27 +2,37 @@ const { like } = require("../models");
 
 // * Add a like
 exports.addLike = (req, res) => {
-	const likes = new like({
-		userId: 4, // TODO : Id de la personne qui like
-		publicationId: 1, // TODO : Id de la publication = id dans URL
-	});
-	likes.save();
-	// .then((like)=>{
-	//     res.send(like);
-	// })
-	// .catch((err)=>{
-	//     console.log(err);
-	// });
-	like.findAndCountAll({
-		// ! Prob sync car ne prend  pas en compte le dernier rajout
-		where: {
-			publicationId: 1,
-		},
-	})
-		.then((total) => {
-			res.send("total likes = " + total.count);
+	// check if user not already liked
+	like.findAll({ where: { publicationId: req.params.pubid, userId: req.params.id } })
+		.then((resp) => {
+			if (resp[0] == null) {
+				const likes = new like({
+					userId: req.params.id,
+					publicationId: req.params.pubid,
+				});
+				likes
+					.save()
+					.then((like) => {
+						res.send(like);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			} else {
+				res.send("user already liked that publication");
+			}
 		})
 		.catch((err) => {
-			console.log(err);
+			res.send(err);
+		});
+};
+// * Count likes for a publication
+exports.countLike = (req, res) => {
+	like.findAll({ where: { publicationId: req.params.pubid } })
+		.then((likes) => {
+			res.send(likes);
+		})
+		.catch((err) => {
+			res.send(err);
 		});
 };

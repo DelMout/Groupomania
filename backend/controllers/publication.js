@@ -25,7 +25,7 @@ exports.createPub = (req, res) => {
 			res.send(pub);
 		})
 		.catch((err) => {
-			console.log(err);
+			res.send(err);
 		});
 };
 

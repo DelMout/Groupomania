@@ -1,13 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const likeCtrl=require('../controllers/like');
-
+const likeCtrl = require("../controllers/like");
 
 // * Add a like
-router.post('/',likeCtrl.addLike);
+router.post("/:pubid/like/:id", likeCtrl.addLike);
 
-module.exports=router;
+// * Count likes
+router.get("/:pubid/like/", likeCtrl.countLike);
 
-
-// derniere modif !
+module.exports = router;
