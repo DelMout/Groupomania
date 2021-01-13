@@ -123,3 +123,15 @@ exports.delete = (req, res) => {
 			res.send(err);
 		});
 };
+
+// * Identify user
+exports.ident = (req, res) => {
+	user.findAll({ where: { id: req.params.id } })
+		.then((resp) => {
+			res.send(resp);
+		})
+		.catch((err) => {
+			console.log(err);
+			res.send(err);
+		});
+};

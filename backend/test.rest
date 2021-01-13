@@ -54,11 +54,11 @@ POST http://localhost:3001/api/pub/
 ######
 GET http://localhost:3001/api/pub/user/7
 ######
-GET http://localhost:3001/api/pub/4
+GET http://localhost:3001/api/pub/
 ######
-POST http://localhost:3001/api/pub/1/like/7
+POST http://localhost:3001/api/pub/2/like/7
 ######
-GET http://localhost:3001/api/pub/1/like/
+GET http://localhost:3001/api/pub/4/like/
 ######
 POST http://localhost:3001/api/pub/4/comm/11
 content-type: application/json
@@ -68,3 +68,5 @@ content-type: application/json
 }
 ######
 GET http://localhost:3001/api/pub/4/comm/
+######
+GET http://localhost:3001/api/auth/ident/14

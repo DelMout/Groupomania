@@ -22,4 +22,7 @@ router.put("/modif/:id", userCtrl.modif);
 // * Delete user
 router.delete("/delete/:id", userCtrl.delete);
 
+// * Identify user
+router.get("/ident/:id", userCtrl.ident);
+
 module.exports = router;

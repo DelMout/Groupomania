@@ -1,22 +1,15 @@
 <template>
 	<div>
 		<h1>{{ theInfo }}</h1>
-		<!-- <p>{{ theWarning }}</p> -->
 		<button v-if="log" v-on:click="displayPublications">Valider</button>
 		<!-- boucle  pour afficher toutes les pub -->
 		<div v-for="pub in publica" :key="pub.titre">
-			<a v-if="!select" v-on:click="seeOnePublication(pub)">
-				<h2>{{ pub.titre }}</h2>
-				<p>{{ pub.contenu }}</p>
-				<p>Likes : {{ pub.likes }}</p>
-				<p>commentaires</p>
-			</a>
-			<div v-if="select">
-				<h2>{{ pub.titre }}</h2>
-				<p>{{ pub.contenu }}</p>
-				<Like />
-				<Comment />
-			</div>
+			<Author :item="pub" />
+			<h2>{{ pub.titre }}</h2>
+			<p>{{ pub.contenu }}</p>
+			<Like :pub="pub" />
+			<Comment :pub="pub" />
+			<p>***********************</p>
 		</div>
 		<button v-if="seePub" v-on:click="displayPublications">Revenir sur les publications</button>
 		* <button v-if="more" v-on:click="seeMorePublications">Voir plus de publications</button> *
@@ -27,12 +20,15 @@
 <script>
 import Like from "@/components/Like";
 import Comment from "@/components/Comment";
+import Author from "@/components/Author";
+// import * as moment from "vue-moment";
 import axios from "axios";
 export default {
 	name: "Publication",
 	components: {
 		Like,
 		Comment,
+		Author,
 	},
 	data() {
 		return {
@@ -54,6 +50,7 @@ export default {
 			this.log = false;
 			this.select = false;
 			this.seePub = false;
+			this.qtyMore = 0;
 
 			this.publica = [];
 			axios
@@ -74,18 +71,42 @@ export default {
 							.get("http://localhost:3001/api/pub/" + resp.data[i].id + "/like/")
 							.then((respo) => {
 								//* get total of comments
-								console.log("lon = " + respo.data.length);
-								this.publica.push({
-									index: resp.data[i].id,
-									titre: resp.data[i].titre,
-									contenu: resp.data[i].texte_pub,
-									userId: resp.data[i].userId,
-									likes: respo.data.length,
-								});
+								axios
+									.get(
+										"http://localhost:3001/api/pub/" +
+											resp.data[i].id +
+											"/comm/"
+									)
+									.then((rep) => {
+										console.log("lon = " + respo.data.length);
+										console.log("comments = " + rep.data.length);
+										// Pick up firstName and name of Publication author
+										axios
+											.get(
+												"http://localhost:3001/api/auth/ident/" +
+													resp.data[i].userId
+											)
+											.then((respon) => {
+												this.publica.push({
+													index: resp.data[i].id,
+													titre: resp.data[i].titre,
+													contenu: resp.data[i].texte_pub,
+													date: resp.data[i].date_crea_pub,
+													userId: resp.data[i].userId,
+													comm: rep.data.length,
+													likes: respo.data.length,
+													nom: respon.data[0].nom,
+													prenom: respon.data[0].prenom,
+												});
+												console.log("index = " + this.publica[0].index);
+											})
+											.catch((err) => console.log(err));
+									})
+									.catch((err) => console.log(err));
 							})
-							.catch((err) => console.log(err));
+							.catch((erreur) => console.log(erreur));
+						// console.log("Publica_like :" + this.publica[0]);
 					}
-					console.log("Publica_like :" + this.publica[0]);
 				})
 				.catch((erreur) => console.log(erreur));
 		},
@@ -114,14 +135,39 @@ export default {
 						axios
 							.get("http://localhost:3001/api/pub/" + resp.data[i].id + "/like/")
 							.then((respo) => {
-								console.log("lon = " + respo.data.length);
-								this.publica.push({
-									index: resp.data[i].id,
-									titre: resp.data[i].titre,
-									contenu: resp.data[i].texte_pub,
-									userId: resp.data[i].userId,
-									likes: respo.data.length,
-								});
+								//* get total of comments
+								axios
+									.get(
+										"http://localhost:3001/api/pub/" +
+											resp.data[i].id +
+											"/comm/"
+									)
+									.then((rep) => {
+										console.log("lon = " + respo.data.length);
+										console.log("comments = " + rep.data.length);
+										// Pick up firstName and name of Comment author
+										axios
+											.get(
+												"http://localhost:3001/api/auth/ident/" +
+													resp.data[i].userId
+											)
+											.then((respon) => {
+												this.publica.push({
+													index: resp.data[i].id,
+													titre: resp.data[i].titre,
+													contenu: resp.data[i].texte_pub,
+													date: resp.data[i].date_crea_pub,
+													userId: resp.data[i].userId,
+													comm: rep.data.length,
+													likes: respo.data.length,
+													nom: respon.data[0].nom,
+													prenom: respon.data[0].prenom,
+												});
+											})
+											.catch((err) => console.log(err));
+									})
+									.catch((erreur) => console.log(erreur));
+								// console.log("Publica_like :" + this.publica[0]);
 							})
 							.catch((err) => console.log(err));
 					}
@@ -161,9 +207,9 @@ export default {
 			console.log("select one : " + pub.index);
 			this.theInfo = "Votre sélection :";
 			this.publica = [];
-			const likes_anc = pub.likes;
+			this.$store.state.currentPubId = pub.index;
 			this.$store.state.currentLikes = pub.likes;
-			console.log("likes : " + likes_anc);
+			this.$store.state.currentComments = pub.comm;
 			this.onePub = true;
 			this.seePub = true;
 			this.more = false;
@@ -177,10 +223,13 @@ export default {
 						titre: resp.data[0].titre,
 						contenu: resp.data[0].texte_pub,
 						userId: resp.data[0].userId,
-						likes: likes_anc,
+						likes: pub.likes,
+						comm: pub.comm,
 					});
 					console.log("publicat[likes] : " + this.publica[0].likes);
-					this.$store.state.currentPubId = resp.data[0].id;
+					// this.$store.state.currentPubId = resp.data[0].id;
+					// this.$store.state.currentComments = resp.data[0].id;
+
 					console.log("pubId = " + this.$store.state.currentPubId);
 				})
 				.catch((erreur) => console.log(erreur));

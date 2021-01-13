@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<a v-on:click="liker">
-			<p>Likes :{{ countLike }}</p>
+		<a v-on:click="liker(pub)">
+			<p>Likes : {{ pub.likes }}</p>
 		</a>
 		<p v-if="alreadyLike">Vous avez déjà émis un like sur cette publication.</p>
 	</div>
@@ -13,18 +13,19 @@ export default {
 	data() {
 		return {
 			alreadyLike: false,
-			countLike: this.$store.state.currentLikes,
 		};
 	},
+	props: ["pub"],
 	computed: {},
 
 	methods: {
 		//* Add a LIKE
-		liker: function() {
+		liker: function(pub) {
+			console.log("pub.index = " + this.pub.index);
 			axios
 				.post(
 					"http://localhost:3001/api/pub/" +
-						this.$store.state.currentPubId +
+						this.pub.index +
 						"/like/" +
 						this.$store.state.currentUserId
 				)
@@ -32,7 +33,7 @@ export default {
 					if (resp.data === "user already liked that publication") {
 						this.alreadyLike = true;
 					} else {
-						this.countLike += 1;
+						this.pub.likes += 1;
 					}
 				})
 				.catch((erreur) => console.log(erreur));

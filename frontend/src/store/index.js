@@ -4,16 +4,6 @@ export default createStore({
 	state: {
 		totalFromVuex: 12,
 		currentUserId: 5,
-		currentLikes: 1,
-		currentComments: 1,
-		// theWarning: "",
-		// info: "RAS",
-		// savePrenom: "Norbert",
-		// saveNom: "DuSchnok",
-		// saveEmail: "ddd@groupomania.fr",
-		// saveService: "Finance",
-		// savePassword: "nnn",
-		// saveDescription: "Champion de la dérision !",
 	},
 	getters: {
 		doubleDuTotal(state) {
@@ -24,15 +14,6 @@ export default createStore({
 		setTotalFromVuex(state, nouvelle_valeur) {
 			state.totalFromVuex = nouvelle_valeur;
 		},
-		// createUser(state){
-		//   fetch("http://localhost:3001/api/auth.signup")
-		//   .then((resp)=>{
-		//     return resp.json();
-		//   })
-		//   .then((obj)=>{
-		//     state.info=obj[0];
-		//   })
-		// }
 	},
 	actions: {},
 	modules: {},

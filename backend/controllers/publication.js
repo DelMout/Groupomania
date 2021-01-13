@@ -3,7 +3,9 @@ const { publication } = require("../models");
 // * Get all publications
 exports.getAllPub = (req, res) => {
 	publication
-		.findAll()
+		.findAll({
+			order: [["date_crea_pub", "DESC"]],
+		})
 		.then((pub) => {
 			res.send(pub);
 		})
