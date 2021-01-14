@@ -1,29 +1,41 @@
 <template>
 	<div>
-		<h1 v-if="!newUser">
+		<h1 v-if="hom == 0 || creat">
 			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
+			{{ this.$store.state.currentUserId }}
 		</h1>
 		<div>
-			<h1 v-if="newUser">Merci de renseigner le formulaire ci-dessous</h1>
-			<h2>{{ theInfo }}</h2>
-			<p v-if="newUser">Prénom : <input type="text" v-model="prenom" /></p>
-			<p v-if="newUser">Nom : <input type="text" v-model="nom" /></p>
-			<p v-if="affEmail">Email : <input type="text" v-model="email" /></p>
-			<p v-if="newUser">Service : <input type="text" v-model="service" /></p>
-			<p>Mot de passe : <input type="text" v-model="password" /></p>
-			<p v-if="newUser">
-				Description (optionnel) : <input type="text" v-model="description" />
-			</p>
-			<button v-if="!newUser" v-on:click="loginUser">Entrer sur le GroupoRéseau !</button
-			><button v-if="valider" v-on:click="createUser">Valider</button><br /><button
-				v-if="!affEmail"
+			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
+			<h2 style="color:red;">{{ theInfo }}</h2>
+			<div>
+				<p v-if="mod || creat">Prénom : <input type="text" v-model="prenom" /></p>
+				<p v-if="mod || creat">Nom : <input type="text" v-model="nom" /></p>
+				<p v-if="hom == 0 || creat">Email : <input type="text" v-model="email" /></p>
+				<p v-if="mod || creat">Service : <input type="text" v-model="service" /></p>
+				<p v-if="hom == 0 || mod || creat">
+					Mot de passe : <input type="text" v-model="password" />
+				</p>
+				<p v-if="mod || creat">
+					Description (optionnel) : <input type="text" v-model="description" />
+				</p>
+			</div>
+			<button v-if="hom == 0" v-on:click="loginUser">
+				Entrer sur le GroupoSocialMania !</button
+			><button v-if="creat" v-on:click="createUser">Valider</button><br /><button
+				v-if="mod"
 				v-on:click="modifUser"
 			>
 				Valider les modifications</button
 			><br />
-			<button v-if="!newUser" v-on:click="demandModifUser">Modifier mon compte</button
-			><button v-if="!newUser" v-on:click="deleteUser">Supprimer mon compte</button>
-			<p v-if="!newUser">
+			<button v-if="hom > 0" v-on:click="demandModifUser">
+				Modifier mon compte</button
+			><button v-if="hom > 0" v-on:click="demandDeleteUser">
+				Supprimer mon compte
+			</button>
+			<button style="color:red;" v-if="sup" v-on:click="deleteUser">
+				Confirmer la suppression de mon compte
+			</button>
+			<p v-if="hom == 0" style="color:blue;">
 				Pas encore de compte ? <button v-on:click="wantCreate">Créer un compte</button>
 			</p>
 		</div>
@@ -43,10 +55,11 @@ export default {
 			service: "",
 			password: "",
 			description: "",
-			newUser: false,
-			affEmail: true,
-			valider: false,
-			informations: ["prénom", "nom", "email", "service", "mot de passe", "description"],
+			hom: this.$store.state.currentUserId, //user connected if >0
+			creat: false, //phase user creation
+			mod: false, //phase modification user
+			sup: false, //phase delete user
+			indexDel: "",
 			paramUser: {
 				prenom: "prénom",
 				nom: "nom",
@@ -60,18 +73,12 @@ export default {
 	methods: {
 		//* CREATE a new USER
 		wantCreate: function() {
-			this.newUser = true;
-			this.valider = true;
+			this.hom = -1;
+			this.creat = true;
 		},
 		createUser: function() {
 			console.log("g bien recu la requete!");
 			this.theInfo = "Fonction lancée !!";
-			// if (this.prenom == "") {
-			// 	this.theInfo = "Merci de renseigner votre prénom";
-			// } else if (this.nom == "") {
-			// 	this.theInfo = "Merci de renseigner votre nom";
-			// }
-
 			axios
 				.post("http://localhost:3001/api/auth/signup", {
 					prenom: this.prenom,
@@ -82,12 +89,12 @@ export default {
 					description: this.description,
 				})
 				.then((resp) => {
-					this.newUser = false;
 					console.log(resp.data);
 					this.theInfo = "Compte créé !!";
 					this.$store.state.currentUserId = resp.data.id;
+					this.creat = false;
+					this.hom = this.$store.state.currentUserId;
 					console.log("currentUserId = " + this.$store.state.currentUserId);
-					// TODO : transfert vers page du réseau !
 				})
 				.catch((err) => {
 					if (err.response.data.validatorKey === "notEmpty") {
@@ -117,11 +124,8 @@ export default {
 					} else if (connection === "Email not OK") {
 						this.theInfo = "Email incorrect !!";
 					} else {
-						this.theInfo = "Email et Mot de passe corrects !!";
 						this.$store.state.currentUserId = resp.data.id;
-						console.log("id =" + resp.data.id);
-						// TODO : transfert vers page du réseau !
-						// TODO  : ...avec bouton modifier compte / supprimer compte accessibles !
+						this.$router.push("http://localhost:8080/publi");
 					}
 				})
 				.catch((erreur) => console.log(erreur));
@@ -129,8 +133,10 @@ export default {
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
 			console.log("g bien recu la requete pour DEMANDE de modif!");
-			this.newUser = true;
-			this.affEmail = false;
+			this.theInfo = "";
+			this.mod = true;
+			this.hom = -1;
+			console.log("mod = " + this.mod);
 			axios
 				.get("http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId)
 				.then((resp) => {
@@ -140,14 +146,16 @@ export default {
 					this.service = resp.data.service;
 					this.description = resp.data.description;
 					console.log(this.$store.state.currentUserId);
+					// this.mod = false;
 				})
 				.catch((erreur) => console.log(erreur));
 		},
 
 		//* MODIFY a USER
 		modifUser: function() {
-			console.log("g bien recu la requete pour modif!");
-
+			console.log("g bien recu la requete pour modif!" + this.$store.state.currentUserId);
+			//! Il faut renseigner toutes les lignes !
+			// ! Dans le back faire remonter l'info que manque ligne renseignée !
 			axios
 				.put("http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId, {
 					prenom: this.prenom,
@@ -158,16 +166,25 @@ export default {
 				})
 				.then((resp) => {
 					console.log(resp);
+					this.mod = false;
+					this.hom = this.$store.state.currentUserId;
+					this.theInfo = "Vos modifications ont été prises en compte";
 				})
 				.catch((erreur) => console.log(erreur));
 		},
 		//* DELETE a USER
+		demandDeleteUser: function() {
+			this.sup = true;
+			this.hom = -1;
+			this.theInfo = "Êtes vous sûre de vouloir supprimer votre compte ?";
+		},
 		deleteUser: function() {
 			console.log("g bien recu la requete pour delete!");
 			axios
 				.delete("http://localhost:3001/api/auth/delete/" + this.$store.state.currentUserId)
 				.then((resp) => {
 					console.log(resp);
+					this.sup = false;
 					this.theInfo = "Votre compte a été supprimé !";
 				})
 				.catch((erreur) => console.log(erreur));

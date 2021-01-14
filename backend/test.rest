@@ -29,13 +29,13 @@ POST http://localhost:3001/api/auth/login
 ######
 GET http://localhost:3001/api/auth/modif/31
 ######
-PUT http://localhost:3001/api/auth/modif
+PUT http://localhost:3001/api/auth/modif/7
 content-type: application/json
 
 {
-    "nom": "Modifé",
+    "nom": "Pareil",
     "prenom": "modif Prénom",
-    "password": "modif",
+    "password": "mmm",
     "service": "service modif", 
     "description":"modif aussi"
 }

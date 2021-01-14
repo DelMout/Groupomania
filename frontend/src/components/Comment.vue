@@ -1,12 +1,11 @@
 <template>
 	<div>
-		<a v-on:click="seeComment(pub)">
+		<a v-on:click="seeComment(pub)" style="text-decoration:underline;">
 			<p v-if="pub.comm > 1">{{ pub.comm }} commentaires</p>
 			<p v-else>{{ pub.comm }} commentaire</p>
 		</a>
 		<div v-for="com in allComments" :key="com">
 			<Author :item="com" />
-			<!-- <p>{{ com.prenom }} {{ com.nom }} :</p> -->
 			<p>{{ com.texte }}</p>
 			<p>----------------------</p>
 		</div>
@@ -19,7 +18,6 @@
 				</button>
 			</p>
 		</div>
-		<!-- <p v-if="alreadyLike">Vous avez déjà émis un like sur cette publication.</p> -->
 	</div>
 </template>
 <script>
@@ -48,19 +46,11 @@ export default {
 				.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
 				.then((resp) => {
 					for (let i = 0; i < this.pub.comm; i++) {
-						// Pick up firstName and name of Comment author
-						axios
-							.get("http://localhost:3001/api/auth/ident/" + resp.data[i].userId)
-							.then((respo) => {
-								this.allComments.push({
-									texte: resp.data[i].texte_com,
-									date: resp.data[i].date_crea_com,
-									userId: resp.data[i].userId,
-									prenom: respo.data[0].prenom,
-									nom: respo.data[0].nom,
-								});
-							})
-							.catch((err) => console.log(err));
+						this.allComments.push({
+							texte: resp.data[i].texte_com,
+							date: resp.data[i].date_crea_com,
+							userId: resp.data[i].userId,
+						});
 					}
 				})
 				.catch((err) => console.log(err));
@@ -87,22 +77,14 @@ export default {
 						.then((resp) => {
 							console.log("length = " + resp.data.length);
 							for (let i = 0; i < resp.data.length; i++) {
-								// Pick up firstName and name of Comment author
-								axios
-									.get(
-										"http://localhost:3001/api/auth/ident/" +
-											resp.data[i].userId
-									)
-									.then((respo) => {
-										this.allComments.push({
-											texte: resp.data[i].texte_com,
-											prenom: respo.data[0].prenom,
-											nom: respo.data[0].nom,
-										});
-									})
-									.catch((err) => console.log(err));
+								this.allComments.push({
+									texte: resp.data[i].texte_com,
+									date: resp.data[i].date_crea_com,
+									userId: resp.data[i].userId,
+								});
 							}
 							this.commentUser = "";
+							this.pub.comm += 1;
 						})
 						.catch((err) => console.log(err));
 				})

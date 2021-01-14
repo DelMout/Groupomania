@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<h1>{{ theInfo }}</h1>
-		<p>Titre de ma publication : <input type="text" v-model="titre" /></p>
-		<p>Contenu de ma publication : <input type="text" v-model="contenu" /></p>
-		<button v-if="r" v-on:click="createPub">Publier</button>
+		<p v-if="toSend">Titre de ma publication : <input type="text" v-model="titre" /></p>
+		<p v-if="toSend">Contenu de ma publication : <input type="text" v-model="contenu" /></p>
+		<button v-if="toSend" v-on:click="createPub">Publier</button>
 	</div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
 		return {
 			titre: "",
 			contenu: "",
-			r: true,
+			toSend: true,
 			theInfo: "Ici je crée ma publication",
 		};
 	},
@@ -31,8 +31,8 @@ export default {
 				.then((resp) => {
 					console.log(resp.data);
 					console.log("Pub créée !!");
+					this.toSend = false;
 					this.theInfo = "Votre publication a été créée !";
-					// TODO : transfert vers page du réseau !
 				})
 				.catch((erreur) => console.log(erreur));
 		},

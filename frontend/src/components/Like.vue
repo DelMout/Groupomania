@@ -3,7 +3,9 @@
 		<a v-on:click="liker(pub)">
 			<p>Likes : {{ pub.likes }}</p>
 		</a>
-		<p v-if="alreadyLike">Vous avez déjà émis un like sur cette publication.</p>
+		<i v-if="alreadyLike" style="color:blue"
+			>Vous avez déjà émis un like sur cette publication.</i
+		>
 	</div>
 </template>
 <script>

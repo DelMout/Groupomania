@@ -1,10 +1,14 @@
 <template>
 	<div id="app">
 		<div id="nav">
-			<router-link to="/">Home</router-link> | <router-link to="/about">About</router-link> |
-			<router-link to="/publi">Les publications</router-link> |
-			<router-link to="/publier">Créer une publication</router-link> |
-			<router-link to="/signup">Créer son compte</router-link>
+			<router-link to="/">Home</router-link> |
+			<router-link to="/signup">Mon compte</router-link
+			><span v-if="this.$store.state.currentUserId != 0">
+				|
+				<router-link to="/publi">Les publications</router-link>
+				|
+				<router-link to="/publier">Créer une publication</router-link></span
+			>
 		</div>
 		<router-view />
 	</div>
