@@ -9,10 +9,24 @@
 				|
 				<router-link to="/publier">Créer une publication</router-link></span
 			>
+			|
+			<span v-if="this.$store.state.currentUserId != 0">
+				<router-link v-on:click="deconnect" to="/">Se déconnecter</router-link></span
+			>
 		</div>
 		<router-view />
 	</div>
 </template>
+<script>
+export default {
+	name: "Home",
+	methods: {
+		deconnect: function() {
+			this.$store.state.currentUserId = 0;
+		},
+	},
+};
+</script>
 
 <style>
 #app {

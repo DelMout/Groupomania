@@ -3,8 +3,10 @@ const router = express.Router();
 
 const pubCtrl = require("../controllers/publication");
 
+const multer = require("../middleware/multer-config"); //Upload files
+
 // * Create a publication
-router.post("/create/:id", pubCtrl.createPub);
+router.post("/create/:id", multer, pubCtrl.createPub);
 
 // * Select all publications
 router.get("/", pubCtrl.getAllPub);

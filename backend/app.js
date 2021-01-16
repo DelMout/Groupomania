@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const userRoutes = require("./routes/user");
 const pubRoutes = require("./routes/publication");
@@ -47,53 +48,7 @@ app.use("/api/pub", commRoutes);
 // * Likes
 app.use("/api/pub", likeRoutes);
 
-// app.get('/select',(req,res)=>{
-//     user.findAll()
-//     .then((users)=>{
-//         res.send(users);
-//     })
-//     .catch((err)=>{
-//         console.log(err);
-//     });
-// });
-
-app.get("/pub", (req, res) => {
-	publication
-		.findAll()
-		.then((pubs) => {
-			res.send(pubs);
-		})
-		.catch((err) => {
-			console.log(err);
-		});
-});
-
-// app.get('/select/lou',(req,res)=>{
-//     user.findAll({ where:{ prenom:"Louise"}})
-//     .then((users)=>{
-//         res.send(users);
-//     })
-//     .catch((err)=>{
-//         console.log(err);
-//     });
-
-// });
-
-// app.get('/insert',(req,res)=>{
-//     user.create({
-//         nom:"Lord",
-//         prenom:"Manuel",
-//     }).catch((err)=>{
-//         if(err){
-//             console.log(err);
-//         }
-//     });
-//     res.send("insert");
-// });
-
-// app.get('/delete',(req,res)=>{
-//     user.destroy({where:{id:10}});
-//     res.send("delete");
-// });
+// * Access images
+app.use("/images/", express.static(path.join(__dirname, "images")));
 
 module.exports = app;

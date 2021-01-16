@@ -5,6 +5,8 @@
 			><span v-else>a commenté</span> {{ dateFr(item.date) }}
 		</i>
 		<p v-if="hover" style="color:green;">
+			<img style="width:70px;" :src="photo" alt="author picture" title="user-img" />
+			<!-- <img v-bind:src="photo" title="user-img" /> -->
 			Service : {{ service }}, A propos de moi : {{ description }}
 		</p>
 	</div>
@@ -20,6 +22,7 @@ export default {
 			nom: "",
 			service: "",
 			description: "",
+			photo: "",
 			publie: true,
 			hover: false,
 		};
@@ -47,6 +50,12 @@ export default {
 				this.nom = respon.data[0].nom;
 				this.service = respon.data[0].service;
 				this.description = respon.data[0].description;
+				if (respon.data[0].photo != null) {
+					this.photo = respon.data[0].photo;
+				} else {
+					this.photo = "http://localhost:3001/images/photo_defaut.jpg";
+				}
+				console.log("lien photo = " + this.photo);
 				if (this.item.index >= 0) {
 					this.publie = true; // Corresponding to publication
 				} else {

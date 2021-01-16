@@ -11,14 +11,15 @@ const { user } = require("../models");
 // 	});
 // };
 
+// * Create a new user
 exports.signup = (req, res) => {
+	if (req.file) {
+		req.body.photo = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+	} else {
+		req.body.photo = null;
+	}
 	const newUser = new user({
-		nom: req.body.nom,
-		prenom: req.body.prenom,
-		email: req.body.email,
-		password: req.body.password,
-		service: req.body.service,
-		description: req.body.description,
+		...req.body,
 	});
 	newUser
 		.save()
@@ -88,19 +89,9 @@ exports.demandmodif = (req, res) => {
 
 // * Modify
 exports.modif = (req, res) => {
-	let nom = req.body.nom;
-	let prenom = req.body.prenom;
-	let password = req.body.password;
-	let service = req.body.service;
-	let description = req.body.description;
-
 	user.update(
 		{
-			nom: nom,
-			prenom: prenom,
-			password: password,
-			service: service,
-			description: description,
+			...req.body,
 		},
 		{ where: { id: req.params.id } }
 	)

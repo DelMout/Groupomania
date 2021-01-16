@@ -16,10 +16,13 @@ exports.getAllPub = (req, res) => {
 
 // * Create a publication
 exports.createPub = (req, res) => {
+	if (req.file) {
+		req.body.photo = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+	} else {
+		req.body.photo = null;
+	}
 	const newPub = new publication({
-		titre: req.body.titre,
-		texte_pub: req.body.contenu,
-		userId: req.params.id,
+		...req.body,
 	});
 	newPub
 		.save()
@@ -46,7 +49,10 @@ exports.getPub = (req, res) => {
 // * Select publications by userId
 exports.getPubByUser = (req, res) => {
 	publication
-		.findAll({ where: { userId: req.params.id } })
+		.findAll({
+			order: [["date_crea_pub", "DESC"]],
+			where: { userId: req.params.id },
+		})
 		.then((pub) => {
 			res.send(pub);
 		})

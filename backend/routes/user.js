@@ -3,12 +3,13 @@ const router = express.Router();
 
 const userCtrl = require("../controllers/user");
 
+const multer = require("../middleware/multer-config"); //Upload files
+
 // * Voir tous users
 // router.get('/user',userCtrl.getAllUser);
 
 // * Sign Up
-router.post("/signup", userCtrl.signup);
-// router.post("/signup", userCtrl.signup);
+router.post("/signup", multer, userCtrl.signup);
 
 // * Login
 router.post("/login", userCtrl.login);

@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 			titre: {
 				type: DataTypes.STRING,
 				allowNull: false,
+				require,
 				validate: {
 					notEmpty: true,
 				},

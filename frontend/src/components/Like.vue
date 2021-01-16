@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<a v-on:click="liker(pub)">
-			<p>Likes : {{ pub.likes }}</p>
+			<p v-if="pub.likes > 1">Likes : {{ pub.likes }}</p>
+			<p v-else>Like : {{ pub.likes }}</p>
 		</a>
 		<i v-if="alreadyLike" style="color:blue"
 			>Vous avez déjà émis un like sur cette publication.</i

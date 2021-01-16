@@ -7,7 +7,7 @@
 		<div>
 			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
 			<h2 style="color:red;">{{ theInfo }}</h2>
-			<div>
+			<form enctype="multipart/form-data">
 				<p v-if="mod || creat">Prénom : <input type="text" v-model="prenom" /></p>
 				<p v-if="mod || creat">Nom : <input type="text" v-model="nom" /></p>
 				<p v-if="hom == 0 || creat">Email : <input type="text" v-model="email" /></p>
@@ -18,7 +18,13 @@
 				<p v-if="mod || creat">
 					Description (optionnel) : <input type="text" v-model="description" />
 				</p>
-			</div>
+				<p v-if="mod || creat">
+					Photo (optionnel) :<input type="file" name="image" @change="onFileChange" />
+				</p>
+				<!-- <p v-if="mod || creat">
+					Photo (optionnel) : <input type="file" ref="file" @change="selectFile" />
+				</p> -->
+			</form>
 			<button v-if="hom == 0" v-on:click="loginUser">
 				Entrer sur le GroupoSocialMania !</button
 			><button v-if="creat" v-on:click="createUser">Valider</button><br /><button
@@ -43,6 +49,7 @@
 </template>
 
 <script>
+import { FileUpload } from "v-file-upload"; //! a retirer
 import axios from "axios";
 export default {
 	name: "Signup",
@@ -55,11 +62,14 @@ export default {
 			service: "",
 			password: "",
 			description: "",
+			image: null,
 			hom: this.$store.state.currentUserId, //user connected if >0
 			creat: false, //phase user creation
 			mod: false, //phase modification user
 			sup: false, //phase delete user
 			indexDel: "",
+			// selectedFile: null,
+			// file: "",
 			paramUser: {
 				prenom: "prénom",
 				nom: "nom",
@@ -71,6 +81,11 @@ export default {
 		};
 	},
 	methods: {
+		//* Select a photo
+		onFileChange: function(event) {
+			console.log(event.target.files[0]);
+			this.image = event.target.files[0];
+		},
 		//* CREATE a new USER
 		wantCreate: function() {
 			this.hom = -1;
@@ -79,17 +94,19 @@ export default {
 		createUser: function() {
 			console.log("g bien recu la requete!");
 			this.theInfo = "Fonction lancée !!";
+			const formData = new FormData();
+			formData.append("image", this.$data.image);
+			formData.append("prenom", this.$data.prenom);
+			formData.append("nom", this.$data.nom);
+			formData.append("email", this.$data.email);
+			formData.append("service", this.$data.service);
+			formData.append("description", this.$data.description);
+			formData.append("password", this.$data.password);
 			axios
-				.post("http://localhost:3001/api/auth/signup", {
-					prenom: this.prenom,
-					nom: this.nom,
-					email: this.email,
-					service: this.service,
-					password: this.password,
-					description: this.description,
-				})
+				.post("http://localhost:3001/api/auth/signup", formData)
 				.then((resp) => {
 					console.log(resp.data);
+
 					this.theInfo = "Compte créé !!";
 					this.$store.state.currentUserId = resp.data.id;
 					this.creat = false;
@@ -105,6 +122,8 @@ export default {
 					} else if (err.response.data === "Not format email") {
 						this.theInfo = "Il ne s'agit pas d'un format email";
 					} // TODO ici les autres erreurs de création (password pas assez fort, cellule non renseignée...)
+					this.theInfo =
+						"Votre compte n'a pas pu être créé. Merci de corriger les données.";
 					console.log("c pas bon ! " + err.response.data);
 				});
 		},

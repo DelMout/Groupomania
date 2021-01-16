@@ -7,6 +7,12 @@
 				<Author :item="pub" />
 				<h2>{{ pub.titre }}</h2>
 				<p>{{ pub.contenu }}</p>
+				<img
+					v-if="pub.photo != null"
+					:src="pub.photo"
+					alt="publication picture"
+					title="pub-img"
+				/>
 				<Like :pub="pub" />
 				<Comment :pub="pub" />
 				<button style="color:red;" v-if="seePub" v-on:click="deletePub(pub)">
@@ -14,13 +20,6 @@
 				</button>
 				<p>***********************</p>
 			</div>
-			<button v-if="seePub" v-on:click="backToPublications">
-				Revenir sur les publications
-			</button>
-			*
-			<button v-if="more" v-on:click="seeMorePublications">Voir plus de publications</button>
-			*
-			<button v-if="mine" v-on:click="seeMinePublications">Voir vos publications</button>
 		</div>
 		<div v-if="del">
 			<p>Titre de la publication à supprimer : {{ titreDel }}</p>
@@ -29,6 +28,13 @@
 				Confirmer la suppression
 			</button>
 		</div>
+		<button v-if="seePub" v-on:click="backToPublications">
+			Revenir sur les publications
+		</button>
+
+		<button v-if="more" v-on:click="seeMorePublications">Voir plus de publications</button>
+
+		<button v-if="mine" v-on:click="seeMinePublications">Voir vos publications</button>
 	</div>
 </template>
 
@@ -58,6 +64,7 @@ export default {
 			seePub: false,
 			del: false,
 			confDel: true,
+			photo: "",
 		};
 	},
 	created: function() {
@@ -120,6 +127,7 @@ export default {
 											contenu: resp.data[i].texte_pub,
 											date: resp.data[i].date_crea_pub,
 											userId: resp.data[i].userId,
+											photo: resp.data[i].photo,
 											comm: rep.data.length,
 											likes: respo.data.length,
 										});
@@ -168,6 +176,7 @@ export default {
 											contenu: resp.data[i].texte_pub,
 											userId: resp.data[i].userId,
 											date: resp.data[i].date_crea_pub,
+											photo: resp.data[i].photo,
 											comm: rep.data.length,
 											likes: respo.data.length,
 										});
@@ -185,6 +194,9 @@ export default {
 			this.theInfo =
 				"Attention cette publication, supprimera aussi les commentaires liés à cette publication.";
 			this.del = true;
+			this.seePub = false;
+			this.more = false;
+			this.mine = false;
 			this.titreDel = pub.titre;
 			this.contenuDel = pub.contenu;
 			this.indexDel = pub.index;
@@ -195,42 +207,13 @@ export default {
 				.then((resp) => {
 					this.theInfo = "Votre publication a été supprimée.";
 					this.confDel = false;
+					this.seePub = true;
+					this.mine = true;
+
 					//TODO : afficher boutons "back publi" et "voir mes pub"
 				})
 				.catch((err) => console.log(err));
 		},
-		// //* SELECT one PUBLICATION
-		// seeOnePublication: function(pub) {
-		// 	console.log("select one : " + pub.index);
-		// 	this.theInfo = "Votre sélection :";
-		// 	this.publica = [];
-		// 	this.$store.state.currentPubId = pub.index;
-		// 	this.$store.state.currentLikes = pub.likes;
-		// 	this.$store.state.currentComments = pub.comm;
-		// 	this.onePub = true;
-		// 	this.seePub = true;
-		// 	this.more = false;
-		// 	this.select = true;
-
-		// 	axios
-		// 		.get("http://localhost:3001/api/pub/" + pub.index)
-		// 		.then((resp) => {
-		// 			this.publica.push({
-		// 				index: resp.data[0].id,
-		// 				titre: resp.data[0].titre,
-		// 				contenu: resp.data[0].texte_pub,
-		// 				userId: resp.data[0].userId,
-		// 				likes: pub.likes,
-		// 				comm: pub.comm,
-		// 			});
-		// 			console.log("publicat[likes] : " + this.publica[0].likes);
-		// 			// this.$store.state.currentPubId = resp.data[0].id;
-		// 			// this.$store.state.currentComments = resp.data[0].id;
-
-		// 			console.log("pubId = " + this.$store.state.currentPubId);
-		// 		})
-		// 		.catch((erreur) => console.log(erreur));
-		// },
 	},
 };
 </script>

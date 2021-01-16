@@ -8,12 +8,12 @@ POST http://localhost:3001/api/auth/signup
 content-type: application/json
 
 {
-    "nom": "fff",
-    "prenom":"dfd",
-    "email": "fd@.fd",
-    "service": "cc",
+    "nom": "Février",
+    "prenom":"Onze",
+    "email": "onz@groupomania.fr",
+    "service": "Roquefort",
     "description":"",
-    "password": ""  
+    "password": "ooo"  
 }
 ######
 POST http://localhost:3001/api/auth/login 
@@ -29,25 +29,25 @@ POST http://localhost:3001/api/auth/login
 ######
 GET http://localhost:3001/api/auth/modif/31
 ######
-PUT http://localhost:3001/api/auth/modif/7
+PUT http://localhost:3001/api/auth/modif/18
 content-type: application/json
 
 {
-    "nom": "Pareil",
-    "prenom": "modif Prénom",
-    "password": "mmm",
+    "nom": "Avril",
+    "prenom": "Onze",
+    "password": "ooo",
     "service": "service modif", 
     "description":"modif aussi"
 }
 ######
 DELETE http://localhost:3001/api/auth/delete/72
 ######
-POST http://localhost:3001/api/pub/create/15
+POST http://localhost:3001/api/pub/create/22
 content-type: application/json
 
 {
-    "titre": "Essai non user",
-    "contenu": "Voir si ça marche avec user non existant"
+    "titre": "Essai avec user 22",
+    "texte_pub": "Voir si ça marche avec user 22"
 }
 ######
 POST http://localhost:3001/api/pub/

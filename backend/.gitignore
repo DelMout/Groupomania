@@ -1,1 +1,4 @@
 node_modules
+
+# Do not export repertory images
+#**/images/
