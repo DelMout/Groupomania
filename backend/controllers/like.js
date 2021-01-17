@@ -3,11 +3,11 @@ const { like } = require("../models");
 // * Add a like
 exports.addLike = (req, res) => {
 	// check if user not already liked
-	like.findAll({ where: { publicationId: req.params.pubid, userId: req.params.id } })
+	like.findAll({ where: { publicationId: req.params.pubid, userId: req.params.userid } })
 		.then((resp) => {
 			if (resp[0] == null) {
 				const likes = new like({
-					userId: req.params.id,
+					userId: req.params.userid,
 					publicationId: req.params.pubid,
 				});
 				likes

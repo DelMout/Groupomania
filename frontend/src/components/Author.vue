@@ -46,6 +46,7 @@ export default {
 		axios
 			.get("http://localhost:3001/api/auth/ident/" + this.item.userId)
 			.then((respon) => {
+				console.log(respon.data[0]);
 				this.prenom = respon.data[0].prenom;
 				this.nom = respon.data[0].nom;
 				this.service = respon.data[0].service;

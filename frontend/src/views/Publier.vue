@@ -36,7 +36,6 @@ export default {
 			formData.append("image", this.$data.image);
 			formData.append("titre", this.$data.titre);
 			formData.append("texte_pub", this.$data.contenu);
-			formData.append("userId", this.$store.state.currentUserId);
 			axios
 				.post(
 					"http://localhost:3001/api/pub/create/" + this.$store.state.currentUserId,
@@ -48,7 +47,12 @@ export default {
 					this.toSend = false;
 					this.theInfo = "Votre publication a été créée !";
 				})
-				.catch((erreur) => console.log(erreur));
+				.catch((err) => {
+					if (err.response.data === "notEmpty") {
+						this.theInfo = "Le titre et le contenu doivent être renseignés.";
+					}
+					console.log(err);
+				});
 		},
 	},
 };

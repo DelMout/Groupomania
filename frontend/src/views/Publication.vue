@@ -2,9 +2,9 @@
 	<div>
 		<h1>{{ theInfo }}</h1>
 		<!-- loop to display all publications -->
-		<div v-if="!del">
+		<div>
 			<div v-for="pub in publica" :key="pub.index">
-				<Author :item="pub" />
+				<Author :item="pub" v-if="comLike" />
 				<h2>{{ pub.titre }}</h2>
 				<p>{{ pub.contenu }}</p>
 				<img
@@ -13,17 +13,15 @@
 					alt="publication picture"
 					title="pub-img"
 				/>
-				<Like :pub="pub" />
-				<Comment :pub="pub" />
-				<button style="color:red;" v-if="seePub" v-on:click="deletePub(pub)">
+				<Like :pub="pub" v-if="comLike" />
+				<Comment :pub="pub" v-if="comLike" />
+				<button style="color:red;" v-if="seeDel" v-on:click="deletePub(pub)">
 					Supprimer cette publication
 				</button>
 				<p>***********************</p>
 			</div>
 		</div>
-		<div v-if="del">
-			<p>Titre de la publication à supprimer : {{ titreDel }}</p>
-			<p>Contenu de la publication à supprimer : {{ contenuDel }}</p>
+		<div>
 			<button v-if="confDel" style="color:red;" v-on:click="confDeletePub">
 				Confirmer la suppression
 			</button>
@@ -62,9 +60,10 @@ export default {
 			mine: true,
 			select: false,
 			seePub: false,
-			del: false,
-			confDel: true,
+			confDel: false,
+			seeDel: false,
 			photo: "",
+			comLike: true,
 		};
 	},
 	created: function() {
@@ -83,12 +82,16 @@ export default {
 			this.qtyMore = 0;
 			this.mine = true;
 			this.seePublications();
+			this.comLike = true;
+			this.theInfo = "Les publications GroupoRéseauMania";
+			this.seeDel = false;
 		},
 		//* SELECT 10 PUBLICATIONS
 		seePublications: function() {
 			// this.qtyMore += 1;
 			this.seePub = false;
 			this.del = false;
+			this.seeDel = false;
 
 			console.log("qtyMore : " + this.qtyMore);
 			axios
@@ -147,6 +150,8 @@ export default {
 			this.publica = [];
 			this.seePub = true;
 			this.del = false;
+			this.seeDel = true;
+			this.comLike = true;
 
 			axios
 				.get("http://localhost:3001/api/pub/user/" + this.$store.state.currentUserId)
@@ -192,14 +197,23 @@ export default {
 		deletePub: function(pub) {
 			console.log("indexPub =" + pub.index);
 			this.theInfo =
-				"Attention cette publication, supprimera aussi les commentaires liés à cette publication.";
-			this.del = true;
+				"Attention, cette suppression supprimera aussi les commentaires liés à cette publication.";
 			this.seePub = false;
 			this.more = false;
 			this.mine = false;
-			this.titreDel = pub.titre;
-			this.contenuDel = pub.contenu;
+
+			this.publica = [];
+			this.publica.push({
+				index: pub.index,
+				titre: pub.titre,
+				contenu: pub.contenu,
+				photo: pub.photo,
+			});
+
 			this.indexDel = pub.index;
+			this.confDel = true;
+			this.comLike = false;
+			this.seeDel = false;
 		},
 		confDeletePub: function() {
 			axios

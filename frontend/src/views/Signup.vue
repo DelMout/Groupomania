@@ -25,6 +25,11 @@
 					Photo (optionnel) : <input type="file" ref="file" @change="selectFile" />
 				</p> -->
 			</form>
+			<div v-if="photo != null && mod">
+				<span>Votre photo actuelle : </span
+				><img style="width:200px;" :src="photo" alt="photo utilisateur" />
+			</div>
+			<div v-if="photo === null && mod">Vous n'avez pas de photo actuellement.</div>
 			<button v-if="hom == 0" v-on:click="loginUser">
 				Entrer sur le GroupoSocialMania !</button
 			><button v-if="creat" v-on:click="createUser">Valider</button><br /><button
@@ -62,6 +67,7 @@ export default {
 			service: "",
 			password: "",
 			description: "",
+			photo: "",
 			image: null,
 			hom: this.$store.state.currentUserId, //user connected if >0
 			creat: false, //phase user creation
@@ -108,7 +114,7 @@ export default {
 					console.log(resp.data);
 
 					this.theInfo = "Compte créé !!";
-					this.$store.state.currentUserId = resp.data.id;
+					this.$store.state.currentUserId = resp.data.user[0].id;
 					this.creat = false;
 					this.hom = this.$store.state.currentUserId;
 					console.log("currentUserId = " + this.$store.state.currentUserId);
@@ -136,18 +142,19 @@ export default {
 					password: this.password,
 				})
 				.then((resp) => {
-					const connection = resp.data;
-					console.log(connection);
-					if (connection === "Password not OK") {
-						this.theInfo = "Mot de passe incorrect !! !!";
-					} else if (connection === "Email not OK") {
-						this.theInfo = "Email incorrect !!";
-					} else {
-						this.$store.state.currentUserId = resp.data.id;
-						this.$router.push("http://localhost:8080/publi");
-					}
+					console.log(resp.data.user[0].id);
+					this.$store.state.currentUserId = resp.data.user[0].id;
+					// this.$store.state.currentUserId = resp.data.id;
+					this.$router.push("http://localhost:8080/publi");
 				})
-				.catch((erreur) => console.log(erreur));
+				.catch((err) => {
+					if (err.response.data === "Password not OK") {
+						this.theInfo = "Mot de passe incorrect !! !!";
+					} else if (err.response.data === "Email not OK") {
+						this.theInfo = "Email incorrect !!";
+					}
+					console.log(err);
+				});
 		},
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
@@ -155,7 +162,6 @@ export default {
 			this.theInfo = "";
 			this.mod = true;
 			this.hom = -1;
-			console.log("mod = " + this.mod);
 			axios
 				.get("http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId)
 				.then((resp) => {
@@ -164,6 +170,7 @@ export default {
 					this.nom = resp.data.nom;
 					this.service = resp.data.service;
 					this.description = resp.data.description;
+					this.photo = resp.data.photo;
 					console.log(this.$store.state.currentUserId);
 					// this.mod = false;
 				})
@@ -173,21 +180,28 @@ export default {
 		//* MODIFY a USER
 		modifUser: function() {
 			console.log("g bien recu la requete pour modif!" + this.$store.state.currentUserId);
-			//! Il faut renseigner toutes les lignes !
-			// ! Dans le back faire remonter l'info que manque ligne renseignée !
+			const formData = new FormData();
+			formData.append("image", this.$data.image);
+			formData.append("prenom", this.$data.prenom);
+			formData.append("nom", this.$data.nom);
+			formData.append("service", this.$data.service);
+			formData.append("description", this.$data.description);
+			formData.append("password", this.$data.password);
+			console.log(this.$data.nom);
 			axios
-				.put("http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId, {
-					prenom: this.prenom,
-					nom: this.nom,
-					service: this.service,
-					password: this.password,
-					description: this.description,
-				})
+				.put(
+					"http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId,
+					formData
+				)
 				.then((resp) => {
 					console.log(resp);
-					this.mod = false;
-					this.hom = this.$store.state.currentUserId;
-					this.theInfo = "Vos modifications ont été prises en compte";
+					if (resp.data === "notEmpty") {
+						this.theInfo = "Les champs non optionnels doivent être remplis.";
+					} else {
+						this.mod = false;
+						this.hom = this.$store.state.currentUserId;
+						this.theInfo = "Vos modifications ont été prises en compte";
+					}
 				})
 				.catch((erreur) => console.log(erreur));
 		},
@@ -205,6 +219,7 @@ export default {
 					console.log(resp);
 					this.sup = false;
 					this.theInfo = "Votre compte a été supprimé !";
+					this.$store.state.currentUserId = 0;
 				})
 				.catch((erreur) => console.log(erreur));
 		},

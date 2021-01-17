@@ -4,7 +4,7 @@ const { comment } = require("../models");
 exports.createComm = (req, res) => {
 	const newComm = new comment({
 		texte_com: req.body.texte,
-		userId: req.params.id, // TODO : Id de la personne connectée
+		userId: req.params.userid, // TODO : Id de la personne connectée
 		publicationId: req.params.pubid, // TODO : Id de la publication = id dans URL
 	});
 	newComm

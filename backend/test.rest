@@ -1,56 +1,55 @@
 
 
 GET http://localhost:3001/api/auth/signup 
-####
-GET http://localhost:3001/api/pub/3
+
 ######
 POST http://localhost:3001/api/auth/signup 
 content-type: application/json
 
 {
-    "nom": "Février",
-    "prenom":"Onze",
-    "email": "onz@groupomania.fr",
-    "service": "Roquefort",
+    "nom": "Nez",
+    "prenom":"Daphné",
+    "email": "daph@groupo.fr",
+    "service": "Logistique",
     "description":"",
-    "password": "ooo"  
+    "password": "ddd"  
 }
-######
+### login  ###
 POST http://localhost:3001/api/auth/login 
 content-type: application/json
 
 {
-    "password": "sts",
-    "email": "seli@groupomania.fr"
+    "password": "jjj",
+    "email": "jo@groupo.fr"
 }
 
 ######
 POST http://localhost:3001/api/auth/login 
 ######
 GET http://localhost:3001/api/auth/modif/31
-######
-PUT http://localhost:3001/api/auth/modif/18
+### modif user ###
+PUT http://localhost:3001/api/auth/modif/9
 content-type: application/json
 
 {
-    "nom": "Avril",
-    "prenom": "Onze",
-    "password": "ooo",
-    "service": "service modif", 
-    "description":"modif aussi"
+    "nom": "Balançoire"
+    
 }
 ######
-DELETE http://localhost:3001/api/auth/delete/72
-######
-POST http://localhost:3001/api/pub/create/22
+
+DELETE http://localhost:3001/api/auth/delete/25
+### create a publication ###
+POST http://localhost:3001/api/pub/create/27
 content-type: application/json
 
 {
-    "titre": "Essai avec user 22",
-    "texte_pub": "Voir si ça marche avec user 22"
+    "titre": "Essai sans texte",
+    "texte_pub": ""
 }
 ######
 POST http://localhost:3001/api/pub/
+###select a pub###
+GET http://localhost:3001/api/pub/16
 ######
 GET http://localhost:3001/api/pub/user/7
 ######
@@ -68,5 +67,8 @@ content-type: application/json
 }
 ######
 GET http://localhost:3001/api/pub/4/comm/
-######
-GET http://localhost:3001/api/auth/ident/14
+### get a user by id ###
+GET http://localhost:3001/api/auth/ident/30
+
+### delete a pub ###
+DELETE http://localhost:3001/api/pub/22

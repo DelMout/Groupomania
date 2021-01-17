@@ -4,7 +4,7 @@ const router = express.Router();
 const likeCtrl = require("../controllers/like");
 
 // * Add a like
-router.post("/:pubid/like/:id", likeCtrl.addLike);
+router.post("/:pubid/like/:userid", likeCtrl.addLike);
 
 // * Count likes
 router.get("/:pubid/like/", likeCtrl.countLike);

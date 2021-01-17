@@ -15,15 +15,15 @@ router.post("/signup", multer, userCtrl.signup);
 router.post("/login", userCtrl.login);
 
 // * Demand Modify user datas
-router.get("/modif/:id", userCtrl.demandmodif);
+router.get("/modif/:userid", userCtrl.demandmodif);
 
 // * Modify user datas
-router.put("/modif/:id", userCtrl.modif);
+router.put("/modif/:userid", multer, userCtrl.modif);
 
 // * Delete user
-router.delete("/delete/:id", userCtrl.delete);
+router.delete("/delete/:userid", multer, userCtrl.delete);
 
 // * Identify user
-router.get("/ident/:id", userCtrl.ident);
+router.get("/ident/:userid", userCtrl.ident);
 
 module.exports = router;
