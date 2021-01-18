@@ -12,6 +12,7 @@
 
 <script>
 import { FileUpload } from "v-file-upload"; //! a retirer
+import { mapGetters, mapState } from "vuex"; // for authentification
 import axios from "axios";
 export default {
 	name: "Publier",
@@ -24,6 +25,9 @@ export default {
 			theInfo: "Ici je crée ma publication",
 		};
 	},
+	computed: {
+		...mapState({ token: "token" }),
+	},
 	methods: {
 		//* Select a photo
 		onFileChange: function(event) {
@@ -32,15 +36,24 @@ export default {
 		},
 		//* CREATE a PUBLICATION
 		createPub: function() {
+			console.log("token une fois dans create pub !" + this.$store.state.user[0].id);
+			console.log(this.$store.state.token);
 			const formData = new FormData();
 			formData.append("image", this.$data.image);
 			formData.append("titre", this.$data.titre);
 			formData.append("texte_pub", this.$data.contenu);
-			axios
-				.post(
-					"http://localhost:3001/api/pub/create/" + this.$store.state.currentUserId,
-					formData
-				)
+			axios({
+				method: "post",
+				url: "http://localhost:3001/api/pub/create/" + this.$store.state.user[0].id,
+				data: formData,
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			})
+				// .post(
+				// 	"http://localhost:3001/api/pub/create/" + this.$store.state.currentUserId,
+				// 	formData
+				// )
 				.then((resp) => {
 					console.log(resp.data);
 					console.log("Pub créée !!");

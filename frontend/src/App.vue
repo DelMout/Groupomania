@@ -3,7 +3,7 @@
 		<div id="nav">
 			<router-link to="/">Home</router-link> |
 			<router-link to="/signup">Mon compte</router-link
-			><span v-if="this.$store.state.currentUserId != 0">
+			><span>
 				|
 				<router-link to="/publi">Les publications</router-link>
 				|
@@ -23,6 +23,8 @@ export default {
 	methods: {
 		deconnect: function() {
 			this.$store.state.currentUserId = 0;
+			this.$router.push("/");
+			//! Préciser la perte de token
 		},
 	},
 };

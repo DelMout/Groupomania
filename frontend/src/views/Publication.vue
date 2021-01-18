@@ -41,6 +41,8 @@ import Like from "@/components/Like";
 import Comment from "@/components/Comment";
 import Author from "@/components/Author";
 import axios from "axios";
+import { mapGetters, mapState } from "vuex"; // for authentification
+
 export default {
 	name: "Publication",
 	components: {
@@ -69,6 +71,10 @@ export default {
 	created: function() {
 		this.qtyMore = 0;
 		this.seePublications();
+	},
+	computed: {
+		...mapState({ token: "token" }),
+		...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		//* SELECT MORE publications
@@ -152,9 +158,15 @@ export default {
 			this.del = false;
 			this.seeDel = true;
 			this.comLike = true;
-
-			axios
-				.get("http://localhost:3001/api/pub/user/" + this.$store.state.currentUserId)
+			axios({
+				method: "get",
+				url: "http://localhost:3001/api/pub/user/" + this.$store.state.user[0].id,
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			})
+				// axios
+				// 	.get("http://localhost:3001/api/pub/user/" + this.$store.state.currentUserId)
 				.then((resp) => {
 					this.qtyPub = resp.data.length;
 					console.log("qty :" + resp.data.length);
@@ -216,15 +228,20 @@ export default {
 			this.seeDel = false;
 		},
 		confDeletePub: function() {
-			axios
-				.delete("http://localhost:3001/api/pub/" + this.indexDel)
+			axios({
+				method: "delete",
+				url: "http://localhost:3001/api/pub/" + this.indexDel,
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			})
+				// axios
+				// 	.delete("http://localhost:3001/api/pub/" + this.indexDel)
 				.then((resp) => {
 					this.theInfo = "Votre publication a été supprimée.";
 					this.confDel = false;
 					this.seePub = true;
 					this.mine = true;
-
-					//TODO : afficher boutons "back publi" et "voir mes pub"
 				})
 				.catch((err) => console.log(err));
 		},

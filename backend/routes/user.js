@@ -4,6 +4,7 @@ const router = express.Router();
 const userCtrl = require("../controllers/user");
 
 const multer = require("../middleware/multer-config"); //Upload files
+const auth = require("../middleware/auth"); // Request authentification
 
 // * Voir tous users
 // router.get('/user',userCtrl.getAllUser);

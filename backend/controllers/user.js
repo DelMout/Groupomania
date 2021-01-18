@@ -60,10 +60,9 @@ exports.login = (req, res) => {
 	const password_saisi = req.body.password;
 	user.findAll({ where: { email: email_saisi } })
 		.then((user) => {
-			const obj = user[0];
-			const pass = obj.password;
-			if (bcrypt.compareSync(password_saisi, pass)) {
-				console.log("OK pour tout" + obj);
+			const password = user[0].password;
+			if (bcrypt.compareSync(password_saisi, password)) {
+				console.log("OK pour tout");
 				let token = jwt.sign({ user: user }, "un_long_chemin", {
 					expiresIn: "1h",
 				});
@@ -78,6 +77,7 @@ exports.login = (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err);
+			// res.status(401).send(err.data);
 			res.status(401).send("Email not OK");
 		});
 };

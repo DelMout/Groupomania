@@ -7,12 +7,12 @@ POST http://localhost:3001/api/auth/signup
 content-type: application/json
 
 {
-    "nom": "Nez",
-    "prenom":"Daphné",
-    "email": "daph@groupo.fr",
+    "nom": "Hangar",
+    "prenom":"José",
+    "email": "jose@groupo.fr",
     "service": "Logistique",
     "description":"",
-    "password": "ddd"  
+    "password": "jjj"  
 }
 ### login  ###
 POST http://localhost:3001/api/auth/login 
@@ -20,7 +20,7 @@ content-type: application/json
 
 {
     "password": "jjj",
-    "email": "jo@groupo.fr"
+    "email": "jose@groupo.fr"
 }
 
 ######
@@ -39,19 +39,20 @@ content-type: application/json
 
 DELETE http://localhost:3001/api/auth/delete/25
 ### create a publication ###
-POST http://localhost:3001/api/pub/create/27
+POST http://localhost:3001/api/pub/create/41
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjpbeyJpZCI6NDEsIm5vbSI6IkhhbmdhciIsInByZW5vbSI6Ikpvc8OpIiwiZW1haWwiOiJqb3NlQGdyb3Vwby5mciIsInNlcnZpY2UiOiJMb2dpc3RpcXVlIiwiZGVzY3JpcHRpb24iOiIiLCJwYXNzd29yZCI6IiQyYiQxMCRRM3RqblZoMFBVT29QLkp3Qk14YnZ1MHpHNVZqY3VpL0U0SmhqMDdDekxCbXNuRVhzOHVLZSIsImxhc3RfY29ubmVjdCI6IjIwMjEtMDEtMTgiLCJwaG90byI6bnVsbH1dLCJpYXQiOjE2MTA5OTI0OTksImV4cCI6MTYxMDk5NjA5OX0.MGzySyLr3u_hD9gfCtwa6NvPHQyoMxGwl7zM5-HhNLU
 
 {
-    "titre": "Essai sans texte",
-    "texte_pub": ""
+    "titre": "Test via REST client",
+    "texte_pub": "bla blab la"
 }
 ######
 POST http://localhost:3001/api/pub/
 ###select a pub###
 GET http://localhost:3001/api/pub/16
-######
-GET http://localhost:3001/api/pub/user/7
+### select ses publications ###
+GET http://localhost:3001/api/pub/user/41
 ######
 GET http://localhost:3001/api/pub/
 ######

@@ -2,7 +2,6 @@
 	<div>
 		<h1 v-if="hom == 0 || creat">
 			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
-			{{ this.$store.state.currentUserId }}
 		</h1>
 		<div>
 			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
@@ -55,6 +54,7 @@
 
 <script>
 import { FileUpload } from "v-file-upload"; //! a retirer
+import { mapMutations } from "vuex";
 import axios from "axios";
 export default {
 	name: "Signup",
@@ -134,28 +134,53 @@ export default {
 				});
 		},
 		//* LOGIN a USER
-		loginUser: function() {
-			console.log("g bien recu la requete pour login!");
-			axios
-				.post("http://localhost:3001/api/auth/login", {
-					email: this.email,
-					password: this.password,
-				})
-				.then((resp) => {
-					console.log(resp.data.user[0].id);
-					this.$store.state.currentUserId = resp.data.user[0].id;
-					// this.$store.state.currentUserId = resp.data.id;
-					this.$router.push("http://localhost:8080/publi");
-				})
-				.catch((err) => {
-					if (err.response.data === "Password not OK") {
-						this.theInfo = "Mot de passe incorrect !! !!";
-					} else if (err.response.data === "Email not OK") {
-						this.theInfo = "Email incorrect !!";
-					}
-					console.log(err);
-				});
+		// loginUser: function() {
+		// 	this.theInfo = this.$store.state.storeInfo;
+		// 	const { email, password } = this;
+		// 	this.$store.dispatch(AUTH_REQUEST, { email, password }).then(() => {
+		// 		this.$router.push("http://localhost:8080/publi");
+		// 	});
+		// },
+
+		//* LOGIN a USER
+		...mapMutations(["setUser", "setToken"]),
+		async loginUser() {
+			const response = await axios.post("http://localhost:3001/api/auth/login", {
+				email: this.email,
+				password: this.password,
+			});
+			const { user, token } = await response.data;
+			this.$store.state.currentUserId = response.data.user[0].id;
+			console.log("je vais renvoyer le token de store");
+			this.setUser(user);
+			this.setToken(token);
+			console.log(this.$store.state.token);
+			this.$router.push("http://localhost:8080/publi");
 		},
+
+		// loginUser: function() {
+		// 	console.log("g bien recu la requete pour login!");
+		// 	axios
+		// 		.post("http://localhost:3001/api/auth/login", {
+		// 			email: this.email,
+		// 			password: this.password,
+		// 		})
+		// 		.then((resp) => {
+		// 			console.log(resp.data.user[0].id);
+		// 			this.$store.state.currentUserId = resp.data.user[0].id;
+		// 			// this.$store.state.currentUserId = resp.data.id;
+		// 			this.$router.push("http://localhost:8080/publi");
+		// 		})
+		// 		.catch((err) => {
+		// 			if (err.response.data === "Password not OK") {
+		// 				this.theInfo = "Mot de passe incorrect !! !!";
+		// 			} else if (err.response.data === "Email not OK") {
+		// 				this.theInfo = "Email incorrect !!";
+		// 			}
+		// 			console.log(err);
+		// 		});
+		// },
+
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
 			console.log("g bien recu la requete pour DEMANDE de modif!");
