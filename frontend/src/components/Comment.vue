@@ -23,6 +23,7 @@
 <script>
 import Author from "@/components/Author";
 import axios from "axios";
+import { mapGetters, mapState } from "vuex"; // for authentification
 export default {
 	name: "Comment",
 	data() {
@@ -35,6 +36,9 @@ export default {
 	},
 	components: {
 		Author,
+	},
+	computed: {
+		...mapState({ token: "token" }),
 	},
 	props: ["pub"],
 	methods: {
@@ -58,16 +62,28 @@ export default {
 
 		//* Create a COMMENT
 		createComm: function() {
-			axios
-				.post(
+			axios({
+				method: "post",
+				url:
 					"http://localhost:3001/api/pub/" +
-						this.pub.index +
-						"/comm/" +
-						this.$store.state.currentUserId,
-					{
-						texte: this.commentUser,
-					}
-				)
+					this.pub.index +
+					"/comm/" +
+					this.$store.state.user[0].id,
+				data: { texte: this.commentUser },
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			})
+				// axios
+				// 	.post(
+				// 		"http://localhost:3001/api/pub/" +
+				// 			this.pub.index +
+				// 			"/comm/" +
+				// 			this.$store.state.currentUserId,
+				// 		{
+				// 			texte: this.commentUser,
+				// 		}
+				// 	)
 				.then((resp) => {
 					console.log("commentaire créé !");
 					// see allComments

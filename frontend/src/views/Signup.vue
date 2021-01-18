@@ -54,7 +54,7 @@
 
 <script>
 import { FileUpload } from "v-file-upload"; //! a retirer
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters, mapState } from "vuex";
 import axios from "axios";
 export default {
 	name: "Signup",
@@ -85,6 +85,9 @@ export default {
 				password: "mot de passe",
 			},
 		};
+	},
+	computed: {
+		...mapState({ token: "token" }),
 	},
 	methods: {
 		//* Select a photo
@@ -204,7 +207,7 @@ export default {
 
 		//* MODIFY a USER
 		modifUser: function() {
-			console.log("g bien recu la requete pour modif!" + this.$store.state.currentUserId);
+			console.log("g bien recu la requete pour modif!" + this.$store.state.user[0].id);
 			const formData = new FormData();
 			formData.append("image", this.$data.image);
 			formData.append("prenom", this.$data.prenom);
@@ -213,18 +216,26 @@ export default {
 			formData.append("description", this.$data.description);
 			formData.append("password", this.$data.password);
 			console.log(this.$data.nom);
-			axios
-				.put(
-					"http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId,
-					formData
-				)
+			axios({
+				method: "put",
+				url: "http://localhost:3001/api/auth/modif/" + this.$store.state.user[0].id,
+				data: formData,
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			})
+				// axios
+				// 	.put(
+				// 		"http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId,
+				// 		formData
+				// 	)
 				.then((resp) => {
 					console.log(resp);
 					if (resp.data === "notEmpty") {
 						this.theInfo = "Les champs non optionnels doivent être remplis.";
 					} else {
 						this.mod = false;
-						this.hom = this.$store.state.currentUserId;
+						this.hom = this.$store.state.user[0].id;
 						this.theInfo = "Vos modifications ont été prises en compte";
 					}
 				})
@@ -238,8 +249,15 @@ export default {
 		},
 		deleteUser: function() {
 			console.log("g bien recu la requete pour delete!");
-			axios
-				.delete("http://localhost:3001/api/auth/delete/" + this.$store.state.currentUserId)
+			axios({
+				method: "delete",
+				url: "http://localhost:3001/api/auth/delete/" + this.$store.state.user[0].id,
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			})
+				// axios
+				// 	.delete("http://localhost:3001/api/auth/delete/" + this.$store.state.currentUserId)
 				.then((resp) => {
 					console.log(resp);
 					this.sup = false;

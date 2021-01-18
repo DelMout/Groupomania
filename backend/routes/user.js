@@ -19,10 +19,10 @@ router.post("/login", userCtrl.login);
 router.get("/modif/:userid", userCtrl.demandmodif);
 
 // * Modify user datas
-router.put("/modif/:userid", multer, userCtrl.modif);
+router.put("/modif/:userid", auth, multer, userCtrl.modif);
 
 // * Delete user
-router.delete("/delete/:userid", multer, userCtrl.delete);
+router.delete("/delete/:userid", auth, multer, userCtrl.delete);
 
 // * Identify user
 router.get("/ident/:userid", userCtrl.ident);
