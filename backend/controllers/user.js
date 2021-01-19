@@ -58,9 +58,9 @@ exports.signup = (req, res) => {
 exports.login = (req, res) => {
 	const email_saisi = req.body.email;
 	const password_saisi = req.body.password;
-	user.findAll({ where: { email: email_saisi } })
+	user.findOne({ where: { email: email_saisi } })
 		.then((user) => {
-			const password = user[0].password;
+			const password = user.password;
 			if (bcrypt.compareSync(password_saisi, password)) {
 				console.log("OK pour tout");
 				let token = jwt.sign({ user: user }, "un_long_chemin", {
@@ -106,7 +106,10 @@ exports.modif = (req, res) => {
 				if (rep[0].photo != null) {
 					const filename = rep[0].photo.split("/images/")[1];
 					fs.unlink(`images/${filename}`, () => {
-						user.update({ ...req.body }, { where: { id: req.params.userid } })
+						user.update(
+							{ ...req.body, password: bcrypt.hashSync(req.body.password, 10) },
+							{ where: { id: req.params.userid } }
+						)
 							.then(() => {
 								console.log("user and image file modified");
 								res.send("user and image file modified");
@@ -117,7 +120,10 @@ exports.modif = (req, res) => {
 							});
 					});
 				} else {
-					user.update({ ...req.body }, { where: { id: req.params.userid } })
+					user.update(
+						{ ...req.body, password: bcrypt.hashSync(req.body.password, 10) },
+						{ where: { id: req.params.userid } }
+					)
 						.then(() => {
 							console.log("user modified and image file saved");
 							res.send("user modified and image file saved");
@@ -136,6 +142,7 @@ exports.modif = (req, res) => {
 		user.update(
 			{
 				...req.body,
+				password: bcrypt.hashSync(req.body.password, 10),
 			},
 			{ where: { id: req.params.userid } }
 		)
@@ -181,7 +188,7 @@ exports.delete = (req, res) => {
 
 // * Identify user
 exports.ident = (req, res) => {
-	user.findAll({ where: { id: req.params.userid } })
+	user.findOne({ where: { id: req.params.userid } })
 		.then((resp) => {
 			res.send(resp);
 		})

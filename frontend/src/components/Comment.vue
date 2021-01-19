@@ -68,7 +68,7 @@ export default {
 					"http://localhost:3001/api/pub/" +
 					this.pub.index +
 					"/comm/" +
-					this.$store.state.user[0].id,
+					this.$store.state.user.id,
 				data: { texte: this.commentUser },
 				headers: {
 					Authorization: `Bearer ${this.token}`,

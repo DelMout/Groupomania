@@ -32,7 +32,9 @@
 
 		<button v-if="more" v-on:click="seeMorePublications">Voir plus de publications</button>
 
-		<button v-if="mine" v-on:click="seeMinePublications">Voir vos publications</button>
+		<button v-if="mine && isLoggedIn" v-on:click="seeMinePublications">
+			Voir vos publications
+		</button>
 	</div>
 </template>
 
@@ -160,7 +162,7 @@ export default {
 			this.comLike = true;
 			axios({
 				method: "get",
-				url: "http://localhost:3001/api/pub/user/" + this.$store.state.user[0].id,
+				url: "http://localhost:3001/api/pub/user/" + this.$store.state.user.id,
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 				},

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1 v-if="hom == 0 || creat">
+		<h1 v-if="!isLoggedIn">
 			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
 		</h1>
 		<div>
@@ -9,10 +9,14 @@
 			<form enctype="multipart/form-data">
 				<p v-if="mod || creat">Prénom : <input type="text" v-model="prenom" /></p>
 				<p v-if="mod || creat">Nom : <input type="text" v-model="nom" /></p>
-				<p v-if="hom == 0 || creat">Email : <input type="text" v-model="email" /></p>
+				<p v-if="!isLoggedIn || creat">Email : <input type="text" v-model="email" /></p>
 				<p v-if="mod || creat">Service : <input type="text" v-model="service" /></p>
-				<p v-if="hom == 0 || mod || creat">
+				<p v-if="!isLoggedIn || mod || creat">
 					Mot de passe : <input type="text" v-model="password" />
+					<span style="color:red;" v-if="mod"
+						>La saisie du mot de passe est obligatoire. Vous pouvez en saisir un
+						différent.</span
+					>
 				</p>
 				<p v-if="mod || creat">
 					Description (optionnel) : <input type="text" v-model="description" />
@@ -29,7 +33,7 @@
 				><img style="width:200px;" :src="photo" alt="photo utilisateur" />
 			</div>
 			<div v-if="photo === null && mod">Vous n'avez pas de photo actuellement.</div>
-			<button v-if="hom == 0" v-on:click="loginUser">
+			<button v-if="!isLoggedIn && !creat" v-on:click="loginUser">
 				Entrer sur le GroupoSocialMania !</button
 			><button v-if="creat" v-on:click="createUser">Valider</button><br /><button
 				v-if="mod"
@@ -37,15 +41,15 @@
 			>
 				Valider les modifications</button
 			><br />
-			<button v-if="hom > 0" v-on:click="demandModifUser">
+			<button v-if="isLoggedIn && !mod && !sup" v-on:click="demandModifUser">
 				Modifier mon compte</button
-			><button v-if="hom > 0" v-on:click="demandDeleteUser">
+			><button v-if="isLoggedIn && !mod && !sup" v-on:click="demandDeleteUser">
 				Supprimer mon compte
 			</button>
 			<button style="color:red;" v-if="sup" v-on:click="deleteUser">
 				Confirmer la suppression de mon compte
 			</button>
-			<p v-if="hom == 0" style="color:blue;">
+			<p v-if="!isLoggedIn && !creat" style="color:blue;">
 				Pas encore de compte ? <button v-on:click="wantCreate">Créer un compte</button>
 			</p>
 		</div>
@@ -53,11 +57,12 @@
 </template>
 
 <script>
-import { FileUpload } from "v-file-upload"; //! a retirer
+// import { FileUpload } from "v-file-upload"; //! a retirer
 import { mapMutations, mapGetters, mapState } from "vuex";
 import axios from "axios";
 export default {
 	name: "Signup",
+
 	data() {
 		return {
 			theInfo: "",
@@ -69,7 +74,6 @@ export default {
 			description: "",
 			photo: "",
 			image: null,
-			hom: this.$store.state.currentUserId, //user connected if >0
 			creat: false, //phase user creation
 			mod: false, //phase modification user
 			sup: false, //phase delete user
@@ -88,6 +92,7 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }),
+		...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		//* Select a photo
@@ -97,7 +102,6 @@ export default {
 		},
 		//* CREATE a new USER
 		wantCreate: function() {
-			this.hom = -1;
 			this.creat = true;
 		},
 		createUser: function() {
@@ -115,14 +119,15 @@ export default {
 				.post("http://localhost:3001/api/auth/signup", formData)
 				.then((resp) => {
 					console.log(resp.data);
-
+					const { user, token } = resp.data;
+					this.setUser(user);
+					this.setToken(token);
 					this.theInfo = "Compte créé !!";
-					this.$store.state.currentUserId = resp.data.user[0].id;
 					this.creat = false;
-					this.hom = this.$store.state.currentUserId;
-					console.log("currentUserId = " + this.$store.state.currentUserId);
+					console.log("currentUserId = " + resp.data.user.id);
 				})
 				.catch((err) => {
+					console.log(err);
 					if (err.response.data.validatorKey === "notEmpty") {
 						this.theInfo =
 							"Merci de compléter votre " + this.paramUser[err.response.data.path];
@@ -133,7 +138,8 @@ export default {
 					} // TODO ici les autres erreurs de création (password pas assez fort, cellule non renseignée...)
 					this.theInfo =
 						"Votre compte n'a pas pu être créé. Merci de corriger les données.";
-					console.log("c pas bon ! " + err.response.data);
+					console.log("c pas bon ! " + err);
+					// console.log("c pas bon ! " + err.response.data);
 				});
 		},
 		//* LOGIN a USER
@@ -147,51 +153,51 @@ export default {
 
 		//* LOGIN a USER
 		...mapMutations(["setUser", "setToken"]),
-		async loginUser() {
-			const response = await axios.post("http://localhost:3001/api/auth/login", {
-				email: this.email,
-				password: this.password,
-			});
-			const { user, token } = await response.data;
-			this.$store.state.currentUserId = response.data.user[0].id;
-			console.log("je vais renvoyer le token de store");
-			this.setUser(user);
-			this.setToken(token);
-			console.log(this.$store.state.token);
-			this.$router.push("http://localhost:8080/publi");
-		},
-
-		// loginUser: function() {
-		// 	console.log("g bien recu la requete pour login!");
-		// 	axios
-		// 		.post("http://localhost:3001/api/auth/login", {
-		// 			email: this.email,
-		// 			password: this.password,
-		// 		})
-		// 		.then((resp) => {
-		// 			console.log(resp.data.user[0].id);
-		// 			this.$store.state.currentUserId = resp.data.user[0].id;
-		// 			// this.$store.state.currentUserId = resp.data.id;
-		// 			this.$router.push("http://localhost:8080/publi");
-		// 		})
-		// 		.catch((err) => {
-		// 			if (err.response.data === "Password not OK") {
-		// 				this.theInfo = "Mot de passe incorrect !! !!";
-		// 			} else if (err.response.data === "Email not OK") {
-		// 				this.theInfo = "Email incorrect !!";
-		// 			}
-		// 			console.log(err);
-		// 		});
+		// async loginUser() {
+		// 	const response = await axios.post("http://localhost:3001/api/auth/login", {
+		// 		email: this.email,
+		// 		password: this.password,
+		// 	});
+		// 	const { user, token } = await response.data;
+		// 	this.$store.state.currentUserId = response.data.user[0].id;
+		// 	console.log("je vais renvoyer le token de store");
+		// 	this.setUser(user);
+		// 	this.setToken(token);
+		// 	console.log(this.$store.state.token);
+		// 	this.$router.push("http://localhost:8080/publi");
 		// },
+
+		loginUser: function() {
+			console.log("g bien recu la requete pour login!");
+			axios
+				.post("http://localhost:3001/api/auth/login", {
+					email: this.email,
+					password: this.password,
+				})
+				.then((resp) => {
+					const { user, token } = resp.data;
+					console.log(resp.data.user.id);
+					this.setUser(user);
+					this.setToken(token);
+					this.$router.push("http://localhost:8080/publi");
+				})
+				.catch((err) => {
+					if (err.response.data === "Password not OK") {
+						this.theInfo = "Mot de passe incorrect !! !!";
+					} else if (err.response.data === "Email not OK") {
+						this.theInfo = "Email incorrect !!";
+					}
+					console.log(err);
+				});
+		},
 
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
 			console.log("g bien recu la requete pour DEMANDE de modif!");
 			this.theInfo = "";
 			this.mod = true;
-			this.hom = -1;
 			axios
-				.get("http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId)
+				.get("http://localhost:3001/api/auth/modif/" + this.$store.state.user.id)
 				.then((resp) => {
 					console.log(resp.data);
 					this.prenom = resp.data.prenom;
@@ -199,7 +205,6 @@ export default {
 					this.service = resp.data.service;
 					this.description = resp.data.description;
 					this.photo = resp.data.photo;
-					console.log(this.$store.state.currentUserId);
 					// this.mod = false;
 				})
 				.catch((erreur) => console.log(erreur));
@@ -207,7 +212,7 @@ export default {
 
 		//* MODIFY a USER
 		modifUser: function() {
-			console.log("g bien recu la requete pour modif!" + this.$store.state.user[0].id);
+			console.log("g bien recu la requete pour modif!" + this.$store.state.user.id);
 			const formData = new FormData();
 			formData.append("image", this.$data.image);
 			formData.append("prenom", this.$data.prenom);
@@ -218,7 +223,7 @@ export default {
 			console.log(this.$data.nom);
 			axios({
 				method: "put",
-				url: "http://localhost:3001/api/auth/modif/" + this.$store.state.user[0].id,
+				url: "http://localhost:3001/api/auth/modif/" + this.$store.state.user.id,
 				data: formData,
 				headers: {
 					Authorization: `Bearer ${this.token}`,
@@ -235,7 +240,6 @@ export default {
 						this.theInfo = "Les champs non optionnels doivent être remplis.";
 					} else {
 						this.mod = false;
-						this.hom = this.$store.state.user[0].id;
 						this.theInfo = "Vos modifications ont été prises en compte";
 					}
 				})
@@ -244,14 +248,13 @@ export default {
 		//* DELETE a USER
 		demandDeleteUser: function() {
 			this.sup = true;
-			this.hom = -1;
 			this.theInfo = "Êtes vous sûre de vouloir supprimer votre compte ?";
 		},
 		deleteUser: function() {
 			console.log("g bien recu la requete pour delete!");
 			axios({
 				method: "delete",
-				url: "http://localhost:3001/api/auth/delete/" + this.$store.state.user[0].id,
+				url: "http://localhost:3001/api/auth/delete/" + this.$store.state.user.id,
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 				},
@@ -262,7 +265,9 @@ export default {
 					console.log(resp);
 					this.sup = false;
 					this.theInfo = "Votre compte a été supprimé !";
-					this.$store.state.currentUserId = 0;
+					this.hom = false;
+					this.$store.state.user = null;
+					this.$store.state.token = null;
 				})
 				.catch((erreur) => console.log(erreur));
 		},

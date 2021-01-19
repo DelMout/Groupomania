@@ -7,10 +7,12 @@
 				|
 				<router-link to="/publi">Les publications</router-link>
 				|
-				<router-link to="/publier">Créer une publication</router-link></span
+				<router-link v-if="isLoggedIn" to="/publier"
+					>Créer une publication</router-link
+				></span
 			>
 			|
-			<span v-if="this.$store.state.currentUserId != 0">
+			<span v-if="isLoggedIn">
 				<router-link v-on:click="deconnect" to="/">Se déconnecter</router-link></span
 			>
 		</div>
@@ -18,13 +20,17 @@
 	</div>
 </template>
 <script>
+import { mapGetters, mapState } from "vuex"; // for authentification
 export default {
 	name: "Home",
+	computed: {
+		...mapGetters(["isLoggedIn"]),
+	},
 	methods: {
 		deconnect: function() {
-			this.$store.state.currentUserId = 0;
+			this.$store.state.user = null;
+			this.$store.state.token = null;
 			this.$router.push("/");
-			//! Préciser la perte de token
 		},
 	},
 };

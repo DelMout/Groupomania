@@ -46,13 +46,13 @@ export default {
 		axios
 			.get("http://localhost:3001/api/auth/ident/" + this.item.userId)
 			.then((respon) => {
-				console.log(respon.data[0]);
-				this.prenom = respon.data[0].prenom;
-				this.nom = respon.data[0].nom;
-				this.service = respon.data[0].service;
-				this.description = respon.data[0].description;
-				if (respon.data[0].photo != null) {
-					this.photo = respon.data[0].photo;
+				console.log(respon.data);
+				this.prenom = respon.data.prenom;
+				this.nom = respon.data.nom;
+				this.service = respon.data.service;
+				this.description = respon.data.description;
+				if (respon.data.photo != null) {
+					this.photo = respon.data.photo;
 				} else {
 					this.photo = "http://localhost:3001/images/photo_defaut.jpg";
 				}

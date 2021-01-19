@@ -7,12 +7,12 @@ POST http://localhost:3001/api/auth/signup
 content-type: application/json
 
 {
-    "nom": "Hangar",
-    "prenom":"José",
-    "email": "jose@groupo.fr",
+    "nom": "Blois",
+    "prenom":"François",
+    "email": "fran@groupo.fr",
     "service": "Logistique",
     "description":"",
-    "password": "jjj"  
+    "password": "fff"  
 }
 ### login  ###
 POST http://localhost:3001/api/auth/login 
@@ -23,16 +23,22 @@ content-type: application/json
     "email": "jose@groupo.fr"
 }
 
+
+### ident user  ###
+GET http://localhost:3001/api/auth/ident/22 
+
+
 ######
 POST http://localhost:3001/api/auth/login 
 ######
 GET http://localhost:3001/api/auth/modif/31
 ### modif user ###
-PUT http://localhost:3001/api/auth/modif/9
+PUT http://localhost:3001/api/auth/modif/48
 content-type: application/json
 
 {
-    "nom": "Balançoire"
+    "nom": "Balançoire",
+    "password":"jjj"
     
 }
 ######

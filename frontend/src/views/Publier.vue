@@ -36,7 +36,7 @@ export default {
 		},
 		//* CREATE a PUBLICATION
 		createPub: function() {
-			console.log("token une fois dans create pub !" + this.$store.state.user[0].id);
+			console.log("token une fois dans create pub !" + this.$store.state.user.id);
 			console.log(this.$store.state.token);
 			const formData = new FormData();
 			formData.append("image", this.$data.image);
@@ -44,16 +44,12 @@ export default {
 			formData.append("texte_pub", this.$data.contenu);
 			axios({
 				method: "post",
-				url: "http://localhost:3001/api/pub/create/" + this.$store.state.user[0].id,
+				url: "http://localhost:3001/api/pub/create/" + this.$store.state.user.id,
 				data: formData,
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 				},
 			})
-				// .post(
-				// 	"http://localhost:3001/api/pub/create/" + this.$store.state.currentUserId,
-				// 	formData
-				// )
 				.then((resp) => {
 					console.log(resp.data);
 					console.log("Pub créée !!");

@@ -35,7 +35,7 @@ export default {
 					"http://localhost:3001/api/pub/" +
 					this.pub.index +
 					"/like/" +
-					this.$store.state.user[0].id,
+					this.$store.state.user.id,
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 				},
