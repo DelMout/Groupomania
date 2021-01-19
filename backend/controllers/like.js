@@ -3,9 +3,9 @@ const { like } = require("../models");
 // * Add a like
 exports.addLike = (req, res) => {
 	// check if user not already liked
-	like.findAll({ where: { publicationId: req.params.pubid, userId: req.params.userid } })
+	like.findOne({ where: { publicationId: req.params.pubid, userId: req.params.userid } })
 		.then((resp) => {
-			if (resp[0] == null) {
+			if (resp === null) {
 				const likes = new like({
 					userId: req.params.userid,
 					publicationId: req.params.pubid,

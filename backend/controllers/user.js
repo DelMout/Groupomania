@@ -85,10 +85,9 @@ exports.login = (req, res) => {
 // * Demand modify (click button)
 exports.demandmodif = (req, res) => {
 	const userId = req.params.userid;
-	user.findAll({ where: { id: userId } })
+	user.findOne({ where: { id: userId } })
 		.then((rep) => {
-			const obj = rep[0];
-			res.send(obj);
+			res.send(rep);
 		})
 		.catch((err) => {
 			console.log(err);
@@ -101,10 +100,10 @@ exports.modif = (req, res) => {
 	if (req.file) {
 		req.body.photo = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
 		//delete the previous image file
-		user.findAll({ where: { id: req.params.userid } })
+		user.findOne({ where: { id: req.params.userid } })
 			.then((rep) => {
-				if (rep[0].photo != null) {
-					const filename = rep[0].photo.split("/images/")[1];
+				if (rep.photo != null) {
+					const filename = rep.photo.split("/images/")[1];
 					fs.unlink(`images/${filename}`, () => {
 						user.update(
 							{ ...req.body, password: bcrypt.hashSync(req.body.password, 10) },
@@ -151,6 +150,7 @@ exports.modif = (req, res) => {
 				res.send("user modified !");
 			})
 			.catch((err) => {
+				// res.status(401).send(err);
 				res.status(401).send(err.errors[0].validatorKey);
 			});
 	}
@@ -158,10 +158,10 @@ exports.modif = (req, res) => {
 
 // * Delete user
 exports.delete = (req, res) => {
-	user.findAll({ where: { id: req.params.userid } })
+	user.findOne({ where: { id: req.params.userid } })
 		.then((resp) => {
-			if (resp[0].photo != null) {
-				const filename = resp[0].photo.split("/images/")[1];
+			if (resp.photo != null) {
+				const filename = resp.photo.split("/images/")[1];
 				fs.unlink(`images/${filename}`, () => {
 					user.destroy({ where: { id: req.params.userid } })
 						.then(() => {

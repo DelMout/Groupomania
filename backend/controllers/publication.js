@@ -39,16 +39,16 @@ exports.createPub = (req, res) => {
 };
 
 // * Select a publication
-exports.getPub = (req, res) => {
-	publication
-		.findAll({ where: { id: req.params.pubid } })
-		.then((pub) => {
-			res.send(pub);
-		})
-		.catch((err) => {
-			console.log(err);
-		});
-};
+// exports.getPub = (req, res) => {
+// 	publication
+// 		.findOne({ where: { id: req.params.pubid } })
+// 		.then((pub) => {
+// 			res.send(pub);
+// 		})
+// 		.catch((err) => {
+// 			console.log(err);
+// 		});
+// };
 
 // * Select publications by userId
 exports.getPubByUser = (req, res) => {
@@ -68,10 +68,10 @@ exports.getPubByUser = (req, res) => {
 // * Delete a publication
 exports.deletePub = (req, res) => {
 	publication
-		.findAll({ where: { id: req.params.pubid } })
+		.findOne({ where: { id: req.params.pubid } })
 		.then((pub) => {
-			if (pub[0].photo != null) {
-				const filename = pub[0].photo.split("/images/")[1];
+			if (pub.photo != null) {
+				const filename = pub.photo.split("/images/")[1];
 				fs.unlink(`images/${filename}`, () => {
 					publication
 						.destroy({ where: { id: req.params.pubid } })

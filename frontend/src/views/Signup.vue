@@ -236,14 +236,15 @@ export default {
 				// 	)
 				.then((resp) => {
 					console.log(resp);
-					if (resp.data === "notEmpty") {
-						this.theInfo = "Les champs non optionnels doivent être remplis.";
-					} else {
-						this.mod = false;
-						this.theInfo = "Vos modifications ont été prises en compte";
-					}
+					this.mod = false;
+					this.theInfo = "Vos modifications ont été prises en compte";
 				})
-				.catch((erreur) => console.log(erreur));
+				.catch((erreur) => {
+					console.log(erreur.response.data);
+					if (erreur.response.data === "notEmpty") {
+						this.theInfo = "Les champs non optionnels doivent être remplis.";
+					}
+				});
 		},
 		//* DELETE a USER
 		demandDeleteUser: function() {

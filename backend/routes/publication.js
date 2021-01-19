@@ -13,7 +13,7 @@ router.post("/create/:userid", auth, multer, pubCtrl.createPub);
 router.get("/", pubCtrl.getAllPub);
 
 // * Select a publication
-router.get("/:pubid", pubCtrl.getPub);
+// router.get("/:pubid", pubCtrl.getPub);
 
 // * Select publications by userId
 router.get("/user/:userid", auth, pubCtrl.getPubByUser);

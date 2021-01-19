@@ -33,12 +33,12 @@ POST http://localhost:3001/api/auth/login
 ######
 GET http://localhost:3001/api/auth/modif/31
 ### modif user ###
-PUT http://localhost:3001/api/auth/modif/48
+PUT http://localhost:3001/api/auth/modif/31
 content-type: application/json
 
 {
-    "nom": "Balançoire",
-    "password":"jjj"
+    "nom": "",
+    "password":""
     
 }
 ######
@@ -61,9 +61,9 @@ GET http://localhost:3001/api/pub/16
 GET http://localhost:3001/api/pub/user/41
 ######
 GET http://localhost:3001/api/pub/
-######
-POST http://localhost:3001/api/pub/2/like/7
-######
+### add a like ###
+POST http://localhost:3001/api/pub/4/like/4
+###  ###
 GET http://localhost:3001/api/pub/4/like/
 ######
 POST http://localhost:3001/api/pub/4/comm/11
