@@ -2,17 +2,17 @@
 
 GET http://localhost:3001/api/auth/signup 
 
-######
+### create a user ###
 POST http://localhost:3001/api/auth/signup 
 content-type: application/json
 
 {
-    "nom": "Blois",
-    "prenom":"François",
-    "email": "fran@groupo.fr",
-    "service": "Logistique",
+    "nom": "tt  t",
+    "prenom":"r  gos",
+    "email": "maskotgroupo.fr",
+    "service": "pluie-et aujou'dui",
     "description":"",
-    "password": "fff"  
+    "password": "125fdsfsd"  
 }
 ### login  ###
 POST http://localhost:3001/api/auth/login 

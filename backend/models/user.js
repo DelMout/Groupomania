@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 				validate: {
 					notEmpty: true,
+					is: ["^[a-zÀ-ÿ- ']+$", "i"],
 				},
 			},
 			prenom: {
@@ -16,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 				validate: {
 					notEmpty: true,
+					is: ["^[a-zÀ-ÿ-]+$", "i"],
 				},
 			},
 			email: {
@@ -32,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 				validate: {
 					notEmpty: true,
+					is: ["^[0-9a-zÀ-ÿ- ']+$", "i"],
 				},
 			},
 			description: {

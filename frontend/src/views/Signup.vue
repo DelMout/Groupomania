@@ -7,19 +7,39 @@
 			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
 			<h2 style="color:red;">{{ theInfo }}</h2>
 			<form enctype="multipart/form-data">
-				<p v-if="mod || creat">Prénom : <input type="text" v-model="prenom" /></p>
-				<p v-if="mod || creat">Nom : <input type="text" v-model="nom" /></p>
-				<p v-if="!isLoggedIn || creat">Email : <input type="text" v-model="email" /></p>
-				<p v-if="mod || creat">Service : <input type="text" v-model="service" /></p>
+				<p v-if="mod || creat">
+					Prénom : <input type="text" @keyup="checkData" v-model="prenom" />
+					<span style="background-color:pink;">{{ prenomInfo }} </span>
+				</p>
+				<p v-if="mod || creat">
+					Nom : <input type="text" @keyup="checkData" v-model="nom" /><span
+						style="background-color:pink;"
+						>{{ nomInfo }}
+					</span>
+				</p>
+				<p v-if="!isLoggedIn || creat">
+					Email : <input type="text" @keyup="checkData" v-model="email" />
+					<span v-if="creat" style="background-color:pink;">{{ emailInfo }} </span>
+				</p>
+				<p v-if="mod || creat">
+					Service : <input type="text" @keyup="checkData" v-model="service" /><span
+						style="background-color:pink;"
+						>{{ serviceInfo }}
+					</span>
+				</p>
 				<p v-if="!isLoggedIn || mod || creat">
-					Mot de passe : <input type="text" v-model="password" />
+					Mot de passe : <button @click="visibility">Vu/Masqué</button
+					><input :type="type" @keyup="checkData" v-model="password" /><span
+						style="background-color:pink;"
+						>{{ passwordInfo }}
+					</span>
 					<span style="color:red;" v-if="mod"
-						>La saisie du mot de passe est obligatoire. Vous pouvez en saisir un
-						différent.</span
+						>Vous pouvez modifier votre mot de passe directement dans la cellule.</span
 					>
 				</p>
 				<p v-if="mod || creat">
-					Description (optionnel) : <input type="text" v-model="description" />
+					Description (optionnel) :
+					<input type="text" v-model="description" />
 				</p>
 				<p v-if="mod || creat">
 					Photo (optionnel) :<input type="file" name="image" @change="onFileChange" />
@@ -78,6 +98,8 @@ export default {
 			mod: false, //phase modification user
 			sup: false, //phase delete user
 			indexDel: "",
+			// password: "",
+			type: "password",
 			// selectedFile: null,
 			// file: "",
 			paramUser: {
@@ -88,6 +110,45 @@ export default {
 				description: "description",
 				password: "mot de passe",
 			},
+			notStrong: [],
+			prenomTest: "",
+			nomTest: "",
+			serviceTest: "",
+			emailTest: "",
+			// passwordMin: "",
+			prenomInfo: "Merci de renseigner ce champ",
+			// passwordLow: "",
+			// passwordNum: "",
+			nomInfo: "Merci de renseigner ce champ",
+			serviceInfo: "Merci de renseigner ce champ",
+			emailInfo: "Merci de renseigner ce champ",
+			passwordInfo: "Merci de renseigner ce champ",
+			min: "",
+			up: "",
+			low: "",
+			num: "",
+			// descriptionInfo: "",
+			convers: {
+				min: "10 caractères minimum",
+				uppercase: "manque majuscule",
+				lowercase: "manque minuscle",
+				digits: "manque chiffres",
+				not: 'les symboles "$.=" et apostrophe sont interdits',
+			},
+			// testData: [
+			// 	{
+			// 		attribut: "prenom",
+			// 		test: "this.prenomTest",
+			// 		info: "this.prenomInfo",
+			// 		expReg: "/[^_a-zA-ZÀ-ÿ-]/",
+			// 	},
+			// 	{
+			// 		attribut: "nom",
+			// 		test: "nomTest",
+			// 		info: "nomInfo",
+			// 		expReg: "/[^_a-zA-ZÀ-ÿ- ']/",
+			// 	},
+			// ],
 		};
 	},
 	computed: {
@@ -95,6 +156,106 @@ export default {
 		...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
+		//* Hide or show password
+		visibility() {
+			if (this.type === "password") {
+				this.type = "text";
+			} else {
+				this.type = "password";
+			}
+		},
+
+		//* Check datas in form
+		checkData: function() {
+			if (this.prenom !== "") {
+				this.prenomTest = !/[^_a-zA-ZÀ-ÿ-]/.test(this.prenom); // Renvoie true qd bonne saisie
+				if (this.prenomTest === false) {
+					this.prenomInfo = "Caractère non accépté.";
+				} else {
+					this.prenomInfo = "";
+				}
+				// } else(this.prenom !== null) {
+			} else if (this.prenom === "") {
+				this.prenomInfo = "Merci de renseigner ce champ";
+			}
+
+			if (this.nom !== "") {
+				this.nomTest = !/[^_a-zA-ZÀ-ÿ- ']/.test(this.nom);
+				if (this.nomTest === false) {
+					this.nomInfo = "Caractère non accépté.";
+				} else {
+					this.nomInfo = "";
+				}
+			} else if (this.nom === "") {
+				this.nomInfo = "Merci de renseigner ce champ";
+			}
+
+			if (this.service !== "") {
+				this.serviceTest = !/[^_0-9a-zÀ-ÿ- ']/.test(this.service);
+				if (this.serviceTest === false) {
+					this.serviceInfo = "Caractère non accépté.";
+				} else {
+					this.serviceInfo = "";
+				}
+			} else if (this.service === "") {
+				this.serviceInfo = "Merci de renseigner ce champ";
+			}
+
+			// if (this.description !== "") {
+			// 	this.descriptionTest = !/[\$]/.test(this.description);
+			// 	if (this.descriptionTest === false) {
+			// 		this.descriptionInfo = "Caractère non accépté.";
+			// 	} else {
+			// 		this.descriptionInfo = "";
+			// 	}
+			// } else if (this.description === "") {
+			// 	this.descriptionInfo = "";
+			// }
+			if (this.password !== "") {
+				let passwordMin = this.password.length >= 10;
+				let passwordUp = /[A-Z]/.test(this.password);
+				let passwordLow = /[a-z]/.test(this.password);
+				let passwordNum = /[0-9]/.test(this.password);
+				if (passwordMin === false) {
+					this.min = "10 caractères minimum |";
+				} else {
+					this.min = "";
+				}
+
+				if (passwordUp === false) {
+					this.up = " 1 majuscule requise |";
+				} else {
+					this.up = "";
+				}
+				if (passwordLow === false) {
+					this.low = " 1 minuscule requise |";
+				} else {
+					this.low = "";
+				}
+				if (passwordNum === false) {
+					this.num = " 1 chiffre requis ";
+				} else {
+					this.num = "";
+				}
+				this.passwordInfo = this.min + this.up + this.low + this.num;
+			} else if (this.password === "") {
+				this.passwordInfo = "Merci de renseigner ce champ";
+			}
+
+			if (this.email !== "") {
+				this.emailTest = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+					this.email
+				);
+				if (this.emailTest === false) {
+					this.emailInfo = "Adresse email non accéptée.";
+				} else {
+					this.emailInfo = "";
+				}
+			} else if (this.email === "") {
+				this.emailInfo = "Merci de renseigner ce champ";
+			}
+		},
+
 		//* Select a photo
 		onFileChange: function(event) {
 			console.log(event.target.files[0]);
@@ -136,37 +297,23 @@ export default {
 					} else if (err.response.data === "Not format email") {
 						this.theInfo = "Il ne s'agit pas d'un format email";
 					} // TODO ici les autres erreurs de création (password pas assez fort, cellule non renseignée...)
+					const issues = err.response.data;
+					for (let n in issues) {
+						let issue = issues[n];
+						this.notStrong.push(this.convers[issue]);
+					}
 					this.theInfo =
-						"Votre compte n'a pas pu être créé. Merci de corriger les données.";
-					console.log("c pas bon ! " + err);
+						"Votre compte n'a pas pu être créé. Merci de corriger les données. Ces conditions pour le mot de passe ne sont pas respectées : " +
+						this.notStrong +
+						".";
+					console.log(err.response.data);
+					console.log(this.notStrong);
 					// console.log("c pas bon ! " + err.response.data);
 				});
 		},
-		//* LOGIN a USER
-		// loginUser: function() {
-		// 	this.theInfo = this.$store.state.storeInfo;
-		// 	const { email, password } = this;
-		// 	this.$store.dispatch(AUTH_REQUEST, { email, password }).then(() => {
-		// 		this.$router.push("http://localhost:8080/publi");
-		// 	});
-		// },
 
 		//* LOGIN a USER
 		...mapMutations(["setUser", "setToken"]),
-		// async loginUser() {
-		// 	const response = await axios.post("http://localhost:3001/api/auth/login", {
-		// 		email: this.email,
-		// 		password: this.password,
-		// 	});
-		// 	const { user, token } = await response.data;
-		// 	this.$store.state.currentUserId = response.data.user[0].id;
-		// 	console.log("je vais renvoyer le token de store");
-		// 	this.setUser(user);
-		// 	this.setToken(token);
-		// 	console.log(this.$store.state.token);
-		// 	this.$router.push("http://localhost:8080/publi");
-		// },
-
 		loginUser: function() {
 			console.log("g bien recu la requete pour login!");
 			axios
@@ -229,20 +376,25 @@ export default {
 					Authorization: `Bearer ${this.token}`,
 				},
 			})
-				// axios
-				// 	.put(
-				// 		"http://localhost:3001/api/auth/modif/" + this.$store.state.currentUserId,
-				// 		formData
-				// 	)
 				.then((resp) => {
 					console.log(resp);
 					this.mod = false;
 					this.theInfo = "Vos modifications ont été prises en compte";
 				})
-				.catch((erreur) => {
-					console.log(erreur.response.data);
-					if (erreur.response.data === "notEmpty") {
+				.catch((err) => {
+					console.log(err.response.data);
+					if (err.response.data === "notEmpty") {
 						this.theInfo = "Les champs non optionnels doivent être remplis.";
+					} else {
+						const issues = err.response.data;
+						for (let n in issues) {
+							let issue = issues[n];
+							this.notStrong.push(this.convers[issue]);
+						}
+						this.theInfo =
+							"Ces conditions pour le mot de passe ne sont pas respectées : " +
+							this.notStrong +
+							".";
 					}
 				});
 		},
