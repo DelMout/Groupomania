@@ -28,59 +28,65 @@ exports.signup = (req, res) => {
 	} else {
 		req.body.photo = null;
 	}
-	// if (!schemaPassword.validate(req.body.password)) {
-	// 	const wrongPass = schemaPassword.validate(req.body.password, { list: true });
-	// 	// return res.status(401).send(schemaPassword.validate(req.body.password, { list: true }));
-	// } else {
-	const newUser = new user({
-		...req.body,
-		password: bcrypt.hashSync(req.body.password, 10),
-	});
-	newUser
-		.save()
-		.then((user) => {
-			let token = jwt.sign({ user: user }, "un_long_chemin", {
-				expiresIn: "1h",
-			});
-			res.json({
-				user: user,
-				token: token,
-			});
-		})
-		.catch((err) => {
-			res.send(err);
-			// const wrongPass = schemaPassword.validate(req.body.password, { list: true });
-			// if (err.errors[0].validatorKey == "notEmpty") {
-			// 	res.status(401).json({ password: wrongPass, others: err.errors[0] });
-			// } else if (err.name == "SequelizeUniqueConstraintError") {
-			// 	res.status(401).json({ password: wrongPass, others: "email already used" });
-			// } else if (err.name == "SequelizeValidationError") {
-			// 	if (err.errors[0].path == "email") {
-			// 		res.status(401).json({ password: wrongPass, others: "Not format email" });
-			// 		// TODO : erreur qd password pas assez fort, qd email erroné, qd manque une entrée.
-			// 	} else if (err.errors[0].validatorKey == "notEmpty") {
-			// 		res.status(401).json({ password: wrongPass, others: err.errors[0] });
-			// 	}
-			// } else {
-			// 	res.status(401).json({ password: wrongPass, others: err });
-			// }
-
-			// if (err.errors[0].validatorKey == "notEmpty") {
-			// 	res.status(401).send(err.errors[0]);
-			// } else if (err.name == "SequelizeUniqueConstraintError") {
-			// 	res.status(401).send("email already used");
-			// } else if (err.name == "SequelizeValidationError") {
-			// 	if (err.errors[0].path == "email") {
-			// 		res.status(401).send("Not format email");
-			// 		// TODO : erreur qd password pas assez fort, qd email erroné, qd manque une entrée.
-			// 	} else if (err.errors[0].validatorKey == "notEmpty") {
-			// 		res.status(401).send(err.errors[0]);
-			// 	}
-			// } else {
-			// 	res.status(401).send(err);
-			// }
+	if (!schemaPassword.validate(req.body.password)) {
+		// const wrongPass = schemaPassword.validate(req.body.password, { list: true });
+		return res
+			.status(401)
+			.send(
+				"password not enough strong, missing :" +
+					schemaPassword.validate(req.body.password, { list: true })
+			);
+	} else {
+		const newUser = new user({
+			...req.body,
+			password: bcrypt.hashSync(req.body.password, 10),
 		});
-	// }
+		newUser
+			.save()
+			.then((user) => {
+				let token = jwt.sign({ user: user }, "un_long_chemin", {
+					expiresIn: "1h",
+				});
+				res.json({
+					user: user,
+					token: token,
+				});
+			})
+			.catch((err) => {
+				res.status(401).send(err);
+				// const wrongPass = schemaPassword.validate(req.body.password, { list: true });
+				// if (err.errors[0].validatorKey == "notEmpty") {
+				// 	res.status(401).json({ password: wrongPass, others: err.errors[0] });
+				// } else if (err.name == "SequelizeUniqueConstraintError") {
+				// 	res.status(401).json({ password: wrongPass, others: "email already used" });
+				// } else if (err.name == "SequelizeValidationError") {
+				// 	if (err.errors[0].path == "email") {
+				// 		res.status(401).json({ password: wrongPass, others: "Not format email" });
+				// 		// TODO : erreur qd password pas assez fort, qd email erroné, qd manque une entrée.
+				// 	} else if (err.errors[0].validatorKey == "notEmpty") {
+				// 		res.status(401).json({ password: wrongPass, others: err.errors[0] });
+				// 	}
+				// } else {
+				// 	res.status(401).json({ password: wrongPass, others: err });
+				// }
+
+				// if (err.errors[0].validatorKey == "notEmpty") {
+				// 	res.status(401).send(err.errors[0]);
+				// } else if (err.name == "SequelizeUniqueConstraintError") {
+				// 	res.status(401).send("email already used");
+				// } else if (err.name == "SequelizeValidationError") {
+				// 	if (err.errors[0].path == "email") {
+				// 		res.status(401).send("Not format email");
+				// 		// TODO : erreur qd password pas assez fort, qd email erroné, qd manque une entrée.
+				// 	} else if (err.errors[0].validatorKey == "notEmpty") {
+				// 		res.status(401).send(err.errors[0]);
+				// 	}
+				// } else {
+				// 	res.status(401).send(err);
+				// }
+			});
+		// }
+	}
 };
 
 // * Login

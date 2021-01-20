@@ -12,7 +12,7 @@ content-type: application/json
     "email": "maskotgroupo.fr",
     "service": "pluie-et aujou'dui",
     "description":"",
-    "password": "125fdsfsd"  
+    "password": "125fMMMdssd"  
 }
 ### login  ###
 POST http://localhost:3001/api/auth/login 

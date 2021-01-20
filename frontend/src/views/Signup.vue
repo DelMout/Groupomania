@@ -115,10 +115,7 @@ export default {
 			nomTest: "",
 			serviceTest: "",
 			emailTest: "",
-			// passwordMin: "",
 			prenomInfo: "Merci de renseigner ce champ",
-			// passwordLow: "",
-			// passwordNum: "",
 			nomInfo: "Merci de renseigner ce champ",
 			serviceInfo: "Merci de renseigner ce champ",
 			emailInfo: "Merci de renseigner ce champ",
@@ -127,7 +124,6 @@ export default {
 			up: "",
 			low: "",
 			num: "",
-			// descriptionInfo: "",
 			convers: {
 				min: "10 caractères minimum",
 				uppercase: "manque majuscule",
@@ -135,20 +131,6 @@ export default {
 				digits: "manque chiffres",
 				not: 'les symboles "$.=" et apostrophe sont interdits',
 			},
-			// testData: [
-			// 	{
-			// 		attribut: "prenom",
-			// 		test: "this.prenomTest",
-			// 		info: "this.prenomInfo",
-			// 		expReg: "/[^_a-zA-ZÀ-ÿ-]/",
-			// 	},
-			// 	{
-			// 		attribut: "nom",
-			// 		test: "nomTest",
-			// 		info: "nomInfo",
-			// 		expReg: "/[^_a-zA-ZÀ-ÿ- ']/",
-			// 	},
-			// ],
 		};
 	},
 	computed: {
@@ -201,16 +183,6 @@ export default {
 				this.serviceInfo = "Merci de renseigner ce champ";
 			}
 
-			// if (this.description !== "") {
-			// 	this.descriptionTest = !/[\$]/.test(this.description);
-			// 	if (this.descriptionTest === false) {
-			// 		this.descriptionInfo = "Caractère non accépté.";
-			// 	} else {
-			// 		this.descriptionInfo = "";
-			// 	}
-			// } else if (this.description === "") {
-			// 	this.descriptionInfo = "";
-			// }
 			if (this.password !== "") {
 				let passwordMin = this.password.length >= 10;
 				let passwordUp = /[A-Z]/.test(this.password);
@@ -289,26 +261,8 @@ export default {
 				})
 				.catch((err) => {
 					console.log(err);
-					if (err.response.data.validatorKey === "notEmpty") {
-						this.theInfo =
-							"Merci de compléter votre " + this.paramUser[err.response.data.path];
-					} else if (err.response.data === "email already used") {
-						this.theInfo = "Un compte contient déjà cet email !";
-					} else if (err.response.data === "Not format email") {
-						this.theInfo = "Il ne s'agit pas d'un format email";
-					} // TODO ici les autres erreurs de création (password pas assez fort, cellule non renseignée...)
-					const issues = err.response.data;
-					for (let n in issues) {
-						let issue = issues[n];
-						this.notStrong.push(this.convers[issue]);
-					}
 					this.theInfo =
-						"Votre compte n'a pas pu être créé. Merci de corriger les données. Ces conditions pour le mot de passe ne sont pas respectées : " +
-						this.notStrong +
-						".";
-					console.log(err.response.data);
-					console.log(this.notStrong);
-					// console.log("c pas bon ! " + err.response.data);
+						"Votre compte n'a pas pu être créé. Merci de corriger les paramètres demandés dans le formulaire.";
 				});
 		},
 
