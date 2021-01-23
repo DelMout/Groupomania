@@ -43,7 +43,7 @@ import Like from "@/components/Like";
 import Comment from "@/components/Comment";
 import Author from "@/components/Author";
 import axios from "axios";
-import { mapGetters, mapState } from "vuex"; // for authentification
+import { mapGetters, mapState, mapActions } from "vuex"; // for authentification
 
 export default {
 	name: "Publication",
@@ -75,8 +75,9 @@ export default {
 		this.seePublications();
 	},
 	computed: {
-		...mapState({ token: "token" }),
-		...mapGetters(["isLoggedIn"]),
+		...mapState({ token: "token" }, { userId: "userId" }),
+		...mapGetters(["isLoggedIn", "isNotExpired"]),
+		...mapActions(["updateInfo"]),
 	},
 	methods: {
 		//* SELECT MORE publications
@@ -152,60 +153,66 @@ export default {
 		},
 		//* SELECT my PUBLICATIONS
 		seeMinePublications: function() {
-			this.mine = false;
-			this.more = false;
-			this.theInfo = "Vos publications GroupoRéseauMania !";
-			this.publica = [];
-			this.seePub = true;
-			this.del = false;
-			this.seeDel = true;
-			this.comLike = true;
-			axios({
-				method: "get",
-				url: "http://localhost:3001/api/pub/user/" + this.$store.state.user.id,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				// axios
-				// 	.get("http://localhost:3001/api/pub/user/" + this.$store.state.currentUserId)
-				.then((resp) => {
-					this.qtyPub = resp.data.length;
-					console.log("qty :" + resp.data.length);
-					console.log("Publica :" + resp.data.length);
-					if (resp.data.length === 0) {
-						this.theInfo = "Vous n'avez pas encore de publications GroupoRéseauMania !";
-					}
-					for (let i = 0; i < this.qtyPub; i++) {
-						//* Get total of likes
-						axios
-							.get("http://localhost:3001/api/pub/" + resp.data[i].id + "/like/")
-							.then((respo) => {
-								//* get total of comments
-								axios
-									.get(
-										"http://localhost:3001/api/pub/" +
-											resp.data[i].id +
-											"/comm/"
-									)
-									.then((rep) => {
-										this.publica.push({
-											index: resp.data[i].id,
-											titre: resp.data[i].titre,
-											contenu: resp.data[i].texte_pub,
-											userId: resp.data[i].userId,
-											date: resp.data[i].date_crea_pub,
-											photo: resp.data[i].photo,
-											comm: rep.data.length,
-											likes: respo.data.length,
-										});
-									})
-									.catch((err) => console.log(err));
-							})
-							.catch((erreur) => console.log(erreur));
-					}
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				this.mine = false;
+				this.more = false;
+				this.theInfo = "Vos publications GroupoRéseauMania !";
+				this.publica = [];
+				this.seePub = true;
+				this.del = false;
+				this.seeDel = true;
+				this.comLike = true;
+				console.log("this.userid =" + this.$store.state.userId);
+
+				axios({
+					method: "get",
+					url: "http://localhost:3001/api/pub/user/" + this.$store.state.userId,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((erreur) => console.log(erreur));
+					.then((resp) => {
+						this.qtyPub = resp.data.length;
+						console.log("qty :" + resp.data.length);
+						console.log("Publica :" + resp.data.length);
+						if (resp.data.length === 0) {
+							this.theInfo =
+								"Vous n'avez pas encore de publications GroupoRéseauMania !";
+						}
+						for (let i = 0; i < this.qtyPub; i++) {
+							//* Get total of likes
+							axios
+								.get("http://localhost:3001/api/pub/" + resp.data[i].id + "/like/")
+								.then((respo) => {
+									//* get total of comments
+									axios
+										.get(
+											"http://localhost:3001/api/pub/" +
+												resp.data[i].id +
+												"/comm/"
+										)
+										.then((rep) => {
+											this.publica.push({
+												index: resp.data[i].id,
+												titre: resp.data[i].titre,
+												contenu: resp.data[i].texte_pub,
+												userId: resp.data[i].userId,
+												date: resp.data[i].date_crea_pub,
+												photo: resp.data[i].photo,
+												comm: rep.data.length,
+												likes: respo.data.length,
+											});
+										})
+										.catch((err) => console.log(err));
+								})
+								.catch((erreur) => console.log(erreur));
+						}
+					})
+					.catch((erreur) => console.log(erreur));
+			}
 		},
 		//* DELETE a PUBLICATION
 		deletePub: function(pub) {
@@ -230,22 +237,29 @@ export default {
 			this.seeDel = false;
 		},
 		confDeletePub: function() {
-			axios({
-				method: "delete",
-				url: "http://localhost:3001/api/pub/" + this.indexDel,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				// axios
-				// 	.delete("http://localhost:3001/api/pub/" + this.indexDel)
-				.then((resp) => {
-					this.theInfo = "Votre publication a été supprimée.";
-					this.confDel = false;
-					this.seePub = true;
-					this.mine = true;
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				axios({
+					method: "delete",
+					url:
+						"http://localhost:3001/api/pub/" +
+						this.indexDel +
+						"/" +
+						this.$store.state.userId,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => console.log(err));
+					.then((resp) => {
+						this.theInfo = "Votre publication a été supprimée.";
+						this.confDel = false;
+						this.seePub = true;
+						this.mine = true;
+					})
+					.catch((err) => console.log(err));
+			}
 		},
 	},
 };

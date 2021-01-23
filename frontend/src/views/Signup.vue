@@ -3,10 +3,11 @@
 		<h1 v-if="!isLoggedIn">
 			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
 		</h1>
+
 		<div>
 			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
 			<h2 style="color:red;">{{ theInfo }}</h2>
-			<form enctype="multipart/form-data">
+			<div enctype="multipart/form-data">
 				<p v-if="mod || creat">
 					Prénom : <input type="text" @keyup="checkData" v-model="prenom" />
 					<span style="background-color:pink;">{{ prenomInfo }} </span>
@@ -27,14 +28,18 @@
 						>{{ serviceInfo }}
 					</span>
 				</p>
+
 				<p v-if="!isLoggedIn || mod || creat">
-					Mot de passe : <button @click="visibility">Vu/Masqué</button
-					><input :type="type" @keyup="checkData" v-model="password" /><span
-						style="background-color:pink;"
+					Mot de passe :
+					<input :type="type" @keyup="checkData" v-model="password" /><button
+						@click="visibility"
+					>
+						{{ hide }}</button
+					><span v-if="mod || creat" style="background-color:pink;"
 						>{{ passwordInfo }}
 					</span>
 					<span style="color:red;" v-if="mod"
-						>Vous pouvez modifier votre mot de passe directement dans la cellule.</span
+						>Saisir un autre mot de passe, modifiera votre mot de passe.</span
 					>
 				</p>
 				<p v-if="mod || creat">
@@ -44,10 +49,7 @@
 				<p v-if="mod || creat">
 					Photo (optionnel) :<input type="file" name="image" @change="onFileChange" />
 				</p>
-				<!-- <p v-if="mod || creat">
-					Photo (optionnel) : <input type="file" ref="file" @change="selectFile" />
-				</p> -->
-			</form>
+			</div>
 			<div v-if="photo != null && mod">
 				<span>Votre photo actuelle : </span
 				><img style="width:200px;" :src="photo" alt="photo utilisateur" />
@@ -78,7 +80,10 @@
 
 <script>
 // import { FileUpload } from "v-file-upload"; //! a retirer
+import moment from "moment"; //! Pour essais sur dates, à retirer par la suite !
+
 import { mapMutations, mapGetters, mapState } from "vuex";
+import jwt_decode from "jwt-decode";
 import axios from "axios";
 export default {
 	name: "Signup",
@@ -100,6 +105,7 @@ export default {
 			indexDel: "",
 			// password: "",
 			type: "password",
+			hide: "Voir",
 			// selectedFile: null,
 			// file: "",
 			paramUser: {
@@ -142,8 +148,10 @@ export default {
 		visibility() {
 			if (this.type === "password") {
 				this.type = "text";
+				this.hide = "Masquer";
 			} else {
 				this.type = "password";
+				this.hide = "Voir";
 			}
 		},
 
@@ -173,7 +181,7 @@ export default {
 			}
 
 			if (this.service !== "") {
-				this.serviceTest = !/[^_0-9a-zÀ-ÿ- ']/.test(this.service);
+				this.serviceTest = !/[^_0-9a-zA-ZÀ-ÿ- ']/.test(this.service);
 				if (this.serviceTest === false) {
 					this.serviceInfo = "Caractère non accépté.";
 				} else {
@@ -252,12 +260,12 @@ export default {
 				.post("http://localhost:3001/api/auth/signup", formData)
 				.then((resp) => {
 					console.log(resp.data);
-					const { user, token } = resp.data;
-					this.setUser(user);
+					const { userId, token } = resp.data;
+					this.setUserId(userId);
 					this.setToken(token);
 					this.theInfo = "Compte créé !!";
 					this.creat = false;
-					console.log("currentUserId = " + resp.data.user.id);
+					console.log("currentUserId = " + resp.data.userId);
 				})
 				.catch((err) => {
 					console.log(err);
@@ -267,7 +275,7 @@ export default {
 		},
 
 		//* LOGIN a USER
-		...mapMutations(["setUser", "setToken"]),
+		...mapMutations(["setUserId", "setToken"]),
 		loginUser: function() {
 			console.log("g bien recu la requete pour login!");
 			axios
@@ -276,10 +284,17 @@ export default {
 					password: this.password,
 				})
 				.then((resp) => {
-					const { user, token } = resp.data;
-					console.log(resp.data.user.id);
-					this.setUser(user);
+					const { userId, token } = resp.data;
+					const decoded = jwt_decode(token);
+					console.log(token);
+					const dateEXP = moment(new Date(decoded.exp * 1000)).format(
+						"DD MM YYYY k:mm:ss"
+					);
+					console.log(dateEXP);
+					this.setUserId(userId);
 					this.setToken(token);
+					console.log("isLoggedIn =" + this.isLoggedIn);
+					console.log(this.token);
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
@@ -294,63 +309,83 @@ export default {
 
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
-			console.log("g bien recu la requete pour DEMANDE de modif!");
-			this.theInfo = "";
-			this.mod = true;
-			axios
-				.get("http://localhost:3001/api/auth/modif/" + this.$store.state.user.id)
-				.then((resp) => {
-					console.log(resp.data);
-					this.prenom = resp.data.prenom;
-					this.nom = resp.data.nom;
-					this.service = resp.data.service;
-					this.description = resp.data.description;
-					this.photo = resp.data.photo;
-					// this.mod = false;
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				console.log(
+					"g bien recu la requete pour DEMANDE de modif!" + this.$store.state.userId
+				);
+				this.theInfo = "";
+				this.mod = true;
+				this.type = "password";
+				this.hide = "Voir";
+				axios({
+					method: "get",
+					url: "http://localhost:3001/api/auth/modif/" + this.$store.state.userId,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((erreur) => console.log(erreur));
+					.then((resp) => {
+						console.log(resp.data);
+						this.prenom = resp.data.prenom;
+						this.nom = resp.data.nom;
+						this.service = resp.data.service;
+						this.description = resp.data.description;
+						this.photo = resp.data.photo;
+						this.checkData();
+						// this.mod = false;
+					})
+					.catch((erreur) => console.log(erreur));
+			}
 		},
 
 		//* MODIFY a USER
 		modifUser: function() {
-			console.log("g bien recu la requete pour modif!" + this.$store.state.user.id);
-			const formData = new FormData();
-			formData.append("image", this.$data.image);
-			formData.append("prenom", this.$data.prenom);
-			formData.append("nom", this.$data.nom);
-			formData.append("service", this.$data.service);
-			formData.append("description", this.$data.description);
-			formData.append("password", this.$data.password);
-			console.log(this.$data.nom);
-			axios({
-				method: "put",
-				url: "http://localhost:3001/api/auth/modif/" + this.$store.state.user.id,
-				data: formData,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				.then((resp) => {
-					console.log(resp);
-					this.mod = false;
-					this.theInfo = "Vos modifications ont été prises en compte";
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				console.log("g bien recu la requete pour modif!" + this.$store.state.userId);
+				const formData = new FormData();
+				formData.append("image", this.$data.image);
+				formData.append("prenom", this.$data.prenom);
+				formData.append("nom", this.$data.nom);
+				formData.append("service", this.$data.service);
+				formData.append("description", this.$data.description);
+				formData.append("password", this.$data.password);
+				console.log(this.$data.nom);
+				axios({
+					method: "put",
+					url: "http://localhost:3001/api/auth/modif/" + this.$store.state.userId,
+					data: formData,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => {
-					console.log(err.response.data);
-					if (err.response.data === "notEmpty") {
-						this.theInfo = "Les champs non optionnels doivent être remplis.";
-					} else {
-						const issues = err.response.data;
-						for (let n in issues) {
-							let issue = issues[n];
-							this.notStrong.push(this.convers[issue]);
+					.then((resp) => {
+						console.log(resp);
+						this.mod = false;
+						this.theInfo = "Vos modifications ont été prises en compte";
+					})
+					.catch((err) => {
+						console.log(err.response.data);
+						if (err.response.data === "notEmpty") {
+							this.theInfo = "Les champs non optionnels doivent être remplis.";
+						} else {
+							const issues = err.response.data;
+							for (let n in issues) {
+								let issue = issues[n];
+								this.notStrong.push(this.convers[issue]);
+							}
+							this.theInfo =
+								"Ces conditions pour le mot de passe ne sont pas respectées : " +
+								this.notStrong +
+								".";
 						}
-						this.theInfo =
-							"Ces conditions pour le mot de passe ne sont pas respectées : " +
-							this.notStrong +
-							".";
-					}
-				});
+					});
+			}
 		},
 		//* DELETE a USER
 		demandDeleteUser: function() {
@@ -358,25 +393,30 @@ export default {
 			this.theInfo = "Êtes vous sûre de vouloir supprimer votre compte ?";
 		},
 		deleteUser: function() {
-			console.log("g bien recu la requete pour delete!");
-			axios({
-				method: "delete",
-				url: "http://localhost:3001/api/auth/delete/" + this.$store.state.user.id,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				// axios
-				// 	.delete("http://localhost:3001/api/auth/delete/" + this.$store.state.currentUserId)
-				.then((resp) => {
-					console.log(resp);
-					this.sup = false;
-					this.theInfo = "Votre compte a été supprimé !";
-					this.hom = false;
-					this.$store.state.user = null;
-					this.$store.state.token = null;
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				console.log("g bien recu la requete pour delete!");
+				axios({
+					method: "delete",
+					url: "http://localhost:3001/api/auth/delete/" + this.$store.state.userId,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((erreur) => console.log(erreur));
+					// axios
+					// 	.delete("http://localhost:3001/api/auth/delete/" + this.$store.state.currentUserId)
+					.then((resp) => {
+						console.log(resp);
+						this.sup = false;
+						this.theInfo = "Votre compte a été supprimé !";
+						this.hom = false;
+						this.$store.state.userId = null;
+						this.$store.state.token = null;
+					})
+					.catch((erreur) => console.log(erreur));
+			}
 		},
 	},
 };

@@ -4,9 +4,6 @@
 			<p v-if="pub.likes > 1">Likes : {{ pub.likes }}</p>
 			<p v-else>Like : {{ pub.likes }}</p>
 		</a>
-		<i v-if="alreadyLike" style="color:blue"
-			>Vous avez déjà émis un like sur cette publication.</i
-		>
 	</div>
 </template>
 <script>
@@ -16,45 +13,42 @@ import { mapGetters, mapState } from "vuex"; // for authentification
 export default {
 	name: "Like",
 	data() {
-		return {
-			alreadyLike: false,
-		};
+		return {};
 	},
 	props: ["pub"],
 	computed: {
 		...mapState({ token: "token" }),
+		...mapGetters(["isLoggedIn"]),
 	},
 
 	methods: {
 		//* Add a LIKE
 		liker: function(pub) {
-			console.log("pub.index = " + this.pub.index);
-			axios({
-				method: "post",
-				url:
-					"http://localhost:3001/api/pub/" +
-					this.pub.index +
-					"/like/" +
-					this.$store.state.user.id,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				// axios
-				// 	.post(
-				// 		"http://localhost:3001/api/pub/" +
-				// 			this.pub.index +
-				// 			"/like/" +
-				// 			this.$store.state.currentUserId
-				// 	)
-				.then((resp) => {
-					if (resp.data === "user already liked that publication") {
-						this.alreadyLike = true;
-					} else {
-						this.pub.likes += 1;
-					}
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				console.log("pub.index = " + this.pub.index);
+				axios({
+					method: "post",
+					url:
+						"http://localhost:3001/api/pub/" +
+						this.pub.index +
+						"/like/" +
+						this.$store.state.userId,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((erreur) => console.log(erreur));
+					.then((resp) => {
+						if (resp.data === "like deleted") {
+							this.pub.likes -= 1;
+						} else {
+							this.pub.likes += 1;
+						}
+					})
+					.catch((err) => res.send(err));
+			}
 		},
 	},
 };

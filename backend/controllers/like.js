@@ -19,7 +19,11 @@ exports.addLike = (req, res) => {
 						console.log(err);
 					});
 			} else {
-				res.send("user already liked that publication");
+				like.destroy({
+					where: { publicationId: req.params.pubid, userId: req.params.userid },
+				})
+					.then(() => res.send("like deleted"))
+					.catch((err) => res.send(err));
 			}
 		})
 		.catch((err) => {

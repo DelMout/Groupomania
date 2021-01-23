@@ -39,6 +39,7 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }),
+		...mapGetters(["isLoggedIn"]),
 	},
 	props: ["pub"],
 	methods: {
@@ -62,49 +63,44 @@ export default {
 
 		//* Create a COMMENT
 		createComm: function() {
-			axios({
-				method: "post",
-				url:
-					"http://localhost:3001/api/pub/" +
-					this.pub.index +
-					"/comm/" +
-					this.$store.state.user.id,
-				data: { texte: this.commentUser },
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				// axios
-				// 	.post(
-				// 		"http://localhost:3001/api/pub/" +
-				// 			this.pub.index +
-				// 			"/comm/" +
-				// 			this.$store.state.currentUserId,
-				// 		{
-				// 			texte: this.commentUser,
-				// 		}
-				// 	)
-				.then((resp) => {
-					console.log("commentaire créé !");
-					// see allComments
-					this.allComments = [];
-					axios
-						.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
-						.then((resp) => {
-							console.log("length = " + resp.data.length);
-							for (let i = 0; i < resp.data.length; i++) {
-								this.allComments.push({
-									texte: resp.data[i].texte_com,
-									date: resp.data[i].date_crea_com,
-									userId: resp.data[i].userId,
-								});
-							}
-							this.commentUser = "";
-							this.pub.comm += 1;
-						})
-						.catch((err) => console.log(err));
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				axios({
+					method: "post",
+					url:
+						"http://localhost:3001/api/pub/" +
+						this.pub.index +
+						"/comm/" +
+						this.$store.state.userId,
+					data: { texte: this.commentUser },
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => console.log(err));
+					.then((resp) => {
+						console.log("commentaire créé !");
+						// see allComments
+						this.allComments = [];
+						axios
+							.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
+							.then((resp) => {
+								console.log("length = " + resp.data.length);
+								for (let i = 0; i < resp.data.length; i++) {
+									this.allComments.push({
+										texte: resp.data[i].texte_com,
+										date: resp.data[i].date_crea_com,
+										userId: resp.data[i].userId,
+									});
+								}
+								this.commentUser = "";
+								this.pub.comm += 1;
+							})
+							.catch((err) => console.log(err));
+					})
+					.catch((err) => console.log(err));
+			}
 		},
 	},
 };

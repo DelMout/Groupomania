@@ -1,4 +1,3 @@
-const { fstat } = require("fs");
 const { publication } = require("../models");
 const fs = require("fs");
 
@@ -40,10 +39,11 @@ exports.createPub = (req, res) => {
 
 // * Select a publication
 // exports.getPub = (req, res) => {
+// 	//! a supprimer
 // 	publication
 // 		.findOne({ where: { id: req.params.pubid } })
 // 		.then((pub) => {
-// 			res.send(pub);
+// 			res.json(pub.id);
 // 		})
 // 		.catch((err) => {
 // 			console.log(err);
