@@ -140,10 +140,11 @@ export default {
 		};
 	},
 	computed: {
-		...mapState({ token: "token" }),
+		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
 		...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
+		...mapMutations(["setUserId", "setToken", "setAdmin"]),
 		//* Hide or show password
 		visibility() {
 			if (this.type === "password") {
@@ -260,9 +261,10 @@ export default {
 				.post("http://localhost:3001/api/auth/signup", formData)
 				.then((resp) => {
 					console.log(resp.data);
-					const { userId, token } = resp.data;
+					const { userId, token, isAdmin } = resp.data;
 					this.setUserId(userId);
 					this.setToken(token);
+					this.setAdmin(isAdmin);
 					this.theInfo = "Compte créé !!";
 					this.creat = false;
 					console.log("currentUserId = " + resp.data.userId);
@@ -275,7 +277,7 @@ export default {
 		},
 
 		//* LOGIN a USER
-		...mapMutations(["setUserId", "setToken"]),
+
 		loginUser: function() {
 			console.log("g bien recu la requete pour login!");
 			axios
@@ -284,17 +286,15 @@ export default {
 					password: this.password,
 				})
 				.then((resp) => {
-					const { userId, token } = resp.data;
+					const { userId, token, isAdmin } = resp.data;
 					const decoded = jwt_decode(token);
-					console.log(token);
 					const dateEXP = moment(new Date(decoded.exp * 1000)).format(
 						"DD MM YYYY k:mm:ss"
 					);
 					console.log(dateEXP);
 					this.setUserId(userId);
 					this.setToken(token);
-					console.log("isLoggedIn =" + this.isLoggedIn);
-					console.log(this.token);
+					this.setAdmin(isAdmin);
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
@@ -405,8 +405,6 @@ export default {
 						Authorization: `Bearer ${this.token}`,
 					},
 				})
-					// axios
-					// 	.delete("http://localhost:3001/api/auth/delete/" + this.$store.state.currentUserId)
 					.then((resp) => {
 						console.log(resp);
 						this.sup = false;

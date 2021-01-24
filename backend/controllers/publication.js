@@ -1,5 +1,6 @@
 const { publication } = require("../models");
 const fs = require("fs");
+const { Op } = require("sequelize");
 
 // * Get all publications
 exports.getAllPub = (req, res) => {
@@ -91,5 +92,27 @@ exports.deletePub = (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err);
+		});
+};
+
+// * Search publications
+exports.searchPub = (req, res) => {
+	publication
+		.findAll({
+			where: {
+				[Op.or]: [
+					{ titre: { [Op.like]: "%" + req.params.word + "%" } },
+					{ texte_pub: { [Op.like]: "%" + req.params.word + "%" } },
+				],
+			},
+		})
+		.then((pub) => {
+			if (!pub[0]) {
+				res.status(401).send("not found");
+			}
+			res.send(pub);
+		})
+		.catch((err) => {
+			res.send(err);
 		});
 };

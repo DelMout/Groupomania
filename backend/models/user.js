@@ -57,6 +57,10 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 				allowNull: true,
 			},
+			isAdmin: {
+				type: DataTypes.TINYINT,
+				defaultValue: 0,
+			},
 		},
 		{
 			timestamps: false,

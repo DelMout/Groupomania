@@ -20,7 +20,10 @@ router.get("/", pubCtrl.getAllPub);
 router.get("/user/:userid", auth, pubCtrl.getPubByUser);
 
 // * Delete a publication
-router.delete("/:pubid/:userid", auth, ident, multer, pubCtrl.deletePub);
+router.delete("/:pubid/:userid", multer, pubCtrl.deletePub); //! remttre auth et ident
+
+// * Search word in publications
+router.get("/search/:word", pubCtrl.searchPub);
 
 // * Login
 // TODO Dégriser qd controllers/login sera OK

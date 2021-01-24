@@ -22,6 +22,21 @@ const routes = [
 		name: "Publier",
 		component: () => import(/* webpackChunkName: "publier" */ "../views/Publier.vue"),
 	},
+	{
+		path: "/admin/users",
+		name: "AdminUsers",
+		component: () => import(/* webpackChunkName: "users" */ "../views/AdminUsers.vue"),
+	},
+	{
+		path: "/admin/publications",
+		name: "AdminPubs",
+		component: () => import(/* webpackChunkName: "publications" */ "../views/AdminPubs.vue"),
+	},
+	{
+		path: "/admin/comments",
+		name: "AdminComms",
+		component: () => import(/* webpackChunkName: "comments" */ "../views/AdminComms.vue"),
+	},
 ];
 
 const router = createRouter({

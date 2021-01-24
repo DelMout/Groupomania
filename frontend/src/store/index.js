@@ -6,6 +6,7 @@ export default createStore({
 	state: {
 		userId: null,
 		token: null,
+		isAdmin: 0,
 		infoHome: "",
 	},
 	mutations: {
@@ -14,6 +15,9 @@ export default createStore({
 		},
 		setToken(state, token) {
 			state.token = token;
+		},
+		setAdmin(state, isAdmin) {
+			state.isAdmin = isAdmin;
 		},
 		setInfo(state) {
 			state.infoHome = "Votre session a expiré.";

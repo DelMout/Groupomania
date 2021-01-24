@@ -7,26 +7,24 @@ POST http://localhost:3001/api/auth/signup
 content-type: application/json
 
 {
-    "nom": "tt  t",
-    "prenom":"r  gos",
-    "email": "maskotgroupo.fr",
-    "service": "pluie-et aujou'dui",
+    "nom": "Montagne",
+    "prenom":"Diego",
+    "email": "die@groupo.fr",
+    "service": "travaux",
     "description":"",
-    "password": "125fMMMdssd"  
+    "password": "DDDddd1111"  
 }
 ### login  ###
 POST http://localhost:3001/api/auth/login 
 content-type: application/json
 
 {
-    "password": "LLLlll1111",
-    "email": "lola@groupo.fr"
+    "password": "AAAaaa1111",
+    "email": "admin@groupomania.fr"
 }
 
 
-### ident user  ###
-GET http://localhost:3001/api/auth/ident/22 
-
+#
 
 ######
 POST http://localhost:3001/api/auth/login 
@@ -86,3 +84,17 @@ GET http://localhost:3001/api/auth/ident/30
 
 ### delete a pub ###
 DELETE http://localhost:3001/api/pub/22
+### get all users ###
+GET http://localhost:3001/api/auth/users
+
+### get user by email ###
+GET http://localhost:3001/api/auth/find/lola@groupo.fr
+### search publications ###
+GET http://localhost:3001/api/pub/search/essai
+### search comments ###
+GET http://localhost:3001/api/pub/search/comment/bv
+
+
+### delete a comment ###
+DELETE http://localhost:3001/api/pub/delete/comment/28
+#

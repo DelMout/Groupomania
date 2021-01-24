@@ -5,17 +5,6 @@ const jwt = require("jsonwebtoken"); // create token key
 const passwordValidator = require("password-validator");
 const schemaPassword = new passwordValidator();
 
-// * Get all users
-// exports.getAllUser = (req, res) => {
-// 	const { emailC } = req.body;
-// 	user.findAll({
-// 		attributes: ["id"],
-// 		where: { email: "clovis@groupomania.fr" },
-// 	}).then((obj) => {
-// 		res.send(obj[0]); //!renvoie {"id":32}
-// 	});
-// };
-
 //* Schema Password
 schemaPassword.is().min(10).has().uppercase().has().lowercase().has().digits();
 // .has()
@@ -43,13 +32,13 @@ exports.signup = (req, res) => {
 		newUser
 			.save()
 			.then((user) => {
-				//! modifier ici en userId !
 				let token = jwt.sign({ userId: user.id }, "un_long_chemin", {
 					expiresIn: "1h",
 				});
 				res.json({
 					userId: user.id,
 					token: token,
+					isAdmin: user.isAdmin,
 				});
 			})
 			.catch((err) => {
@@ -72,6 +61,7 @@ exports.login = (req, res) => {
 				res.json({
 					userId: user.id,
 					token: token,
+					isAdmin: user.isAdmin,
 				});
 			} else {
 				res.status(401).send("Password not OK");
@@ -191,9 +181,30 @@ exports.delete = (req, res) => {
 		.catch((err) => res.status(500).json({ err }));
 };
 
+// * Get all users
+exports.getAllUsers = (req, res) => {
+	user.findAll({
+		order: [["last_connect", "ASC"]],
+	}).then((obj) => {
+		res.send(obj); //!renvoie {"id":32}
+	});
+};
+
 // * Identify user
 exports.ident = (req, res) => {
 	user.findOne({ where: { id: req.params.userid } })
+		.then((resp) => {
+			res.send(resp);
+		})
+		.catch((err) => {
+			console.log(err);
+			res.send(err);
+		});
+};
+
+// * Find user by email
+exports.findUser = (req, res) => {
+	user.findOne({ where: { email: req.params.email } })
 		.then((resp) => {
 			res.send(resp);
 		})

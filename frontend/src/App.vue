@@ -2,19 +2,19 @@
 	<div id="app">
 		<div id="nav">
 			<router-link to="/">Home</router-link> |
-			<router-link to="/signup">Mon compte</router-link
-			><span>
-				|
-				<router-link to="/publi">Les publications</router-link>
-				|
-				<router-link v-if="isLoggedIn" to="/publier"
-					>Créer une publication</router-link
-				></span
-			>
+			<router-link to="/signup">Mon compte</router-link> |
+			<router-link to="/publi">Les publications</router-link>
+			|
+			<router-link v-if="isLoggedIn" to="/publier">Créer une publication</router-link>
 			|
 			<span v-if="isLoggedIn">
 				<router-link v-on:click="deconnect" to="/">Se déconnecter</router-link></span
 			>
+		</div>
+		<div v-if="isAdmin === 1" style="color:red;">
+			<router-link to="/admin/users">Utilisateurs</router-link> |
+			<router-link to="/admin/publications">Publications</router-link> |
+			<router-link to="/admin/comments">Commentaires</router-link>
 		</div>
 		<router-view />
 	</div>
@@ -25,6 +25,7 @@ export default {
 	name: "Home",
 	computed: {
 		...mapGetters(["isLoggedIn"]),
+		...mapState({ isAdmin: "isAdmin" }),
 	},
 	methods: {
 		deconnect: function() {
