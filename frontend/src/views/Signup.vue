@@ -292,6 +292,7 @@ export default {
 						"DD MM YYYY k:mm:ss"
 					);
 					console.log(dateEXP);
+					console.log(token);
 					this.setUserId(userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);

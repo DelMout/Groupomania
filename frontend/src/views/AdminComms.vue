@@ -33,6 +33,8 @@
 	</div>
 </template>
 <script>
+import { mapMutations, mapGetters, mapState } from "vuex";
+
 import axios from "axios";
 import Author from "../components/Author.vue";
 export default {
@@ -46,7 +48,12 @@ export default {
 			infoComm: "",
 		};
 	},
+	computed: {
+		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
+	},
 	methods: {
+		...mapMutations(["setUserId", "setToken", "setAdmin"]),
+
 		//* FIND comments by word
 		findByWord: function() {
 			console.log("qordReq =" + this.wordReq);
@@ -54,9 +61,9 @@ export default {
 			axios({
 				method: "get",
 				url: "http://localhost:3001/api/pub/search/comment/" + this.wordReq,
-				// headers: {
-				// 	Authorization: `Bearer ${this.token}`,
-				// },
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 				.then((resp) => {
 					this.qtyComms = resp.data.length;
@@ -85,9 +92,9 @@ export default {
 			axios({
 				method: "delete",
 				url: "http://localhost:3001/api/pub/delete/comment/" + comm.index,
-				// headers: {
-				// 	Authorization: `Bearer ${this.token}`,
-				// },
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 				.then((resp) => {
 					comm.info = "Ce commentaire vient d'être supprimé.";

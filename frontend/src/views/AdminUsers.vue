@@ -43,6 +43,7 @@
 	</div>
 </template>
 <script>
+import { mapMutations, mapGetters, mapState } from "vuex";
 import moment from "moment";
 import axios from "axios";
 
@@ -58,10 +59,15 @@ export default {
 			emailReq: "",
 		};
 	},
+	computed: {
+		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
+	},
 	created: function() {
 		this.seeAllUsers();
 	},
 	methods: {
+		...mapMutations(["setUserId", "setToken", "setAdmin"]),
+
 		//* DISPLAY ALL USERS
 		seeAllUsers: function() {
 			this.users = [];
@@ -97,9 +103,9 @@ export default {
 			axios({
 				method: "delete",
 				url: "http://localhost:3001/api/auth/delete/" + user.index,
-				// headers: {
-				// 	Authorization: `Bearer ${this.token}`,
-				// },
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 				.then((resp) => {
 					user.info = "Ce compte vient d'être supprimé.";
@@ -118,9 +124,9 @@ export default {
 			axios({
 				method: "get",
 				url: "http://localhost:3001/api/auth/find/" + this.emailReq,
-				// headers: {
-				// 	Authorization: `Bearer ${this.token}`,
-				// },
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 				.then((resp) => {
 					console.log(resp);

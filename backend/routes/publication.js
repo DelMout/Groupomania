@@ -6,6 +6,7 @@ const pubCtrl = require("../controllers/publication");
 const multer = require("../middleware/multer-config"); //Upload files
 const auth = require("../middleware/auth"); // Request authentification
 const ident = require("../middleware/ident"); // Request authentification
+const admin = require("../middleware/isAdmin"); // Request authentification for admin
 
 // * Create a publication
 router.post("/create/:userid", auth, multer, pubCtrl.createPub);
@@ -20,10 +21,10 @@ router.get("/", pubCtrl.getAllPub);
 router.get("/user/:userid", auth, pubCtrl.getPubByUser);
 
 // * Delete a publication
-router.delete("/:pubid/:userid", multer, pubCtrl.deletePub); //! remttre auth et ident
+router.delete("/:pubid/:userid", auth, ident, multer, pubCtrl.deletePub); //! remttre auth et ident
 
 // * Search word in publications
-router.get("/search/:word", pubCtrl.searchPub);
+router.get("/search/:word", admin, pubCtrl.searchPub);
 
 // * Login
 // TODO Dégriser qd controllers/login sera OK

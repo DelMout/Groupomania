@@ -10,8 +10,12 @@ module.exports = (req, res, next) => {
 				const decodedToken = jwt.verify(token, "un_long_chemin");
 				const userConnectedId = decodedToken.userId;
 				const userAuthorId = pub.userId;
-				if (userConnectedId !== userAuthorId) {
-					throw "Connected user is not the publication author.";
+				const isAdmin = decodedToken.isAdmin;
+				if (
+					(isAdmin === 0 && userConnectedId !== userAuthorId) ||
+					(isAdmin === 1 && userConnectedId !== 68)
+				) {
+					throw "Connected user is not the publication author, or not admin.";
 				} else {
 					next();
 				}

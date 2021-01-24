@@ -36,6 +36,8 @@
 	</div>
 </template>
 <script>
+import { mapMutations, mapGetters, mapState } from "vuex";
+
 import moment from "moment";
 import axios from "axios";
 import Author from "../components/Author.vue";
@@ -50,16 +52,21 @@ export default {
 			infoPub: "",
 		};
 	},
+	computed: {
+		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
+	},
 	methods: {
+		...mapMutations(["setUserId", "setToken", "setAdmin"]),
+
 		//* FIND publications by word
 		findByWord: function() {
 			this.pubs = [];
 			axios({
 				method: "get",
 				url: "http://localhost:3001/api/pub/search/" + this.wordReq,
-				// headers: {
-				// 	Authorization: `Bearer ${this.token}`,
-				// },
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 				.then((resp) => {
 					this.qtyPubs = resp.data.length;
@@ -91,9 +98,9 @@ export default {
 			axios({
 				method: "delete",
 				url: "http://localhost:3001/api/pub/" + pub.index + "/" + pub.userId,
-				// headers: {
-				// 	Authorization: `Bearer ${this.token}`,
-				// },
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 				.then((resp) => {
 					pub.info = "Cette publication vient d'être supprimée.";

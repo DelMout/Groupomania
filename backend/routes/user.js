@@ -5,6 +5,7 @@ const userCtrl = require("../controllers/user");
 
 const multer = require("../middleware/multer-config"); //Upload files
 const auth = require("../middleware/auth"); // Request authentification
+const admin = require("../middleware/isAdmin"); // Request authentification for admin
 
 // * Voir tous users
 router.get("/users", userCtrl.getAllUsers);
@@ -22,12 +23,12 @@ router.get("/modif/:userid", auth, userCtrl.demandmodif);
 router.put("/modif/:userid", auth, multer, userCtrl.modif);
 
 // * Delete user
-router.delete("/delete/:userid", multer, userCtrl.delete); //! remettre auth ! + Rajouter droit admin
+router.delete("/delete/:userid", auth, multer, userCtrl.delete); //! remettre auth ! + Rajouter droit admin
 
 // * Identify user
 router.get("/ident/:userid", userCtrl.ident);
 
 // * Find user by email
-router.get("/find/:email", userCtrl.findUser); //! Seulement pour Admin
+router.get("/find/:email", admin, userCtrl.findUser); //! Seulement pour Admin
 
 module.exports = router;

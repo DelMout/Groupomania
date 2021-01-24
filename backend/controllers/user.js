@@ -55,7 +55,7 @@ exports.login = (req, res) => {
 		.then((user) => {
 			const password = user.password;
 			if (bcrypt.compareSync(password_saisi, password)) {
-				let token = jwt.sign({ userId: user.id }, "un_long_chemin", {
+				let token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, "un_long_chemin", {
 					expiresIn: "1h",
 				});
 				res.json({
