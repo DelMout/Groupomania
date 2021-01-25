@@ -50,6 +50,7 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
+		...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
@@ -57,31 +58,36 @@ export default {
 		//* FIND comments by word
 		findByWord: function() {
 			console.log("qordReq =" + this.wordReq);
-			this.comms = [];
-			axios({
-				method: "get",
-				url: "http://localhost:3001/api/pub/search/comment/" + this.wordReq,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				.then((resp) => {
-					this.qtyComms = resp.data.length;
-					for (let i = 0; i < this.qtyComms; i++) {
-						this.comms.push({
-							index: resp.data[i].id,
-							contenu: resp.data[i].texte_com,
-							userId: resp.data[i].userId,
-							date: resp.data[i].date_crea_com,
-							demandDelete: 1,
-							info: "",
-						});
-					}
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				this.comms = [];
+				axios({
+					method: "get",
+					url: "http://localhost:3001/api/pub/search/comment/" + this.wordReq,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => {
-					this.infoComm = "Aucun commentaire ne correspond à cette recherche.";
-					console.log(err);
-				});
+					.then((resp) => {
+						this.qtyComms = resp.data.length;
+						for (let i = 0; i < this.qtyComms; i++) {
+							this.comms.push({
+								index: resp.data[i].id,
+								contenu: resp.data[i].texte_com,
+								userId: resp.data[i].userId,
+								date: resp.data[i].date_crea_com,
+								demandDelete: 1,
+								info: "",
+							});
+						}
+					})
+					.catch((err) => {
+						this.infoComm = "Aucun commentaire ne correspond à cette recherche.";
+						console.log(err);
+					});
+			}
 		},
 		//* DELETE a COMMENT
 		deleteComm: function(comm) {
@@ -89,20 +95,25 @@ export default {
 			console.log(comm.index);
 		},
 		confDeleteComm: function(comm) {
-			axios({
-				method: "delete",
-				url: "http://localhost:3001/api/pub/delete/comment/" + comm.index,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				.then((resp) => {
-					comm.info = "Ce commentaire vient d'être supprimé.";
-					comm.demandDelete = 0;
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				axios({
+					method: "delete",
+					url: "http://localhost:3001/api/pub/delete/comment/" + comm.index,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => {
-					console.log(err);
-				});
+					.then((resp) => {
+						comm.info = "Ce commentaire vient d'être supprimé.";
+						comm.demandDelete = 0;
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
 		},
 	},
 };

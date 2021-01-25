@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
 		// }
 		if (
 			(isAdmin === 0 && paramUserId && paramUserId !== userId) ||
-			(isAdmin === 1 && userId !== 68)
+			(isAdmin === 1 && userId !== 81)
 		) {
 			throw "Invalid user ID";
 		} else {

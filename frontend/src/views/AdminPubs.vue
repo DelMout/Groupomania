@@ -54,40 +54,47 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
+		...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
 
 		//* FIND publications by word
 		findByWord: function() {
-			this.pubs = [];
-			axios({
-				method: "get",
-				url: "http://localhost:3001/api/pub/search/" + this.wordReq,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				.then((resp) => {
-					this.qtyPubs = resp.data.length;
-					for (let i = 0; i < this.qtyPubs; i++) {
-						this.pubs.push({
-							index: resp.data[i].id,
-							titre: resp.data[i].titre,
-							contenu: resp.data[i].texte_pub,
-							userId: resp.data[i].userId,
-							photo: resp.data[i].photo,
-							date: resp.data[i].date_crea_pub,
-							// date: moment(resp.data.date_crea_pub).format("DD/MM/YYYY"),
-							demandDelete: 1,
-							info: "",
-						});
-					}
+			if (!this.isLoggedIn) {
+				console.log("loggIn =" + this.isLoggedIn);
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				this.pubs = [];
+				axios({
+					method: "get",
+					url: "http://localhost:3001/api/pub/search/" + this.wordReq,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => {
-					this.infoPub = "Aucune publication ne correspond à cette recherche.";
-					console.log(err);
-				});
+					.then((resp) => {
+						this.qtyPubs = resp.data.length;
+						for (let i = 0; i < this.qtyPubs; i++) {
+							this.pubs.push({
+								index: resp.data[i].id,
+								titre: resp.data[i].titre,
+								contenu: resp.data[i].texte_pub,
+								userId: resp.data[i].userId,
+								photo: resp.data[i].photo,
+								date: resp.data[i].date_crea_pub,
+								// date: moment(resp.data.date_crea_pub).format("DD/MM/YYYY"),
+								demandDelete: 1,
+								info: "",
+							});
+						}
+					})
+					.catch((err) => {
+						this.infoPub = "Aucune publication ne correspond à cette recherche.";
+						console.log(err);
+					});
+			}
 		},
 		//* DELETE a PUBLICATION
 		deletePub: function(pub) {
@@ -95,20 +102,25 @@ export default {
 			console.log(pub.index);
 		},
 		confDeletePub: function(pub) {
-			axios({
-				method: "delete",
-				url: "http://localhost:3001/api/pub/" + pub.index + "/" + pub.userId,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				.then((resp) => {
-					pub.info = "Cette publication vient d'être supprimée.";
-					pub.demandDelete = 0;
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				axios({
+					method: "delete",
+					url: "http://localhost:3001/api/pub/" + pub.index + "/" + pub.userId,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => {
-					console.log(err);
-				});
+					.then((resp) => {
+						pub.info = "Cette publication vient d'être supprimée.";
+						pub.demandDelete = 0;
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
 		},
 	},
 };

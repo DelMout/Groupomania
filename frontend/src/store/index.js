@@ -8,6 +8,7 @@ export default createStore({
 		token: null,
 		isAdmin: 0,
 		infoHome: "",
+		isLoggedIn: false,
 	},
 	mutations: {
 		setUserId(state, userId) {
@@ -22,6 +23,12 @@ export default createStore({
 		setInfo(state) {
 			state.infoHome = "Votre session a expiré.";
 		},
+		setLogIn(state) {
+			state.isLoggedIn = true;
+		},
+		setLogOut(state) {
+			state.isLoggedIn = false;
+		},
 	},
 	getters: {
 		//* Indication token expired
@@ -32,7 +39,6 @@ export default createStore({
 				const decoded = jwt_decode(state.token);
 				const dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
 				const dateNOW = moment().format("DD MM YYYY k:mm:ss");
-				console.log();
 				return dateEXP > dateNOW;
 			}
 		},
@@ -41,6 +47,22 @@ export default createStore({
 		updateInfo(context) {
 			context.commit("setInfo");
 		},
+		// updateLog(context) {
+		// 	if (this.state.token === null) {
+		// 		context.commit("setLogOut");
+		// 	} else {
+		// 		const decoded = jwt_decode(state.token);
+		// 		const dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
+		// 		const dateNOW = moment().format("DD MM YYYY k:mm:ss");
+		// 		const log = dateEXP > dateNOW;
+		// 		if (log) {
+		// 			context.commit("setLogIn");
+		// 		} else {
+		// 			context.commit("setLogOut");
+		// 			context.commit("setInfo");
+		// 		}
+		// 	}
+		// },
 	},
 
 	//TODO si inNotExpired=false

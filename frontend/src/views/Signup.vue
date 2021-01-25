@@ -82,7 +82,7 @@
 // import { FileUpload } from "v-file-upload"; //! a retirer
 import moment from "moment"; //! Pour essais sur dates, à retirer par la suite !
 
-import { mapMutations, mapGetters, mapState } from "vuex";
+import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 export default {
@@ -140,11 +140,17 @@ export default {
 		};
 	},
 	computed: {
-		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
+		...mapState(
+			{ token: "token" },
+			{ userId: "userId" },
+			{ isAdmin: "isAdmin" },
+			{ isLoggedIn: "isLoggedIn" }
+		),
 		...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
+		...mapActions(["updateLog"]),
 		//* Hide or show password
 		visibility() {
 			if (this.type === "password") {
@@ -293,9 +299,12 @@ export default {
 					);
 					console.log(dateEXP);
 					console.log(token);
+
 					this.setUserId(userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
+					console.log("isLoggedIn = " + this.isLoggedIn);
+					console.log("isLoggedIn$ = " + this.$store.getters.isLoggedIn);
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
@@ -310,7 +319,9 @@ export default {
 
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
+			// this.updateLog();
 			if (!this.isLoggedIn) {
+				console.log("islogg = " + this.isLoggedIn);
 				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
@@ -338,7 +349,13 @@ export default {
 						this.checkData();
 						// this.mod = false;
 					})
-					.catch((erreur) => console.log(erreur));
+					.catch((err) => {
+						if (err.response.data.message === "jwt expired") {
+							console.log("jwt expired venant du back");
+							this.$store.dispatch("updateLog");
+							this.$router.push("/");
+						}
+					});
 			}
 		},
 

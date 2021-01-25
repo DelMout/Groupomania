@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
 		if (isAdmin === 0) {
 			throw "Not Admin";
 		} else {
-			if (isAdmin === 1 && userId !== 68) {
+			if (isAdmin === 1 && userId !== 81) {
 				throw "Invalid user admin";
 			} else {
 				next();

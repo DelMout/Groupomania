@@ -32,7 +32,7 @@ exports.signup = (req, res) => {
 		newUser
 			.save()
 			.then((user) => {
-				let token = jwt.sign({ userId: user.id }, "un_long_chemin", {
+				let token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, "un_long_chemin", {
 					expiresIn: "1h",
 				});
 				res.json({

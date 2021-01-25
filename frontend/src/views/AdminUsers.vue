@@ -61,6 +61,7 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
+		...mapGetters(["isLoggedIn"]),
 	},
 	created: function() {
 		this.seeAllUsers();
@@ -70,28 +71,35 @@ export default {
 
 		//* DISPLAY ALL USERS
 		seeAllUsers: function() {
-			this.users = [];
-			axios
-				.get("http://localhost:3001/api/auth/users")
-				.then((resp) => {
-					this.qtyUsers = resp.data.length;
-					console.log(resp.data[12].nom);
-					for (let i = 0; i < this.qtyUsers; i++) {
-						this.users.push({
-							index: resp.data[i].id,
-							nom: resp.data[i].nom,
-							prenom: resp.data[i].prenom,
-							email: resp.data[i].email,
-							service: resp.data[i].service,
-							description: resp.data[i].description,
-							photo: resp.data[i].photo,
-							last_connect: moment(resp.data[i].last_connect).format("DD/MM/YYYY"),
-							demandDelete: 1,
-							info: "",
-						});
-					}
-				})
-				.catch((err) => console.log(err));
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				this.users = [];
+				axios
+					.get("http://localhost:3001/api/auth/users")
+					.then((resp) => {
+						this.qtyUsers = resp.data.length;
+						console.log(resp.data[12].nom);
+						for (let i = 0; i < this.qtyUsers; i++) {
+							this.users.push({
+								index: resp.data[i].id,
+								nom: resp.data[i].nom,
+								prenom: resp.data[i].prenom,
+								email: resp.data[i].email,
+								service: resp.data[i].service,
+								description: resp.data[i].description,
+								photo: resp.data[i].photo,
+								last_connect: moment(resp.data[i].last_connect).format(
+									"DD/MM/YYYY"
+								),
+								demandDelete: 1,
+								info: "",
+							});
+						}
+					})
+					.catch((err) => console.log(err));
+			}
 		},
 
 		//* DELETE a USER
@@ -119,34 +127,39 @@ export default {
 			this.findUser = true;
 		},
 		findByEmail: function() {
-			this.users = [];
-			console.log("req =" + this.emailReq);
-			axios({
-				method: "get",
-				url: "http://localhost:3001/api/auth/find/" + this.emailReq,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				.then((resp) => {
-					console.log(resp);
-					this.users.push({
-						index: resp.data.id,
-						nom: resp.data.nom,
-						prenom: resp.data.prenom,
-						email: resp.data.email,
-						service: resp.data.service,
-						description: resp.data.description,
-						photo: resp.data.photo,
-						last_connect: moment(resp.data.last_connect).format("DD/MM/YYYY"),
-						demandDelete: 1,
-						info: "",
-					});
+			if (!this.isLoggedIn) {
+				this.$store.dispatch("updateInfo");
+				this.$router.push("/");
+			} else {
+				this.users = [];
+				console.log("req =" + this.emailReq);
+				axios({
+					method: "get",
+					url: "http://localhost:3001/api/auth/find/" + this.emailReq,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => {
-					this.infoFind = "Aucun compte a cette adresse email.";
-					console.log(err);
-				});
+					.then((resp) => {
+						console.log(resp);
+						this.users.push({
+							index: resp.data.id,
+							nom: resp.data.nom,
+							prenom: resp.data.prenom,
+							email: resp.data.email,
+							service: resp.data.service,
+							description: resp.data.description,
+							photo: resp.data.photo,
+							last_connect: moment(resp.data.last_connect).format("DD/MM/YYYY"),
+							demandDelete: 1,
+							info: "",
+						});
+					})
+					.catch((err) => {
+						this.infoFind = "Aucun compte a cette adresse email.";
+						console.log(err);
+					});
+			}
 		},
 	},
 };

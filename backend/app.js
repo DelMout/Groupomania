@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 const bodyParser = require("body-parser");
 const path = require("path");
+const helmet = require("helmet"); // Protect HTTP headers
 
 const userRoutes = require("./routes/user");
 const pubRoutes = require("./routes/publication");
@@ -33,6 +34,7 @@ module.exports = { publication, like };
 
 app.use(cors()); // Security CORS
 app.use(bodyParser.json());
+app.use(helmet());
 
 // **** REQUETE ****
 
