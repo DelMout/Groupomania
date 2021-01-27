@@ -1,44 +1,59 @@
 <template>
 	<div>
 		<p>Nombre utilisateurs dans la base : {{ this.qtyUsers }}.</p>
-		<button style="color:green;" @click="wantFindUser">
-			Recherche d'un compte par email
-		</button>
-		<button @click="seeAllUsers">
-			Voir tous les comptes
-		</button>
+		<Button class="p-m-2" label="Recherche d'un compte par email" @click="wantFindUser" />
+
+		<Button class="p-m-2" label="Voir tous les comptes" @click="seeAllUsers" />
+
 		<div v-if="findUser">
 			<p>
-				Email recherché : <input type="text" v-model="emailReq" /><button
-					style="color:green;"
+				Email recherché : <InputText type="text" v-model="emailReq" /><Button
+					label="Valider la recherche"
 					@click="findByEmail"
-				>
-					Valider la recherche
-				</button>
+				/>
 			</p>
 			<p>{{ infoFind }}</p>
 		</div>
-		<p>- - - - - - - - - - - - - -</p>
 
-		<div v-for="user in users" :key="user.index">
-			<p>Dernière connexion : {{ user.last_connect }}</p>
-			<p>Nom Prénom : {{ user.nom }} {{ user.prenom }}</p>
-			<p>Email : {{ user.email }}</p>
-			<p>Service : {{ user.service }}</p>
-			<p>Description : {{ user.description }}</p>
-			<img v-if="user.photo" style="width:100px;" :src="user.photo" alt="identity user" />
-			<p>{{ user.info }}</p>
-			<button v-if="user.demandDelete === 1" style="color:red;" @click="deleteUser(user)">
-				Supprimer le compte
-			</button>
-			<p v-if="user.demandDelete === 2" style="color:red;">
-				Attention, la suppression de ce compte supprimera aussi les publications et les
-				commentaires créés par cet utilisateur.
-			</p>
-			<button v-if="user.demandDelete === 2" style="color:red;" @click="confDeleteUser(user)">
-				CONFIRMER la SUPPRESSION du compte
-			</button>
-			<p>***** ***** *****</p>
+		<div class="p-grid vertical-container" v-for="user in users" :key="user.index">
+			<div class="p-mx-auto">
+				<div class="p-card p-shadow-6   p-p-5 p-m-2" style="width:25rem;">
+					<div class="p-card-content p-text-left">
+						<i>Dernière connexion : {{ user.last_connect }}</i>
+						<p>
+							<span class="attribut"> Utilisateur : </span>{{ user.nom }}
+							{{ user.prenom }}
+						</p>
+						<p>Email : {{ user.email }}</p>
+						<p>Service : {{ user.service }}</p>
+						<p>Description : {{ user.description }}</p>
+						<img
+							v-if="user.photo"
+							style="width:100px;"
+							:src="user.photo"
+							alt="identity user"
+						/>
+					</div>
+					<div class="p-card-footer">
+						<p>{{ user.info }}</p>
+						<Button
+							label="Supprimer le compte"
+							v-if="user.demandDelete === 1"
+							@click="deleteUser(user)"
+						/>
+
+						<p v-if="user.demandDelete === 2">
+							Attention, la suppression de ce compte supprimera aussi les publications
+							et les commentaires créés par cet utilisateur.
+						</p>
+						<Button
+							label="CONFIRMER la SUPPRESSION du compte"
+							v-if="user.demandDelete === 2"
+							@click="confDeleteUser(user)"
+						/>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -61,7 +76,10 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
-		...mapGetters(["isLoggedIn"]),
+		// ...mapGetters(["isLoggedIn"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
 	},
 	created: function() {
 		this.seeAllUsers();
@@ -71,8 +89,8 @@ export default {
 
 		//* DISPLAY ALL USERS
 		seeAllUsers: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				this.users = [];
@@ -108,18 +126,23 @@ export default {
 			console.log(user.index);
 		},
 		confDeleteUser: function(user) {
-			axios({
-				method: "delete",
-				url: "http://localhost:3001/api/auth/delete/" + user.index,
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			})
-				.then((resp) => {
-					user.info = "Ce compte vient d'être supprimé.";
-					user.demandDelete = 0;
+			this.$store.commit("setLogIn");
+			if (!this.isLoggedIn) {
+				this.$router.push("/");
+			} else {
+				axios({
+					method: "delete",
+					url: "http://localhost:3001/api/auth/delete/" + user.index,
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+					},
 				})
-				.catch((err) => console.log(err));
+					.then((resp) => {
+						user.info = "Ce compte vient d'être supprimé.";
+						user.demandDelete = 0;
+					})
+					.catch((err) => console.log(err));
+			}
 		},
 
 		//* FIND by Email
@@ -127,8 +150,8 @@ export default {
 			this.findUser = true;
 		},
 		findByEmail: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				this.users = [];

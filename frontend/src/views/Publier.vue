@@ -27,7 +27,10 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }),
-		...mapGetters(["isLoggedIn"]),
+		// ...mapGetters(["isLoggedIn"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
 	},
 	methods: {
 		//* Select a photo
@@ -37,8 +40,8 @@ export default {
 		},
 		//* CREATE a PUBLICATION
 		createPub: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				console.log("token une fois dans create pub !" + this.$store.state.userId);

@@ -24,8 +24,10 @@ import { mapGetters, mapState } from "vuex"; // for authentification
 export default {
 	name: "Home",
 	computed: {
-		...mapGetters(["isLoggedIn"]),
 		...mapState({ isAdmin: "isAdmin" }),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
 	},
 	methods: {
 		deconnect: function() {

@@ -29,7 +29,8 @@ const routes = [
 		name: "AdminUsers",
 		component: () => import(/* webpackChunkName: "users" */ "../views/AdminUsers.vue"),
 		beforeEnter: (to, from, next) => {
-			if (!store.getters.isLoggedIn) {
+			store.commit("setLogIn");
+			if (!store.state.isLoggedIn) {
 				next({ name: "Home" });
 			} else {
 				if (store.state.isAdmin === 0) {
@@ -45,7 +46,8 @@ const routes = [
 		name: "AdminPubs",
 		component: () => import(/* webpackChunkName: "publications" */ "../views/AdminPubs.vue"),
 		beforeEnter: (to, from, next) => {
-			if (!store.getters.isLoggedIn) {
+			store.commit("setLogIn");
+			if (!store.state.isLoggedIn) {
 				next({ name: "Home" });
 			} else {
 				if (store.state.isAdmin === 0) {
@@ -61,7 +63,8 @@ const routes = [
 		name: "AdminComms",
 		component: () => import(/* webpackChunkName: "comments" */ "../views/AdminComms.vue"),
 		beforeEnter: (to, from, next) => {
-			if (!store.getters.isLoggedIn) {
+			store.commit("setLogIn");
+			if (!store.state.isLoggedIn) {
 				next({ name: "Home" });
 			} else {
 				if (store.state.isAdmin === 0) {
@@ -80,8 +83,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+	store.commit("setLogIn");
 	if (to.meta.requiresAuth) {
-		if (!store.getters.isLoggedIn) {
+		if (!store.state.isLoggedIn) {
 			next({ name: "Home" });
 		} else {
 			next();
@@ -90,19 +94,5 @@ router.beforeEach((to, from, next) => {
 		next();
 	}
 });
-
-// router.beforeEach((to, from, next) => {
-// 	if (to.meta.requiresAdmin) {
-// 		if (!store.getters.isLoggedIn) {
-// 			next({ name: "Home" });
-// 		} else {
-// 			if (store.state.isAdmin === 0) {
-// 				next({ name: "Home" });
-// 			} else {
-// 				next();
-// 			}
-// 		}
-// 	}
-// });
 
 export default router;

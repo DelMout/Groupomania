@@ -50,7 +50,10 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
-		...mapGetters(["isLoggedIn"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
+		// ...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
@@ -58,8 +61,8 @@ export default {
 		//* FIND comments by word
 		findByWord: function() {
 			console.log("qordReq =" + this.wordReq);
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				this.comms = [];
@@ -95,8 +98,8 @@ export default {
 			console.log(comm.index);
 		},
 		confDeleteComm: function(comm) {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				axios({

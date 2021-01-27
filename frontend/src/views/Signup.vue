@@ -4,76 +4,158 @@
 			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
 		</h1>
 
-		<div>
+		<div class="">
+			<!-- <InputText v-model="text" />
+			<Button label="Greet"></Button> -->
+
 			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
 			<h2 style="color:red;">{{ theInfo }}</h2>
-			<div enctype="multipart/form-data">
-				<p v-if="mod || creat">
-					Prénom : <input type="text" @keyup="checkData" v-model="prenom" />
-					<span style="background-color:pink;">{{ prenomInfo }} </span>
-				</p>
-				<p v-if="mod || creat">
-					Nom : <input type="text" @keyup="checkData" v-model="nom" /><span
-						style="background-color:pink;"
-						>{{ nomInfo }}
-					</span>
-				</p>
-				<p v-if="!isLoggedIn || creat">
-					Email : <input type="text" @keyup="checkData" v-model="email" />
-					<span v-if="creat" style="background-color:pink;">{{ emailInfo }} </span>
-				</p>
-				<p v-if="mod || creat">
-					Service : <input type="text" @keyup="checkData" v-model="service" /><span
-						style="background-color:pink;"
-						>{{ serviceInfo }}
-					</span>
-				</p>
+			<div class="p-grid vertical-container p-text-left ">
+				<div class="p-input-filled  p-mx-auto" enctype="multipart/form-data">
+					<div class="p-col  p-py-0">
+						<p class="   p-float-label" v-if="mod || creat">
+							<InputText
+								class="p-mx-1"
+								type="text"
+								id="firstname"
+								@keyup="checkData"
+								v-model="prenom"
+							/><label for="firstname">Prénom</label>
+							<span style="background-color:pink;">{{ prenomInfo }} </span>
+						</p>
+					</div>
+					<div class="p-col p-py-0">
+						<p class=" p-float-label" v-if="mod || creat">
+							<InputText
+								class="p-mx-1"
+								id="lastname"
+								type="text"
+								@keyup="checkData"
+								v-model="nom"
+							/><label for="lastname">Nom</label
+							><span style="background-color:pink;">{{ nomInfo }} </span>
+						</p>
+					</div>
+					<div class="p-col p-py-0">
+						<p class="p-float-label" v-if="!isLoggedIn || creat">
+							<InputText
+								class="p-mx-1"
+								id="email"
+								type="text"
+								@keyup="checkData"
+								v-model="email"
+							/><label for="email">Email</label>
+							<span v-if="creat" style="background-color:pink;"
+								>{{ emailInfo }}
+							</span>
+						</p>
+					</div>
+					<div class="p-col p-as-center p-py-0">
+						<p class="p-float-label" v-if="mod || creat">
+							<InputText
+								class="p-mx-1"
+								id="service"
+								type="text"
+								@keyup="checkData"
+								v-model="service"
+							/><label for="service">Service</label
+							><span style="background-color:pink;">{{ serviceInfo }} </span>
+						</p>
+					</div>
+					<div class="p-col p-as-center p-py-0">
+						<p class="p-float-label" v-if="!isLoggedIn || mod || creat">
+							<InputText
+								class="p-mx-1"
+								id="password"
+								:type="type"
+								@keyup="checkData"
+								v-model="password"
+							/><label for="password">Mot de passe</label
+							><Button
+								class="p-mx-1 p-px-auto p-button-raised p-button-help p-button-text"
+								@click="visibility"
+								:icon="hide"
+							>
+							</Button
+							><span v-if="mod || creat" style="background-color:pink;"
+								>{{ passwordInfo }}
+							</span>
+							<span style="color:red;" v-if="mod"
+								>Saisir un autre mot de passe, modifiera votre mot de passe.</span
+							>
+						</p>
+					</div>
+					<div class="p-col p-as-center p-py-0">
+						<p class="p-float-label" v-if="mod || creat">
+							<InputText
+								class="p-mx-1"
+								id="description"
+								type="text"
+								v-model="description"
+							/><label for="description">Description (optionnel)</label>
+						</p>
+					</div>
+					<div class="p-col p-as-center p-py-0">
+						<p v-if="mod || creat">
+							Photo (optionnel) :<input
+								type="file"
+								name="image"
+								@change="onFileChange"
+							/>
+						</p>
+					</div>
 
-				<p v-if="!isLoggedIn || mod || creat">
-					Mot de passe :
-					<input :type="type" @keyup="checkData" v-model="password" /><button
-						@click="visibility"
-					>
-						{{ hide }}</button
-					><span v-if="mod || creat" style="background-color:pink;"
-						>{{ passwordInfo }}
-					</span>
-					<span style="color:red;" v-if="mod"
-						>Saisir un autre mot de passe, modifiera votre mot de passe.</span
-					>
-				</p>
-				<p v-if="mod || creat">
-					Description (optionnel) :
-					<input type="text" v-model="description" />
-				</p>
-				<p v-if="mod || creat">
-					Photo (optionnel) :<input type="file" name="image" @change="onFileChange" />
-				</p>
+					<div class="p-col p-as-center p-py-0" v-if="photo != null && mod">
+						<span>Votre photo actuelle : </span
+						><img style="width:200px;" :src="photo" alt="photo utilisateur" />
+					</div>
+					<div class="p-col p-as-center p-py-0" v-if="photo === null && mod">
+						Vous n'avez pas de photo actuellement.
+					</div>
+					<div class="p-col p-as-center p-py-0">
+						<Button
+							label="Entrer dans le réseau social Groupomania !"
+							v-if="!isLoggedIn && !creat"
+							v-on:click="loginUser"
+						/>
+					</div>
+					<div class="p-col p-fluid p-as-center p-py-0 ">
+						<Button label="Valider" v-if="creat" v-on:click="createUser" /><br />
+					</div>
+					<div class="p-col p-as-center p-py-0">
+						<Button
+							label="Valider les modifications"
+							v-if="mod"
+							v-on:click="modifUser"
+						/><br />
+						<Button
+							label="Modifier mon compte"
+							class="p-m-2"
+							v-if="isLoggedIn && !mod && !sup"
+							v-on:click="demandModifUser"
+						/>
+						<Button
+							label="Supprimer mon compte"
+							class="p-m-2"
+							v-if="isLoggedIn && !mod && !sup"
+							v-on:click="demandDeleteUser"
+						/>
+
+						<Button
+							label="Confirmer la suppression de mon compte"
+							style="color:red;"
+							v-if="sup"
+							v-on:click="deleteUser"
+						/>
+					</div>
+					<div class="p-col p-as-center p-py-0">
+						<p v-if="!isLoggedIn && !creat" style="color:blue;">
+							Pas encore de compte ?
+							<Button label="Créer un compte" v-on:click="wantCreate" />
+						</p>
+					</div>
+				</div>
 			</div>
-			<div v-if="photo != null && mod">
-				<span>Votre photo actuelle : </span
-				><img style="width:200px;" :src="photo" alt="photo utilisateur" />
-			</div>
-			<div v-if="photo === null && mod">Vous n'avez pas de photo actuellement.</div>
-			<button v-if="!isLoggedIn && !creat" v-on:click="loginUser">
-				Entrer sur le GroupoSocialMania !</button
-			><button v-if="creat" v-on:click="createUser">Valider</button><br /><button
-				v-if="mod"
-				v-on:click="modifUser"
-			>
-				Valider les modifications</button
-			><br />
-			<button v-if="isLoggedIn && !mod && !sup" v-on:click="demandModifUser">
-				Modifier mon compte</button
-			><button v-if="isLoggedIn && !mod && !sup" v-on:click="demandDeleteUser">
-				Supprimer mon compte
-			</button>
-			<button style="color:red;" v-if="sup" v-on:click="deleteUser">
-				Confirmer la suppression de mon compte
-			</button>
-			<p v-if="!isLoggedIn && !creat" style="color:blue;">
-				Pas encore de compte ? <button v-on:click="wantCreate">Créer un compte</button>
-			</p>
 		</div>
 	</div>
 </template>
@@ -105,7 +187,7 @@ export default {
 			indexDel: "",
 			// password: "",
 			type: "password",
-			hide: "Voir",
+			hide: "pi pi-eye",
 			// selectedFile: null,
 			// file: "",
 			paramUser: {
@@ -143,10 +225,13 @@ export default {
 		...mapState(
 			{ token: "token" },
 			{ userId: "userId" },
-			{ isAdmin: "isAdmin" },
-			{ isLoggedIn: "isLoggedIn" }
+			{ isAdmin: "isAdmin" }
+			// { isLoggedIn: "isLoggedIn" }
 		),
-		...mapGetters(["isLoggedIn"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
+		// ...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
@@ -155,10 +240,10 @@ export default {
 		visibility() {
 			if (this.type === "password") {
 				this.type = "text";
-				this.hide = "Masquer";
+				this.hide = "pi pi-eye-slash";
 			} else {
 				this.type = "password";
-				this.hide = "Voir";
+				this.hide = "pi pi-eye";
 			}
 		},
 
@@ -301,10 +386,12 @@ export default {
 					console.log(token);
 
 					this.setUserId(userId);
+					console.log("userid = " + this.$store.state.userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
+					this.$store.commit("setLogIn");
+
 					console.log("isLoggedIn = " + this.isLoggedIn);
-					console.log("isLoggedIn$ = " + this.$store.getters.isLoggedIn);
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
@@ -319,10 +406,8 @@ export default {
 
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
-			// this.updateLog();
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				console.log("islogg = " + this.isLoggedIn);
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				console.log(
@@ -331,7 +416,7 @@ export default {
 				this.theInfo = "";
 				this.mod = true;
 				this.type = "password";
-				this.hide = "Voir";
+				this.hide = "pi pi-eye";
 				axios({
 					method: "get",
 					url: "http://localhost:3001/api/auth/modif/" + this.$store.state.userId,
@@ -361,8 +446,8 @@ export default {
 
 		//* MODIFY a USER
 		modifUser: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				console.log("g bien recu la requete pour modif!" + this.$store.state.userId);
@@ -411,8 +496,8 @@ export default {
 			this.theInfo = "Êtes vous sûre de vouloir supprimer votre compte ?";
 		},
 		deleteUser: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				console.log("g bien recu la requete pour delete!");

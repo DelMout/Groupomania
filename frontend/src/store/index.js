@@ -23,25 +23,38 @@ export default createStore({
 		setInfo(state) {
 			state.infoHome = "Votre session a expiré.";
 		},
-		setLogIn(state) {
-			state.isLoggedIn = true;
-		},
+		// setLogIn(state) {
+		// 	state.isLoggedIn = true;
+		// },
 		setLogOut(state) {
 			state.isLoggedIn = false;
 		},
-	},
-	getters: {
-		//* Indication token expired
-		isLoggedIn(state) {
+		setLogIn(state) {
 			if (state.token === null) {
-				return false;
+				state.isLoggedIn = false;
 			} else {
 				const decoded = jwt_decode(state.token);
 				const dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
 				const dateNOW = moment().format("DD MM YYYY k:mm:ss");
-				return dateEXP > dateNOW;
+				state.isLoggedIn = dateEXP > dateNOW;
+				if (!state.isLoggedIn) {
+					state.infoHome = "Votre session a expiré.";
+				}
 			}
 		},
+	},
+	getters: {
+		//* Indication token expired
+		// isLoggedIn(state) {
+		// 	if (state.token === null) {
+		// 		return false;
+		// 	} else {
+		// 		const decoded = jwt_decode(state.token);
+		// 		const dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
+		// 		const dateNOW = moment().format("DD MM YYYY k:mm:ss");
+		// 		return dateEXP > dateNOW;
+		// 	}
+		// },
 	},
 	actions: {
 		updateInfo(context) {

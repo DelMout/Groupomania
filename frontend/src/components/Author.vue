@@ -1,14 +1,29 @@
 <template>
-	<div>
-		<i @mouseover="hover = true" @mouseleave="hover = false" style="color:grey;">
-			{{ prenom }} {{ nom }} - <span v-if="publie">a publié</span
-			><span v-else>a commenté</span> {{ dateFr(item.date) }}
-		</i>
-		<p v-if="hover" style="color:green;">
-			<img style="width:70px;" :src="photo" alt="author picture" title="user-img" />
-			<!-- <img v-bind:src="photo" title="user-img" /> -->
-			Service : {{ service }}, A propos de moi : {{ description }}
-		</p>
+	<div class="p-grid  vertical-container nested-grid">
+		<div class="p-col p-mx-auto ">
+			<div class="p-col p-mb-1 ">
+				<i @mouseover="hover = true" @mouseleave="hover = false" style="color:grey;">
+					{{ prenom }} {{ nom }} - <span v-if="publie">a publié</span
+					><span v-else>a commenté</span> {{ dateFr(item.date) }}
+				</i>
+			</div>
+			<div class="p-col p-mx-auto p-shadow-4 " v-if="hover" style="color:grey;">
+				<div class="p-grid">
+					<div class="p-col-4 p-my-auto">
+						<img
+							class=" p-avatar p-avatar-image p-avatar-circle p-avatar-xl "
+							:src="photo"
+							alt="author picture"
+							title="user-img"
+						/>
+					</div>
+					<div class="p-col-8 p-text-left">
+						<p><span class="p-text-bold"> Service : </span>{{ service }}</p>
+						<p><span class="p-text-bold">A propos de moi : </span>{{ description }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 <script>

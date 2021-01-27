@@ -2,7 +2,65 @@
 	<div>
 		<h1>{{ theInfo }}</h1>
 		<!-- loop to display all publications -->
-		<div>
+		<div v-for="pub in publica" :key="pub.index" class=" p-grid vertical-container  ">
+			<div class="p-mx-auto ">
+				<div class=" p-card p-shadow-6 p-col  p-p-5 p-m-2 " style="width:40rem;">
+					<Author :item="pub" v-if="comLike" />
+					<h2 class="p-card-title ">{{ pub.titre }}</h2>
+					<div class="p-card-content">
+						<p class="p-text-justify">{{ pub.contenu }}</p>
+						<img
+							v-if="pub.photo != null"
+							:src="pub.photo"
+							alt="publication picture"
+							style="width:30rem;"
+							title="pub-img"
+						/>
+						<Like :pub="pub" v-if="comLike" />
+						<Comment :pub="pub" v-if="comLike" />
+					</div>
+					<div class="p-card-footer">
+						<Button
+							label="Supprimer cette publication"
+							class="p-button-danger p-button-raised p-button-text"
+							v-if="seeDel"
+							v-on:click="deletePub(pub)"
+						/>
+
+						<Button
+							label="Confirmer la suppression"
+							v-if="confDel"
+							style="color:red;"
+							v-on:click="confDeletePub"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<Button
+			class="p-m-2"
+			label="Revenir sur les publications"
+			v-if="seePub"
+			v-on:click="backToPublications"
+		/>
+
+		<Button
+			class="p-m-2"
+			label="Voir plus de publications"
+			v-if="more"
+			v-on:click="seeMorePublications"
+		/>
+
+		<Button
+			class="p-m-2"
+			label="Voir vos publications"
+			v-if="mine && isLoggedIn"
+			v-on:click="seeMinePublications"
+		/>
+	</div>
+	<!-- <div>
+		<h1>{{ theInfo }}</h1>
+	 <div>
 			<div v-for="pub in publica" :key="pub.index">
 				<Author :item="pub" v-if="comLike" />
 				<h2>{{ pub.titre }}</h2>
@@ -35,7 +93,7 @@
 		<button v-if="mine && isLoggedIn" v-on:click="seeMinePublications">
 			Voir vos publications
 		</button>
-	</div>
+	</div> -->
 </template>
 
 <script>
@@ -54,7 +112,7 @@ export default {
 	},
 	data() {
 		return {
-			theInfo: "Les publications GroupoRéseauMania",
+			theInfo: "Les publications du réseau Groupomania",
 			log: true,
 			qtyPub: 0,
 			qtyMore: 0,
@@ -76,7 +134,10 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }),
-		...mapGetters(["isLoggedIn", "isNotExpired"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
+		// ...mapGetters(["isLoggedIn", "isNotExpired"]),
 		...mapActions(["updateInfo"]),
 	},
 	methods: {
@@ -153,8 +214,8 @@ export default {
 		},
 		//* SELECT my PUBLICATIONS
 		seeMinePublications: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				this.mine = false;
@@ -237,8 +298,8 @@ export default {
 			this.seeDel = false;
 		},
 		confDeletePub: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				axios({

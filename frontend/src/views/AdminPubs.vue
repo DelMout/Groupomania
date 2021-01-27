@@ -54,16 +54,18 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
-		...mapGetters(["isLoggedIn"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
+		// ...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
 
 		//* FIND publications by word
 		findByWord: function() {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				console.log("loggIn =" + this.isLoggedIn);
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				this.pubs = [];
@@ -102,8 +104,8 @@ export default {
 			console.log(pub.index);
 		},
 		confDeletePub: function(pub) {
+			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
 				this.$router.push("/");
 			} else {
 				axios({

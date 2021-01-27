@@ -11,12 +11,17 @@
 		</div>
 		<div>
 			<p v-if="seeComm">
-				Votre commentaire : <input type="text" v-model="commentUser" /><button
-					v-on:click="createComm"
-				>
-					>>
-				</button>
+				Votre commentaire : <InputText type="text" v-model="commentUser" /><Button
+					label=">>"
+					class="p-m-1"
+					@click="createComm"
+				/>
 			</p>
+		</div>
+		<div>
+			<Message v-if="noConnected" severity="warn" :life="5000" :sticky="false"
+				>Vous devez être connecté.e pour écrire un commentaire.</Message
+			>
 		</div>
 	</div>
 </template>
@@ -32,6 +37,7 @@ export default {
 			allComments: [],
 			seeComm: false,
 			commentUser: "",
+			noConnected: false,
 		};
 	},
 	components: {
@@ -39,7 +45,10 @@ export default {
 	},
 	computed: {
 		...mapState({ token: "token" }),
-		...mapGetters(["isLoggedIn"]),
+		// ...mapGetters(["isLoggedIn"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
 	},
 	props: ["pub"],
 	methods: {
@@ -63,43 +72,47 @@ export default {
 
 		//* Create a COMMENT
 		createComm: function() {
-			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
-				this.$router.push("/");
+			if (!this.token) {
+				this.noConnected = true;
 			} else {
-				axios({
-					method: "post",
-					url:
-						"http://localhost:3001/api/pub/" +
-						this.pub.index +
-						"/comm/" +
-						this.$store.state.userId,
-					data: { texte: this.commentUser },
-					headers: {
-						Authorization: `Bearer ${this.token}`,
-					},
-				})
-					.then((resp) => {
-						console.log("commentaire créé !");
-						// see allComments
-						this.allComments = [];
-						axios
-							.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
-							.then((resp) => {
-								console.log("length = " + resp.data.length);
-								for (let i = 0; i < resp.data.length; i++) {
-									this.allComments.push({
-										texte: resp.data[i].texte_com,
-										date: resp.data[i].date_crea_com,
-										userId: resp.data[i].userId,
-									});
-								}
-								this.commentUser = "";
-								this.pub.comm += 1;
-							})
-							.catch((err) => console.log(err));
+				this.$store.commit("setLogIn");
+				if (!this.isLoggedIn) {
+					this.$router.push("/");
+				} else {
+					axios({
+						method: "post",
+						url:
+							"http://localhost:3001/api/pub/" +
+							this.pub.index +
+							"/comm/" +
+							this.$store.state.userId,
+						data: { texte: this.commentUser },
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
 					})
-					.catch((err) => console.log(err));
+						.then((resp) => {
+							console.log("commentaire créé !");
+							// see allComments
+							this.allComments = [];
+							axios
+								.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
+								.then((resp) => {
+									console.log("length = " + resp.data.length);
+									for (let i = 0; i < resp.data.length; i++) {
+										this.allComments.push({
+											texte: resp.data[i].texte_com,
+											date: resp.data[i].date_crea_com,
+											userId: resp.data[i].userId,
+										});
+									}
+									this.commentUser = "";
+									this.pub.comm += 1;
+								})
+								.catch((err) => console.log(err));
+						})
+						.catch((err) => console.log(err));
+				}
 			}
 		},
 	},

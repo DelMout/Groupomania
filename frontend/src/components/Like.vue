@@ -1,9 +1,18 @@
 <template>
 	<div>
-		<a v-on:click="liker(pub)">
-			<p v-if="pub.likes > 1">Likes : {{ pub.likes }}</p>
-			<p v-else>Like : {{ pub.likes }}</p>
-		</a>
+		<div>
+			<Button
+				@click="liker(pub)"
+				:label="pub.likes"
+				icon="pi pi-heart"
+				class="p-button-rounded p-button-help p-button-outlined p-m-2"
+			/>
+		</div>
+		<div>
+			<Message v-if="noConnected" severity="warn" :life="5000" :sticky="false"
+				>Vous devez être connecté.e pour "liker".</Message
+			>
+		</div>
 	</div>
 </template>
 <script>
@@ -13,41 +22,50 @@ import { mapGetters, mapState } from "vuex"; // for authentification
 export default {
 	name: "Like",
 	data() {
-		return {};
+		return {
+			noConnected: false,
+		};
 	},
 	props: ["pub"],
 	computed: {
 		...mapState({ token: "token" }),
-		...mapGetters(["isLoggedIn"]),
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
+		// ...mapGetters(["isLoggedIn"]),
 	},
 
 	methods: {
 		//* Add a LIKE
 		liker: function(pub) {
-			if (!this.isLoggedIn) {
-				this.$store.dispatch("updateInfo");
-				this.$router.push("/");
+			if (!this.token) {
+				this.noConnected = true;
 			} else {
-				console.log("pub.index = " + this.pub.index);
-				axios({
-					method: "post",
-					url:
-						"http://localhost:3001/api/pub/" +
-						this.pub.index +
-						"/like/" +
-						this.$store.state.userId,
-					headers: {
-						Authorization: `Bearer ${this.token}`,
-					},
-				})
-					.then((resp) => {
-						if (resp.data === "like deleted") {
-							this.pub.likes -= 1;
-						} else {
-							this.pub.likes += 1;
-						}
+				this.$store.commit("setLogIn");
+				if (!this.isLoggedIn && this.token) {
+					this.$router.push("/");
+				} else {
+					console.log("pub.index = " + this.pub.index);
+					axios({
+						method: "post",
+						url:
+							"http://localhost:3001/api/pub/" +
+							this.pub.index +
+							"/like/" +
+							this.$store.state.userId,
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
 					})
-					.catch((err) => res.send(err));
+						.then((resp) => {
+							if (resp.data === "like deleted") {
+								this.pub.likes -= 1;
+							} else {
+								this.pub.likes += 1;
+							}
+						})
+						.catch((err) => res.send(err));
+				}
 			}
 		},
 	},
