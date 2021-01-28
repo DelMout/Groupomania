@@ -9,7 +9,13 @@
 			<Button label="Greet"></Button> -->
 
 			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
-			<h2 style="color:red;">{{ theInfo }}</h2>
+			<div class="p-grid">
+				<div class="p-col-6 p-offset-3">
+					<Message v-if="theInfo" :severity="severity" :life="7000" :sticky="false">{{
+						theInfo
+					}}</Message>
+				</div>
+			</div>
 			<div class="p-grid vertical-container p-text-left ">
 				<div class="p-input-filled  p-mx-auto" enctype="multipart/form-data">
 					<div class="p-col  p-py-0">
@@ -21,7 +27,9 @@
 								@keyup="checkData"
 								v-model="prenom"
 							/><label for="firstname">Prénom</label>
-							<span style="background-color:pink;">{{ prenomInfo }} </span>
+							<InlineMessage v-if="prenomInfo" severity="error"
+								>{{ prenomInfo }}
+							</InlineMessage>
 						</p>
 					</div>
 					<div class="p-col p-py-0">
@@ -33,7 +41,9 @@
 								@keyup="checkData"
 								v-model="nom"
 							/><label for="lastname">Nom</label
-							><span style="background-color:pink;">{{ nomInfo }} </span>
+							><InlineMessage v-if="nomInfo" severity="error"
+								>{{ nomInfo }}
+							</InlineMessage>
 						</p>
 					</div>
 					<div class="p-col p-py-0">
@@ -45,9 +55,9 @@
 								@keyup="checkData"
 								v-model="email"
 							/><label for="email">Email</label>
-							<span v-if="creat" style="background-color:pink;"
+							<InlineMessage v-if="creat && emailInfo" severity="error"
 								>{{ emailInfo }}
-							</span>
+							</InlineMessage>
 						</p>
 					</div>
 					<div class="p-col p-as-center p-py-0">
@@ -59,7 +69,9 @@
 								@keyup="checkData"
 								v-model="service"
 							/><label for="service">Service</label
-							><span style="background-color:pink;">{{ serviceInfo }} </span>
+							><InlineMessage v-if="serviceInfo" severity="error"
+								>{{ serviceInfo }}
+							</InlineMessage>
 						</p>
 					</div>
 					<div class="p-col p-as-center p-py-0">
@@ -72,16 +84,20 @@
 								v-model="password"
 							/><label for="password">Mot de passe</label
 							><Button
-								class="p-mx-1 p-px-auto p-button-raised p-button-help p-button-text"
+								class="p-mx-1 p-px-auto p-button-outlined p-button-help p-button-text "
 								@click="visibility"
 								:icon="hide"
 							>
 							</Button
-							><span v-if="mod || creat" style="background-color:pink;"
-								>{{ passwordInfo }}
-							</span>
-							<span style="color:red;" v-if="mod"
-								>Saisir un autre mot de passe, modifiera votre mot de passe.</span
+							><InlineMessage
+								v-if="(mod && passwordInfo) || (creat && passwordInfo)"
+								severity="error"
+							>
+								{{ passwordInfo }}
+							</InlineMessage>
+							<InlineMessage class="p-mx-1" v-if="mod" severity="info"
+								>Saisir un autre mot de passe, modifiera votre mot de
+								passe.</InlineMessage
 							>
 						</p>
 					</div>
@@ -92,7 +108,7 @@
 								id="description"
 								type="text"
 								v-model="description"
-							/><label for="description">Description (optionnel)</label>
+							/><label for="description">Description</label>
 						</p>
 					</div>
 					<div class="p-col p-as-center p-py-0">
@@ -110,7 +126,9 @@
 						><img style="width:200px;" :src="photo" alt="photo utilisateur" />
 					</div>
 					<div class="p-col p-as-center p-py-0" v-if="photo === null && mod">
-						Vous n'avez pas de photo actuellement.
+						<InlineMessage severity="info"
+							>Vous n'avez pas de photo actuellement.</InlineMessage
+						>
 					</div>
 					<div class="p-col p-as-center p-py-0">
 						<Button
@@ -131,27 +149,22 @@
 						<Button
 							label="Modifier mon compte"
 							class="p-m-2"
-							v-if="isLoggedIn && !mod && !sup"
-							v-on:click="demandModifUser"
+							v-if="isLoggedIn && !mod"
+							@click="demandModifUser"
 						/>
+
+						<ConfirmPopup></ConfirmPopup>
 						<Button
 							label="Supprimer mon compte"
 							class="p-m-2"
-							v-if="isLoggedIn && !mod && !sup"
-							v-on:click="demandDeleteUser"
-						/>
-
-						<Button
-							label="Confirmer la suppression de mon compte"
-							style="color:red;"
-							v-if="sup"
-							v-on:click="deleteUser"
+							v-if="isLoggedIn && !mod"
+							@click="demandDeleteUser($event)"
 						/>
 					</div>
 					<div class="p-col p-as-center p-py-0">
 						<p v-if="!isLoggedIn && !creat" style="color:blue;">
 							Pas encore de compte ?
-							<Button label="Créer un compte" v-on:click="wantCreate" />
+							<Button label="Créer un compte" @click="wantCreate" />
 						</p>
 					</div>
 				</div>
@@ -173,6 +186,7 @@ export default {
 	data() {
 		return {
 			theInfo: "",
+			severity: "info",
 			prenom: "",
 			nom: "",
 			email: "",
@@ -183,7 +197,6 @@ export default {
 			image: null,
 			creat: false, //phase user creation
 			mod: false, //phase modification user
-			sup: false, //phase delete user
 			indexDel: "",
 			// password: "",
 			type: "password",
@@ -339,7 +352,6 @@ export default {
 		},
 		createUser: function() {
 			console.log("g bien recu la requete!");
-			this.theInfo = "Fonction lancée !!";
 			const formData = new FormData();
 			formData.append("image", this.$data.image);
 			formData.append("prenom", this.$data.prenom);
@@ -356,7 +368,10 @@ export default {
 					this.setUserId(userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
+					this.$store.commit("setLogIn");
+
 					this.theInfo = "Compte créé !!";
+					this.severity = "success";
 					this.creat = false;
 					console.log("currentUserId = " + resp.data.userId);
 				})
@@ -364,6 +379,7 @@ export default {
 					console.log(err);
 					this.theInfo =
 						"Votre compte n'a pas pu être créé. Merci de corriger les paramètres demandés dans le formulaire.";
+					this.severity = "error";
 				});
 		},
 
@@ -397,8 +413,10 @@ export default {
 				.catch((err) => {
 					if (err.response.data === "Password not OK") {
 						this.theInfo = "Mot de passe incorrect !! !!";
+						this.severity = "error";
 					} else if (err.response.data === "Email not OK") {
 						this.theInfo = "Email incorrect !!";
+						this.severity = "error";
 					}
 					console.log(err);
 				});
@@ -471,11 +489,13 @@ export default {
 						console.log(resp);
 						this.mod = false;
 						this.theInfo = "Vos modifications ont été prises en compte";
+						this.severity = "success";
 					})
 					.catch((err) => {
 						console.log(err.response.data);
 						if (err.response.data === "notEmpty") {
 							this.theInfo = "Les champs non optionnels doivent être remplis.";
+							this.severity = "info";
 						} else {
 							const issues = err.response.data;
 							for (let n in issues) {
@@ -486,14 +506,24 @@ export default {
 								"Ces conditions pour le mot de passe ne sont pas respectées : " +
 								this.notStrong +
 								".";
+							this.severity = "error";
 						}
 					});
 			}
 		},
 		//* DELETE a USER
-		demandDeleteUser: function() {
-			this.sup = true;
-			this.theInfo = "Êtes vous sûre de vouloir supprimer votre compte ?";
+		demandDeleteUser: function(event) {
+			this.$confirm.require({
+				target: event.currentTarget,
+				message: "Êtes vous sûre de vouloir supprimer votre compte ?",
+				icon: "pi pi-exclamation-triangle",
+				accept: () => {
+					this.deleteUser();
+				},
+				reject: () => {
+					this.hom = false;
+				},
+			});
 		},
 		deleteUser: function() {
 			this.$store.commit("setLogIn");
@@ -510,8 +540,8 @@ export default {
 				})
 					.then((resp) => {
 						console.log(resp);
-						this.sup = false;
 						this.theInfo = "Votre compte a été supprimé !";
+						this.severity = "success";
 						this.hom = false;
 						this.$store.state.userId = null;
 						this.$store.state.token = null;

@@ -45,11 +45,11 @@ DELETE http://localhost:3001/api/auth/delete/25
 ### create a publication ###
 POST http://localhost:3001/api/pub/create/64
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY0LCJpYXQiOjE2MTEzMjUwMjUsImV4cCI6MTYxMTMyODYyNX0.9Gi7t_UqsB9hjy2kDKmN9bqAQ8lnn4RFictSYxHxa5s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY0LCJpc0FkbWluIjowLCJpYXQiOjE2MTE4NDQ2OTQsImV4cCI6MTYxMTg0ODI5NH0.QeFVX3uxIbnAJFJqNVHH07glNdNdAMOvmxS7HtyXMcA
 
 {
-    "titre": "3e Essai à partir de REST client",
-    "texte_pub": "avec user 64 et token de 15h17, il est 16h26."
+    "titre": "essai 21",
+    "texte_pub": ""
 }
 ######
 POST http://localhost:3001/api/pub/

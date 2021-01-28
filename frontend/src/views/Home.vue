@@ -2,7 +2,7 @@
 	<div class="home">
 		<h1>Bienvenue sur votre Réseau Social Entreprise</h1>
 		<p>{{ this.$store.state.infoHome }}</p>
-		<img alt="Groupomania logo" src="../assets/iconGroupo.png" />
+		<img alt="Groupomania logo" src="../assets/iconGroupo.png" style="width:30rem;" />
 	</div>
 </template>
 

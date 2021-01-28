@@ -1,38 +1,47 @@
 <template>
 	<div>
 		<h1>{{ theInfo }}</h1>
+
 		<!-- loop to display all publications -->
 		<div v-for="pub in publica" :key="pub.index" class=" p-grid vertical-container  ">
 			<div class="p-mx-auto ">
-				<div class=" p-card p-shadow-6 p-col  p-p-5 p-m-2 " style="width:40rem;">
-					<Author :item="pub" v-if="comLike" />
-					<h2 class="p-card-title ">{{ pub.titre }}</h2>
-					<div class="p-card-content">
+				<div class=" p-card p-shadow-6 p-col p-grid p-p-5 p-m-2 " style="width:40rem;">
+					<Author class="p-col-10 p-offset-1" :item="pub" v-if="comLike" />
+					<h2 class="p-card-title p-col-10 p-offset-1 ">
+						{{ pub.titre }}
+					</h2>
+					<div class="p-card-content p-col-10 p-offset-1 ">
 						<p class="p-text-justify">{{ pub.contenu }}</p>
 						<img
 							v-if="pub.photo != null"
 							:src="pub.photo"
 							alt="publication picture"
-							style="width:30rem;"
+							style="max-width:40rem;max-height:40rem;"
 							title="pub-img"
 						/>
-						<Like :pub="pub" v-if="comLike" />
-						<Comment :pub="pub" v-if="comLike" />
 					</div>
-					<div class="p-card-footer">
+					<div class="p-card-footer p-col-10 p-offset-1  ">
+						<div class="p-grid">
+							<!-- <div class=" "> -->
+							<Like class=" p-col-1" :pub="pub" v-if="comLike" />
+							<!-- </div> -->
+							<Comment class="p-col " :pub="pub" v-if="comLike" />
+						</div>
+
+						<ConfirmPopup></ConfirmPopup>
 						<Button
 							label="Supprimer cette publication"
 							class="p-button-danger p-button-raised p-button-text"
 							v-if="seeDel"
-							v-on:click="deletePub(pub)"
+							@click="deletePub($event, pub)"
 						/>
 
-						<Button
+						<!-- <Button
 							label="Confirmer la suppression"
 							v-if="confDel"
 							style="color:red;"
 							v-on:click="confDeletePub"
-						/>
+						/> -->
 					</div>
 				</div>
 			</div>
@@ -57,43 +66,26 @@
 			v-if="mine && isLoggedIn"
 			v-on:click="seeMinePublications"
 		/>
-	</div>
-	<!-- <div>
-		<h1>{{ theInfo }}</h1>
-	 <div>
-			<div v-for="pub in publica" :key="pub.index">
-				<Author :item="pub" v-if="comLike" />
-				<h2>{{ pub.titre }}</h2>
-				<p>{{ pub.contenu }}</p>
-				<img
-					v-if="pub.photo != null"
-					:src="pub.photo"
-					alt="publication picture"
-					title="pub-img"
-				/>
-				<Like :pub="pub" v-if="comLike" />
-				<Comment :pub="pub" v-if="comLike" />
-				<button style="color:red;" v-if="seeDel" v-on:click="deletePub(pub)">
-					Supprimer cette publication
-				</button>
-				<p>***********************</p>
+		<div class="p-grid p-jc-center p-my-3">
+			<div class=" p-col-2 p-toast ">
+				<div class="">
+					<div
+						class="p-shadow-3 p-py-1 p-grid p-jc-between p-text-left"
+						style="background-color:green;color:white;"
+						v-if="infoDelete"
+					>
+						<div class="p-col-11">
+							<i class="pi pi-check"></i>
+							<span> Votre publication a été supprimée.</span>
+						</div>
+						<div class="p-col-1">
+							<i @click="closeInfo" class="pi pi-times-circle"></i>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-		<div>
-			<button v-if="confDel" style="color:red;" v-on:click="confDeletePub">
-				Confirmer la suppression
-			</button>
-		</div>
-		<button v-if="seePub" v-on:click="backToPublications">
-			Revenir sur les publications
-		</button>
-
-		<button v-if="more" v-on:click="seeMorePublications">Voir plus de publications</button>
-
-		<button v-if="mine && isLoggedIn" v-on:click="seeMinePublications">
-			Voir vos publications
-		</button>
-	</div> -->
+	</div>
 </template>
 
 <script>
@@ -126,11 +118,13 @@ export default {
 			seeDel: false,
 			photo: "",
 			comLike: true,
+			infoDelete: false,
 		};
 	},
 	created: function() {
 		this.qtyMore = 0;
 		this.seePublications();
+		this.infoDelete = false;
 	},
 	computed: {
 		...mapState({ token: "token" }, { userId: "userId" }),
@@ -214,13 +208,14 @@ export default {
 		},
 		//* SELECT my PUBLICATIONS
 		seeMinePublications: function() {
+			this.infoDelete = false;
 			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
 				this.mine = false;
 				this.more = false;
-				this.theInfo = "Vos publications GroupoRéseauMania !";
+				this.theInfo = "Vos publications du Réseau Social Groupomania";
 				this.publica = [];
 				this.seePub = true;
 				this.del = false;
@@ -276,28 +271,47 @@ export default {
 			}
 		},
 		//* DELETE a PUBLICATION
-		deletePub: function(pub) {
+		deletePub: function(event, pub) {
 			console.log("indexPub =" + pub.index);
-			this.theInfo =
-				"Attention, cette suppression supprimera aussi les commentaires liés à cette publication.";
-			this.seePub = false;
-			this.more = false;
-			this.mine = false;
-
-			this.publica = [];
-			this.publica.push({
-				index: pub.index,
-				titre: pub.titre,
-				contenu: pub.contenu,
-				photo: pub.photo,
-			});
-
+			// this.publicaSup.push({
+			// 	index: pub.index,
+			// 	titre: pub.titre,
+			// 	contenu: pub.contenu,
+			// 	photo: pub.photo,
+			// });
+			// console.log("target =" + event.currentTarget);
+			// console.log(event.currentTarget);
 			this.indexDel = pub.index;
-			this.confDel = true;
-			this.comLike = false;
-			this.seeDel = false;
+			this.$confirm.require({
+				target: event.currentTarget,
+				message:
+					"Attention, cette suppression supprimera aussi les commentaires liés à cette publication.",
+				icon: "pi pi-exclamation-triangle",
+				accept: () => {
+					this.confDeletePub(pub);
+				},
+				reject: () => {},
+			});
+			// this.theInfo =
+			// 	"Attention, cette suppression supprimera aussi les commentaires liés à cette publication.";
+			// this.seePub = false;
+			// this.more = false;
+			// this.mine = false;
+
+			// this.publica = [];
+			// this.publica.push({
+			// 	index: pub.index,
+			// 	titre: pub.titre,
+			// 	contenu: pub.contenu,
+			// 	photo: pub.photo,
+			// });
+
+			// this.indexDel = pub.index;
+			// this.confDel = true;
+			// this.comLike = false;
+			// this.seeDel = false;
 		},
-		confDeletePub: function() {
+		confDeletePub: function(pub) {
 			this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
@@ -314,14 +328,25 @@ export default {
 					},
 				})
 					.then((resp) => {
-						this.theInfo = "Votre publication a été supprimée.";
+						// this.theInfo = "Votre publication a été supprimée.";
 						this.confDel = false;
 						this.seePub = true;
 						this.mine = true;
+						this.publica = [];
+						this.infoDelete = true;
 					})
 					.catch((err) => console.log(err));
 			}
 		},
+		//* Close toast information publication deleted
+		closeInfo: function() {
+			this.infoDelete = false;
+		},
 	},
 };
 </script>
+<style>
+.p-card {
+	background-color: beige;
+}
+</style>

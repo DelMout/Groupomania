@@ -1,24 +1,40 @@
 <template>
 	<div>
-		<a v-on:click="seeComment(pub)" style="text-decoration:underline;">
-			<p v-if="pub.comm > 1">{{ pub.comm }} commentaires</p>
-			<p v-else>{{ pub.comm }} commentaire</p>
-		</a>
-		<div v-for="com in allComments" :key="com">
-			<Author :item="com" />
-			<p>{{ com.texte }}</p>
-			<p>----------------------</p>
+		<div class="p-grid">
+			<a
+				class="p-col p-text-right"
+				@click="seeComment(pub)"
+				style="text-decoration:underline;"
+			>
+				<p v-if="pub.comm > 1">{{ pub.comm }} commentaires</p>
+				<p v-else>{{ pub.comm }} commentaire</p>
+			</a>
 		</div>
-		<div>
-			<p v-if="seeComm">
-				Votre commentaire : <InputText type="text" v-model="commentUser" /><Button
-					label=">>"
-					class="p-m-1"
-					@click="createComm"
-				/>
-			</p>
+		<div class=" p-pb-1 p-my-3" v-for="com in allComments" :key="com">
+			<div class="p-grid ">
+				<div class="p-col-11 ">
+					<Author class="" :item="com" />
+				</div>
+			</div>
+			<div class="p-grid ">
+				<div class="p-col-11">
+					<p class="p-text-justify p-my-0">
+						{{ com.texte }}
+					</p>
+				</div>
+			</div>
 		</div>
-		<div>
+		<div v-if="seeComm" class="p-grid p-ai-end vertical-container">
+			<div class="p-col-11 p-as-start p-float-label p-text-left">
+				<Textarea v-model="commentUser" :autoResize="true" rows="3" cols="40" />
+
+				<label>Votre commentaire</label>
+			</div>
+			<div class="p-col-1">
+				<Button icon="pi pi-angle-double-right" class="p-m-1" @click="createComm" />
+			</div>
+		</div>
+		<div class="p-grid">
 			<Message v-if="noConnected" severity="warn" :life="5000" :sticky="false"
 				>Vous devez être connecté.e pour écrire un commentaire.</Message
 			>

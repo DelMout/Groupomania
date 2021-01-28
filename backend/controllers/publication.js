@@ -33,8 +33,8 @@ exports.createPub = (req, res) => {
 			res.send(pub);
 		})
 		.catch((err) => {
-			res.send(err);
-			// res.status(401).send(err.errors[0].validatorKey);
+			// res.send(err);
+			res.status(401).send(err.errors[0].validatorKey);
 		});
 };
 
