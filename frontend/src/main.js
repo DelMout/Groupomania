@@ -16,7 +16,7 @@ import ConfirmPopup from "primevue/confirmpopup";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import Textarea from "primevue/textarea";
-import FileUpload from "primevue/fileupload";
+import TabMenu from "primevue/tabmenu";
 
 import "primevue/resources/themes/mdc-light-deeppurple/theme.css"; //theme
 import "primevue/resources/primevue.min.css"; //core css
@@ -36,7 +36,7 @@ createApp(App)
 	.component("ConfirmPopup", ConfirmPopup)
 	.component("Toast", Toast)
 	.component("Textarea", Textarea)
-	.component("FileUpload", FileUpload)
+	.component("TabMenu", TabMenu)
 	.use(store)
 	.use(router)
 	.mount("#app");

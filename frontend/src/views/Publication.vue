@@ -1,12 +1,31 @@
 <template>
 	<div>
 		<h1>{{ theInfo }}</h1>
+		<div class="p-grid p-jc-center p-mb-6">
+			<div class=" p-col-2 p-toast ">
+				<div class="">
+					<div
+						class="p-shadow-3 p-py-1 p-grid p-jc-between p-text-left"
+						style="background-color:green;color:white;"
+						v-if="infoDelete"
+					>
+						<div class="p-col-11">
+							<i class="pi pi-check"></i>
+							<span> Votre publication a été supprimée.</span>
+						</div>
+						<div class="p-col-1">
+							<i @click="closeInfo" class="pi pi-times-circle"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<!-- loop to display all publications -->
-		<div v-for="pub in publica" :key="pub.index" class=" p-grid vertical-container  ">
+		<div v-for="pub in publica" :key="pub.index" class=" p-grid vertical-container p-mt-3 ">
 			<div class="p-mx-auto ">
 				<div class=" p-card p-shadow-6 p-col p-grid p-p-5 p-m-2 " style="width:40rem;">
-					<Author class="p-col-10 p-offset-1" :item="pub" v-if="comLike" />
+					<Author class="p-col-10 p-offset-1" :item="pub" />
 					<h2 class="p-card-title p-col-10 p-offset-1 ">
 						{{ pub.titre }}
 					</h2>
@@ -23,9 +42,9 @@
 					<div class="p-card-footer p-col-10 p-offset-1  ">
 						<div class="p-grid">
 							<!-- <div class=" "> -->
-							<Like class=" p-col-1" :pub="pub" v-if="comLike" />
+							<Like class=" p-col-1" :pub="pub" />
 							<!-- </div> -->
-							<Comment class="p-col " :pub="pub" v-if="comLike" />
+							<Comment class="p-col " :pub="pub" />
 						</div>
 
 						<ConfirmPopup></ConfirmPopup>
@@ -66,25 +85,6 @@
 			v-if="mine && isLoggedIn"
 			v-on:click="seeMinePublications"
 		/>
-		<div class="p-grid p-jc-center p-my-3">
-			<div class=" p-col-2 p-toast ">
-				<div class="">
-					<div
-						class="p-shadow-3 p-py-1 p-grid p-jc-between p-text-left"
-						style="background-color:green;color:white;"
-						v-if="infoDelete"
-					>
-						<div class="p-col-11">
-							<i class="pi pi-check"></i>
-							<span> Votre publication a été supprimée.</span>
-						</div>
-						<div class="p-col-1">
-							<i @click="closeInfo" class="pi pi-times-circle"></i>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 </template>
 
@@ -117,7 +117,6 @@ export default {
 			confDel: false,
 			seeDel: false,
 			photo: "",
-			comLike: true,
 			infoDelete: false,
 		};
 	},
@@ -146,7 +145,6 @@ export default {
 			this.qtyMore = 0;
 			this.mine = true;
 			this.seePublications();
-			this.comLike = true;
 			this.theInfo = "Les publications GroupoRéseauMania";
 			this.seeDel = false;
 		},
@@ -163,7 +161,6 @@ export default {
 				.then((resp) => {
 					console.log(resp);
 					console.log(resp.data);
-					console.log('titre 0 " : ' + resp.data[0].titre);
 					this.qtyPub = resp.data.length;
 					if (resp.data.length > parseInt(1 + 1 * this.qtyMore)) {
 						//! A modifier le '1' en 10
@@ -220,7 +217,6 @@ export default {
 				this.seePub = true;
 				this.del = false;
 				this.seeDel = true;
-				this.comLike = true;
 				console.log("this.userid =" + this.$store.state.userId);
 
 				axios({
@@ -333,6 +329,7 @@ export default {
 						this.seePub = true;
 						this.mine = true;
 						this.publica = [];
+						this.seeMinePublications();
 						this.infoDelete = true;
 					})
 					.catch((err) => console.log(err));

@@ -9,6 +9,8 @@ export default createStore({
 		isAdmin: 0,
 		infoHome: "",
 		isLoggedIn: false,
+		dateEXP: "",
+		dateNOW: "",
 	},
 	mutations: {
 		setUserId(state, userId) {
@@ -34,9 +36,9 @@ export default createStore({
 				state.isLoggedIn = false;
 			} else {
 				const decoded = jwt_decode(state.token);
-				const dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
-				const dateNOW = moment().format("DD MM YYYY k:mm:ss");
-				state.isLoggedIn = dateEXP > dateNOW;
+				state.dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
+				state.dateNOW = moment().format("DD MM YYYY k:mm:ss");
+				state.isLoggedIn = state.dateEXP > state.dateNOW;
 				if (!state.isLoggedIn) {
 					state.infoHome = "Votre session a expiré.";
 				}

@@ -2,36 +2,54 @@
 	<div>
 		<div>
 			<p>Recherche de publications par mot (dans le titre ou le contenu).</p>
-
-			<p>
-				Mot recherché : <input type="text" v-model="wordReq" /><button
-					style="color:green;"
-					@click="findByWord"
-				>
-					Valider la recherche
-				</button>
-			</p>
-			<p>Nombre de publications trouvées : {{ this.qtyPubs }}.</p>
-			<p>-- -- -- -- -- -- --</p>
-			<p>{{ this.infoPub }}</p>
+			<div class="p-grid p-jc-center">
+				<div class=" p-grid">
+					<div class="p-m-3 p-col-5 p-float-label">
+						<InputText id="word" type="text" v-model="wordReq" /><label for="word">
+							Mot recherché</label
+						>
+					</div>
+					<div class="p-m-3 p-col-5">
+						<Button label="Valider la recherche" @click="findByWord" />
+					</div>
+				</div>
+			</div>
+			<div>Nombre de publications trouvées : {{ qtyPubs }}</div>
+			<div class="p-grid p-jc-center p-mt-3">
+				<Message v-if="infoPub" severity="info">{{ infoPub }}</Message>
+			</div>
 		</div>
-		<div v-for="pub in pubs" :key="pub.index">
-			<Author :item="pub" />
-			<p>Titre : {{ pub.titre }}</p>
-			<p>Contenu : {{ pub.contenu }}</p>
-			<img v-if="pub.photo" style="width:100px;" :src="pub.photo" alt="publication image" />
-			<p>{{ pub.info }}</p>
-			<button v-if="pub.demandDelete === 1" style="color:red;" @click="deletePub(pub)">
-				Supprimer la publication
-			</button>
-			<p v-if="pub.demandDelete === 2" style="color:red;">
-				Attention, la suppression de cette publication supprimera aussi les commentaires
-				liés à cette publication.
-			</p>
-			<button v-if="pub.demandDelete === 2" style="color:red;" @click="confDeletePub(pub)">
-				CONFIRMER la SUPPRESSION de la publication.
-			</button>
-			<p>***** ***** *****</p>
+
+		<div v-for="pub in pubs" :key="pub.index" class=" p-grid vertical-container p-mt-3 ">
+			<div class="p-mx-auto ">
+				<div class=" p-card p-shadow-6 p-col p-grid p-p-5 p-m-2 " style="width:40rem;">
+					<Author class="p-col-10 p-offset-1" :item="pub" />
+					<h2 class="p-card-title p-col-10 p-offset-1 ">
+						{{ pub.titre }}
+					</h2>
+					<div class="p-card-content p-col-10 p-offset-1 ">
+						<p class="p-text-justify">{{ pub.contenu }}</p>
+						<img
+							v-if="pub.photo != null"
+							:src="pub.photo"
+							alt="publication picture"
+							style="max-width:40rem;max-height:40rem;"
+							title="pub-img"
+						/>
+					</div>
+					<div class="p-card-footer p-col-10 p-offset-1  ">
+						<Message v-if="pub.info" severity="success">{{ pub.info }}</Message>
+
+						<ConfirmPopup></ConfirmPopup>
+						<Button
+							label="Supprimer cette publication"
+							class="p-button-danger p-button-raised p-button-text"
+							v-if="pub.demandDelete"
+							@click="deletePub($event, pub)"
+						/>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -57,7 +75,6 @@ export default {
 		isLoggedIn() {
 			return this.$store.state.isLoggedIn;
 		},
-		// ...mapGetters(["isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
@@ -68,6 +85,8 @@ export default {
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
+				this.infoPub = "";
+				this.qtyPubs = "";
 				this.pubs = [];
 				axios({
 					method: "get",
@@ -86,8 +105,7 @@ export default {
 								userId: resp.data[i].userId,
 								photo: resp.data[i].photo,
 								date: resp.data[i].date_crea_pub,
-								// date: moment(resp.data.date_crea_pub).format("DD/MM/YYYY"),
-								demandDelete: 1,
+								demandDelete: true,
 								info: "",
 							});
 						}
@@ -99,9 +117,19 @@ export default {
 			}
 		},
 		//* DELETE a PUBLICATION
-		deletePub: function(pub) {
-			pub.demandDelete = 2;
+		deletePub(event, pub) {
 			console.log(pub.index);
+			this.indexDel = pub.index;
+			this.$confirm.require({
+				target: event.currentTarget,
+				message:
+					"Attention, cette suppression supprimera aussi les commentaires liés à cette publication.",
+				icon: "pi pi-exclamation-triangle",
+				accept: () => {
+					this.confDeletePub(pub);
+				},
+				reject: () => {},
+			});
 		},
 		confDeletePub: function(pub) {
 			this.$store.commit("setLogIn");
@@ -117,7 +145,7 @@ export default {
 				})
 					.then((resp) => {
 						pub.info = "Cette publication vient d'être supprimée.";
-						pub.demandDelete = 0;
+						pub.demandDelete = false;
 					})
 					.catch((err) => {
 						console.log(err);

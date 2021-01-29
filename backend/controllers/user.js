@@ -203,6 +203,20 @@ exports.ident = (req, res) => {
 };
 
 // * Find user by email
+// exports.findUser = (req, res) => {
+// 	const findUser = await user.findOne({ where: { email: req.params.email } });
+// 	if(findUser){
+// 		async user.findOne({ where: { email: req.params.email } })
+// 		.then((resp) => {
+// 			res.send(resp);
+// 		})
+// 		.catch((err) => {
+// 			res.send(err);
+// 		});
+// 	}	else{
+// 		res.statsus(404).send("no user found");
+// 	}
+// };
 exports.findUser = (req, res) => {
 	user.findOne({ where: { email: req.params.email } })
 		.then((resp) => {

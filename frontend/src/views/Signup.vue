@@ -9,16 +9,16 @@
 			<Button label="Greet"></Button> -->
 
 			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
-			<div class="p-grid">
-				<div class="p-col-6 p-offset-3">
+			<div class="p-grid p-jc-center">
+				<div class="p-col-4">
 					<Message v-if="theInfo" :severity="severity" :life="7000" :sticky="false">{{
 						theInfo
 					}}</Message>
 				</div>
 			</div>
 			<div class="p-grid vertical-container p-text-left ">
-				<div class="p-input-filled  p-mx-auto" enctype="multipart/form-data">
-					<div class="p-col  p-py-0">
+				<div class="p-col p-input-filled  " enctype="multipart/form-data">
+					<div class="p-col p-as-start p-offset-2  p-py-0">
 						<p class="   p-float-label" v-if="mod || creat">
 							<InputText
 								class="p-mx-1"
@@ -32,7 +32,7 @@
 							</InlineMessage>
 						</p>
 					</div>
-					<div class="p-col p-py-0">
+					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<p class=" p-float-label" v-if="mod || creat">
 							<InputText
 								class="p-mx-1"
@@ -46,7 +46,7 @@
 							</InlineMessage>
 						</p>
 					</div>
-					<div class="p-col p-py-0">
+					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<p class="p-float-label" v-if="!isLoggedIn || creat">
 							<InputText
 								class="p-mx-1"
@@ -60,7 +60,7 @@
 							</InlineMessage>
 						</p>
 					</div>
-					<div class="p-col p-as-center p-py-0">
+					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<p class="p-float-label" v-if="mod || creat">
 							<InputText
 								class="p-mx-1"
@@ -74,7 +74,7 @@
 							</InlineMessage>
 						</p>
 					</div>
-					<div class="p-col p-as-center p-py-0">
+					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<p class="p-float-label" v-if="!isLoggedIn || mod || creat">
 							<InputText
 								class="p-mx-1"
@@ -95,13 +95,25 @@
 							>
 								{{ passwordInfo }}
 							</InlineMessage>
+							<InlineMessage v-if="(mod && min) || (creat && min)" severity="error">
+								{{ min }}
+							</InlineMessage>
+							<InlineMessage v-if="(mod && up) || (creat && up)" severity="error">
+								{{ up }}
+							</InlineMessage>
+							<InlineMessage v-if="(mod && low) || (creat && low)" severity="error">
+								{{ low }}
+							</InlineMessage>
+							<InlineMessage v-if="(mod && num) || (creat && num)" severity="error">
+								{{ num }}
+							</InlineMessage>
 							<InlineMessage class="p-mx-1" v-if="mod" severity="info"
 								>Saisir un autre mot de passe, modifiera votre mot de
 								passe.</InlineMessage
 							>
 						</p>
 					</div>
-					<div class="p-col p-as-center p-py-0">
+					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<p class="p-float-label" v-if="mod || creat">
 							<InputText
 								class="p-mx-1"
@@ -111,7 +123,7 @@
 							/><label for="description">Description</label>
 						</p>
 					</div>
-					<div class="p-col p-as-center p-py-0">
+					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<p v-if="mod || creat">
 							Photo (optionnel) :<input
 								type="file"
@@ -121,52 +133,54 @@
 						</p>
 					</div>
 
-					<div class="p-col p-as-center p-py-0" v-if="photo != null && mod">
+					<div class="p-col p-as-start p-offset-2 p-py-0" v-if="photo != null && mod">
 						<span>Votre photo actuelle : </span
 						><img style="width:200px;" :src="photo" alt="photo utilisateur" />
 					</div>
-					<div class="p-col p-as-center p-py-0" v-if="photo === null && mod">
+					<div class="p-col p-as-start p-offset-2 p-py-0" v-if="photo === null && mod">
 						<InlineMessage severity="info"
 							>Vous n'avez pas de photo actuellement.</InlineMessage
 						>
 					</div>
-					<div class="p-col p-as-center p-py-0">
+					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<Button
 							label="Entrer dans le réseau social Groupomania !"
 							v-if="!isLoggedIn && !creat"
-							v-on:click="loginUser"
+							@click="loginUser"
 						/>
 					</div>
-					<div class="p-col p-fluid p-as-center p-py-0 ">
+					<div class="p-col p-as-start p-offset-2 p-py-0 ">
 						<Button label="Valider" v-if="creat" v-on:click="createUser" /><br />
 					</div>
-					<div class="p-col p-as-center p-py-0">
-						<Button
-							label="Valider les modifications"
-							v-if="mod"
-							v-on:click="modifUser"
-						/><br />
-						<Button
-							label="Modifier mon compte"
-							class="p-m-2"
-							v-if="isLoggedIn && !mod"
-							@click="demandModifUser"
-						/>
+				</div>
+			</div>
+			<div class="p-grid p-jc-center">
+				<div class="p-col-12 p-py-0">
+					<Button
+						label="Valider les modifications"
+						v-if="mod"
+						v-on:click="modifUser"
+					/><br />
+					<Button
+						label="Modifier mon compte"
+						class="p-m-2"
+						v-if="isLoggedIn && !mod"
+						@click="demandModifUser"
+					/>
 
-						<ConfirmPopup></ConfirmPopup>
-						<Button
-							label="Supprimer mon compte"
-							class="p-m-2"
-							v-if="isLoggedIn && !mod"
-							@click="demandDeleteUser($event)"
-						/>
-					</div>
-					<div class="p-col p-as-center p-py-0">
-						<p v-if="!isLoggedIn && !creat" style="color:blue;">
-							Pas encore de compte ?
-							<Button label="Créer un compte" @click="wantCreate" />
-						</p>
-					</div>
+					<ConfirmPopup></ConfirmPopup>
+					<Button
+						label="Supprimer mon compte"
+						class="p-m-2"
+						v-if="isLoggedIn && !mod"
+						@click="demandDeleteUser($event)"
+					/>
+				</div>
+				<div class="p-offset-5 p-py-0">
+					<p v-if="!isLoggedIn && !creat" style="color:blue;">
+						<span class="p-mx-3">Pas encore de compte ?</span>
+						<Button label="Créer un compte" @click="wantCreate" />
+					</p>
 				</div>
 			</div>
 		</div>
@@ -174,7 +188,6 @@
 </template>
 
 <script>
-// import { FileUpload } from "v-file-upload"; //! a retirer
 import moment from "moment"; //! Pour essais sur dates, à retirer par la suite !
 
 import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
@@ -302,27 +315,27 @@ export default {
 				let passwordLow = /[a-z]/.test(this.password);
 				let passwordNum = /[0-9]/.test(this.password);
 				if (passwordMin === false) {
-					this.min = "10 caractères minimum |";
+					this.min = "10 caractères minimum";
 				} else {
 					this.min = "";
 				}
 
 				if (passwordUp === false) {
-					this.up = " 1 majuscule requise |";
+					this.up = "1 majuscule requise";
 				} else {
 					this.up = "";
 				}
 				if (passwordLow === false) {
-					this.low = " 1 minuscule requise |";
+					this.low = "1 minuscule requise";
 				} else {
 					this.low = "";
 				}
 				if (passwordNum === false) {
-					this.num = " 1 chiffre requis ";
+					this.num = "1 chiffre requis";
 				} else {
 					this.num = "";
 				}
-				this.passwordInfo = this.min + this.up + this.low + this.num;
+				this.passwordInfo = "";
 			} else if (this.password === "") {
 				this.passwordInfo = "Merci de renseigner ce champ";
 			}
@@ -400,13 +413,16 @@ export default {
 					);
 					console.log(dateEXP);
 					console.log(token);
-
+					console.log(moment().format("DD MM YYYY k:mm:ss"));
+					console.log("valeur =" + dateEXP > moment().format("DD MM YYYY k:mm:ss"));
 					this.setUserId(userId);
 					console.log("userid = " + this.$store.state.userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
 					this.$store.commit("setLogIn");
-
+					console.log("store.token =" + this.$store.state.token);
+					console.log("state exp =" + this.$store.state.dateEXP);
+					console.log("state now =" + this.$store.state.dateNOW);
 					console.log("isLoggedIn = " + this.isLoggedIn);
 					this.$router.push("http://localhost:8080/publi");
 				})

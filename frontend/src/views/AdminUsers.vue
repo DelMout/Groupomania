@@ -5,28 +5,38 @@
 
 		<Button class="p-m-2" label="Voir tous les comptes" @click="seeAllUsers" />
 
-		<div v-if="findUser">
-			<p>
-				Email recherché : <InputText type="text" v-model="emailReq" /><Button
-					label="Valider la recherche"
-					@click="findByEmail"
-				/>
-			</p>
-			<p>{{ infoFind }}</p>
+		<div v-if="findUser" class="p-grid p-jc-center">
+			<div class=" p-grid">
+				<div class="p-m-3 p-col-5 p-float-label">
+					<InputText id="email" type="text" v-model="emailReq" /><label for="email">
+						Email recherché</label
+					>
+				</div>
+				<div class="p-m-3 p-col-5">
+					<Button label="Valider la recherche" @click="findByEmail" />
+				</div>
+			</div>
 		</div>
-
+		<div class="p-grid p-jc-center">
+			<Message v-if="noFound" severity="info"
+				>Cet email ne correspond à aucun compte.</Message
+			>
+		</div>
 		<div class="p-grid vertical-container" v-for="user in users" :key="user.index">
-			<div class="p-mx-auto">
+			<div class="p-mx-auto p-mt-3">
 				<div class="p-card p-shadow-6   p-p-5 p-m-2" style="width:25rem;">
 					<div class="p-card-content p-text-left">
-						<i>Dernière connexion : {{ user.last_connect }}</i>
+						<i
+							><span class="intitut">Dernière connexion : </span
+							>{{ user.last_connect }}</i
+						>
 						<p>
-							<span class="attribut"> Utilisateur : </span>{{ user.nom }}
+							<span class="intitut"> Utilisateur : </span>{{ user.nom }}
 							{{ user.prenom }}
 						</p>
-						<p>Email : {{ user.email }}</p>
-						<p>Service : {{ user.service }}</p>
-						<p>Description : {{ user.description }}</p>
+						<p><span class="intitut">Email : </span>{{ user.email }}</p>
+						<p><span class="intitut">Service : </span>{{ user.service }}</p>
+						<p><span class="intitut">Description : </span>{{ user.description }}</p>
 						<img
 							v-if="user.photo"
 							style="width:100px;"
@@ -35,21 +45,13 @@
 						/>
 					</div>
 					<div class="p-card-footer">
-						<p>{{ user.info }}</p>
+						<Message v-if="user.info" severity="success">{{ user.info }}</Message>
+						<ConfirmPopup></ConfirmPopup>
 						<Button
+							class="p-button-danger p-button-raised p-button-text"
 							label="Supprimer le compte"
 							v-if="user.demandDelete === 1"
-							@click="deleteUser(user)"
-						/>
-
-						<p v-if="user.demandDelete === 2">
-							Attention, la suppression de ce compte supprimera aussi les publications
-							et les commentaires créés par cet utilisateur.
-						</p>
-						<Button
-							label="CONFIRMER la SUPPRESSION du compte"
-							v-if="user.demandDelete === 2"
-							@click="confDeleteUser(user)"
+							@click="deleteUser($event, user)"
 						/>
 					</div>
 				</div>
@@ -70,8 +72,8 @@ export default {
 			qtyUsers: "",
 			chose: "",
 			findUser: false,
-			infoFind: "",
 			emailReq: "",
+			noFound: false,
 		};
 	},
 	computed: {
@@ -93,12 +95,14 @@ export default {
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
+				this.noFound = false;
+				this.findUser = false;
 				this.users = [];
 				axios
 					.get("http://localhost:3001/api/auth/users")
 					.then((resp) => {
 						this.qtyUsers = resp.data.length;
-						console.log(resp.data[12].nom);
+						console.log(resp.data[2].nom);
 						for (let i = 0; i < this.qtyUsers; i++) {
 							this.users.push({
 								index: resp.data[i].id,
@@ -121,9 +125,19 @@ export default {
 		},
 
 		//* DELETE a USER
-		deleteUser: function(user) {
-			user.demandDelete = 2;
+		deleteUser: function(event, user) {
+			// user.demandDelete = 2;
 			console.log(user.index);
+			this.$confirm.require({
+				target: event.currentTarget,
+				message:
+					"Attention, la suppression de ce compte supprimera aussi les publications et les commentaires créés par cet utilisateur.",
+				icon: "pi pi-exclamation-triangle",
+				accept: () => {
+					this.confDeleteUser(user);
+				},
+				reject: () => {},
+			});
 		},
 		confDeleteUser: function(user) {
 			this.$store.commit("setLogIn");
@@ -147,6 +161,7 @@ export default {
 
 		//* FIND by Email
 		wantFindUser: function() {
+			this.noFound = false;
 			this.findUser = true;
 		},
 		findByEmail: function() {
@@ -154,6 +169,7 @@ export default {
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
+				this.noFound = false;
 				this.users = [];
 				console.log("req =" + this.emailReq);
 				axios({
@@ -165,25 +181,33 @@ export default {
 				})
 					.then((resp) => {
 						console.log(resp);
-						this.users.push({
-							index: resp.data.id,
-							nom: resp.data.nom,
-							prenom: resp.data.prenom,
-							email: resp.data.email,
-							service: resp.data.service,
-							description: resp.data.description,
-							photo: resp.data.photo,
-							last_connect: moment(resp.data.last_connect).format("DD/MM/YYYY"),
-							demandDelete: 1,
-							info: "",
-						});
+						if (resp.data === "") {
+							this.noFound = true;
+						} else {
+							this.users.push({
+								index: resp.data.id,
+								nom: resp.data.nom,
+								prenom: resp.data.prenom,
+								email: resp.data.email,
+								service: resp.data.service,
+								description: resp.data.description,
+								photo: resp.data.photo,
+								last_connect: moment(resp.data.last_connect).format("DD/MM/YYYY"),
+								demandDelete: 1,
+								info: "",
+							});
+						}
 					})
 					.catch((err) => {
-						this.infoFind = "Aucun compte a cette adresse email.";
-						console.log(err);
+						res.send(err);
 					});
 			}
 		},
 	},
 };
 </script>
+<style>
+.intitut {
+	color: burlywood;
+}
+</style>

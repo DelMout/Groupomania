@@ -1,7 +1,9 @@
 <template>
 	<div class="home">
 		<h1>Bienvenue sur votre Réseau Social Entreprise</h1>
-		<p>{{ this.$store.state.infoHome }}</p>
+		<div v-if="this.$store.state.infoHome" class="p-grid p-jc-center">
+			<Message severity="warn">{{ this.$store.state.infoHome }}</Message>
+		</div>
 		<img alt="Groupomania logo" src="../assets/iconGroupo.png" style="width:30rem;" />
 	</div>
 </template>
