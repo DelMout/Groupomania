@@ -33,15 +33,20 @@ export default {
 	},
 	computed: {
 		...mapState({ isAdmin: "isAdmin" }),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
+		...mapGetters(["isLoggedIn"]),
+		isLoggedIn: function() {
+			return this.$store.getters.isLoggedIn;
 		},
+		// isLoggedIn() {
+		// 	return this.$store.state.isLoggedIn;
+		// },
 	},
 	methods: {
 		deconnect: function() {
 			this.$store.state.user = null;
 			this.$store.state.token = null;
-			this.$store.commit("setLogIn");
+			// this.$store.commit("setLogIn");
+			this.$store.state.infoHome = "";
 			this.$router.push("/");
 		},
 	},

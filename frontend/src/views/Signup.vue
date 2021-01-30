@@ -254,10 +254,10 @@ export default {
 			{ isAdmin: "isAdmin" }
 			// { isLoggedIn: "isLoggedIn" }
 		),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
-		// ...mapGetters(["isLoggedIn"]),
+		// isLoggedIn() {
+		// 	return this.$store.state.isLoggedIn;
+		// },
+		...mapGetters(["isExpire", "isLoggedIn"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
@@ -364,7 +364,7 @@ export default {
 			this.creat = true;
 		},
 		createUser: function() {
-			console.log("g bien recu la requete!");
+			this.theInfo = "";
 			const formData = new FormData();
 			formData.append("image", this.$data.image);
 			formData.append("prenom", this.$data.prenom);
@@ -381,9 +381,9 @@ export default {
 					this.setUserId(userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
-					this.$store.commit("setLogIn");
+					// this.$store.commit("setLogIn");
 
-					this.theInfo = "Compte créé !!";
+					this.theInfo = "Votre compte a été créé.";
 					this.severity = "success";
 					this.creat = false;
 					console.log("currentUserId = " + resp.data.userId);
@@ -399,7 +399,7 @@ export default {
 		//* LOGIN a USER
 
 		loginUser: function() {
-			console.log("g bien recu la requete pour login!");
+			this.theInfo = "";
 			axios
 				.post("http://localhost:3001/api/auth/login", {
 					email: this.email,
@@ -419,11 +419,14 @@ export default {
 					console.log("userid = " + this.$store.state.userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
-					this.$store.commit("setLogIn");
+					// this.setLogIn();
+					// this.$store.commit("setLogIn");
 					console.log("store.token =" + this.$store.state.token);
 					console.log("state exp =" + this.$store.state.dateEXP);
 					console.log("state now =" + this.$store.state.dateNOW);
-					console.log("isLoggedIn = " + this.isLoggedIn);
+					console.log("valeur =" + this.$store.state.dateEXP > this.$store.state.dateNOW);
+					console.log("isLoggedIn =" + this.isLoggedIn);
+					// console.log("isLoggedIn = " + this.isLoggedIn);
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
@@ -440,7 +443,7 @@ export default {
 
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
-			this.$store.commit("setLogIn");
+			// this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
@@ -480,10 +483,11 @@ export default {
 
 		//* MODIFY a USER
 		modifUser: function() {
-			this.$store.commit("setLogIn");
+			// this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
+				this.theInfo = "";
 				console.log("g bien recu la requete pour modif!" + this.$store.state.userId);
 				const formData = new FormData();
 				formData.append("image", this.$data.image);
@@ -542,7 +546,7 @@ export default {
 			});
 		},
 		deleteUser: function() {
-			this.$store.commit("setLogIn");
+			// this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
@@ -556,11 +560,11 @@ export default {
 				})
 					.then((resp) => {
 						console.log(resp);
-						this.theInfo = "Votre compte a été supprimé !";
-						this.severity = "success";
-						this.hom = false;
+						this.$store.state.infoHome = "Votre compte a été supprimé !";
+						// this.hom = false;
 						this.$store.state.userId = null;
 						this.$store.state.token = null;
+						this.$router.push("/");
 					})
 					.catch((erreur) => console.log(erreur));
 			}

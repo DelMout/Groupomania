@@ -7,10 +7,11 @@ export default createStore({
 		userId: null,
 		token: null,
 		isAdmin: 0,
-		infoHome: "",
-		isLoggedIn: false,
+		// infoHome: "",
+		// isLoggedIn: false,
 		dateEXP: "",
 		dateNOW: "",
+		value: "",
 	},
 	mutations: {
 		setUserId(state, userId) {
@@ -25,62 +26,53 @@ export default createStore({
 		setInfo(state) {
 			state.infoHome = "Votre session a expiré.";
 		},
-		// setLogIn(state) {
-		// 	state.isLoggedIn = true;
-		// },
 		setLogOut(state) {
 			state.isLoggedIn = false;
 		},
 		setLogIn(state) {
+			//! A ne plus utiliser
 			if (state.token === null) {
 				state.isLoggedIn = false;
 			} else {
-				const decoded = jwt_decode(state.token);
-				state.dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
-				state.dateNOW = moment().format("DD MM YYYY k:mm:ss");
-				state.isLoggedIn = state.dateEXP > state.dateNOW;
-				if (!state.isLoggedIn) {
-					state.infoHome = "Votre session a expiré.";
-				}
+				state.isLoggedIn = getters.isExpire;
+			}
+			if (!state.isLoggedIn) {
+				state.infoHome = "Votre session a expiré.";
 			}
 		},
 	},
+
 	getters: {
-		//* Indication token expired
-		// isLoggedIn(state) {
-		// 	if (state.token === null) {
-		// 		return false;
-		// 	} else {
-		// 		const decoded = jwt_decode(state.token);
-		// 		const dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
-		// 		const dateNOW = moment().format("DD MM YYYY k:mm:ss");
-		// 		return dateEXP > dateNOW;
-		// 	}
-		// },
+		decoded(state) {
+			return jwt_decode(state.token);
+		},
+		dateExp(state, getters) {
+			return moment(new Date(getters.decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
+		},
+		dateNow(state) {
+			return moment().format("DD MM YYYY k:mm:ss");
+		},
+		isLife(state, getters) {
+			return getters.dateExp > getters.dateNow;
+		},
+		isLoggedIn(state, getters) {
+			if (state.token === null) {
+				return false;
+			} else {
+				return getters.dateExp > getters.dateNow;
+			}
+		},
+		infoHome(state, getters) {
+			if (getters.isLife) {
+				return "";
+			} else {
+				return "Votre session a expiré.";
+			}
+		},
 	},
 	actions: {
 		updateInfo(context) {
 			context.commit("setInfo");
 		},
-		// updateLog(context) {
-		// 	if (this.state.token === null) {
-		// 		context.commit("setLogOut");
-		// 	} else {
-		// 		const decoded = jwt_decode(state.token);
-		// 		const dateEXP = moment(new Date(decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
-		// 		const dateNOW = moment().format("DD MM YYYY k:mm:ss");
-		// 		const log = dateEXP > dateNOW;
-		// 		if (log) {
-		// 			context.commit("setLogIn");
-		// 		} else {
-		// 			context.commit("setLogOut");
-		// 			context.commit("setInfo");
-		// 		}
-		// 	}
-		// },
 	},
-
-	//TODO si inNotExpired=false
-	//TODO => annuler token et userID
-	//TODO => Afficher un message sur page '/' : Votre session a expiré.
 });

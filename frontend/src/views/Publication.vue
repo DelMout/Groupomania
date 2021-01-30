@@ -206,7 +206,7 @@ export default {
 		//* SELECT my PUBLICATIONS
 		seeMinePublications: function() {
 			this.infoDelete = false;
-			this.$store.commit("setLogIn");
+			// this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
@@ -269,14 +269,6 @@ export default {
 		//* DELETE a PUBLICATION
 		deletePub: function(event, pub) {
 			console.log("indexPub =" + pub.index);
-			// this.publicaSup.push({
-			// 	index: pub.index,
-			// 	titre: pub.titre,
-			// 	contenu: pub.contenu,
-			// 	photo: pub.photo,
-			// });
-			// console.log("target =" + event.currentTarget);
-			// console.log(event.currentTarget);
 			this.indexDel = pub.index;
 			this.$confirm.require({
 				target: event.currentTarget,
@@ -288,27 +280,9 @@ export default {
 				},
 				reject: () => {},
 			});
-			// this.theInfo =
-			// 	"Attention, cette suppression supprimera aussi les commentaires liés à cette publication.";
-			// this.seePub = false;
-			// this.more = false;
-			// this.mine = false;
-
-			// this.publica = [];
-			// this.publica.push({
-			// 	index: pub.index,
-			// 	titre: pub.titre,
-			// 	contenu: pub.contenu,
-			// 	photo: pub.photo,
-			// });
-
-			// this.indexDel = pub.index;
-			// this.confDel = true;
-			// this.comLike = false;
-			// this.seeDel = false;
 		},
 		confDeletePub: function(pub) {
-			this.$store.commit("setLogIn");
+			// this.$store.commit("setLogIn");
 			if (!this.isLoggedIn) {
 				this.$router.push("/");
 			} else {
