@@ -110,7 +110,11 @@ export default {
 					})
 					.catch((err) => {
 						this.infoPub = "Aucune publication ne correspond à cette recherche.";
-						console.log(err);
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
 					});
 			}
 		},
@@ -146,7 +150,11 @@ export default {
 						pub.demandDelete = false;
 					})
 					.catch((err) => {
-						console.log(err);
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
 					});
 			}
 		},

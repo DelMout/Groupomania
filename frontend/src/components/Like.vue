@@ -76,7 +76,13 @@ export default {
 								this.pub.likes += 1;
 							}
 						})
-						.catch((err) => res.send(err));
+						.catch((err) => {
+							if (err.response.data.message === "jwt expired") {
+								this.setInfo;
+								this.$router.push("/");
+							}
+							res.send(err);
+						});
 				}
 			}
 		},

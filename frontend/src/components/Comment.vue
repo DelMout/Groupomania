@@ -105,7 +105,6 @@ export default {
 						},
 					})
 						.then((resp) => {
-							console.log("commentaire créé !");
 							// see allComments
 							this.allComments = [];
 							axios
@@ -122,9 +121,15 @@ export default {
 									this.commentUser = "";
 									this.pub.comm += 1;
 								})
-								.catch((err) => console.log(err));
+								.catch((err) => res.send(err));
 						})
-						.catch((err) => console.log(err));
+						.catch((err) => {
+							if (err.response.data.message === "jwt expired") {
+								this.setInfo;
+								this.$router.push("/");
+							}
+							res.send(err);
+						});
 				}
 			}
 		},

@@ -128,7 +128,11 @@ export default {
 					})
 					.catch((err) => {
 						this.infoComm = "Aucun commentaire ne correspond à cette recherche.";
-						console.log(err);
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
 					});
 			}
 		},
@@ -163,7 +167,11 @@ export default {
 						comm.demandDelete = false;
 					})
 					.catch((err) => {
-						console.log(err);
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
 					});
 			}
 		},

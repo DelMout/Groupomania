@@ -116,7 +116,13 @@ export default {
 							});
 						}
 					})
-					.catch((err) => console.log(err));
+					.catch((err) => {
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
+					});
 			}
 		},
 
@@ -151,7 +157,13 @@ export default {
 						user.info = "Ce compte vient d'être supprimé.";
 						user.demandDelete = 0;
 					})
-					.catch((err) => console.log(err));
+					.catch((err) => {
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
+					});
 			}
 		},
 
@@ -193,6 +205,10 @@ export default {
 					})
 					.catch((err) => {
 						this.noFound = true;
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
 						res.send(err);
 					});
 			}

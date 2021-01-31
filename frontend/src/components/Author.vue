@@ -81,7 +81,7 @@ export default {
 					this.publie = false; // Corresponding to comment
 				}
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => res.send(err));
 	},
 };
 </script>

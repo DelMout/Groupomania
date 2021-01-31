@@ -384,7 +384,7 @@ export default {
 					console.log("currentUserId = " + resp.data.userId);
 				})
 				.catch((err) => {
-					console.log(err);
+					res.send(err);
 					this.theInfo =
 						"Votre compte n'a pas pu être créé. Merci de corriger les paramètres demandés dans le formulaire.";
 					this.severity = "error";
@@ -415,14 +415,7 @@ export default {
 					this.setToken(token);
 					this.setAdmin(isAdmin);
 					this.$store.dispatch("checkConnect");
-					// this.setLogIn();
-					// this.$store.commit("setLogIn");
 					console.log("store.token =" + this.$store.state.token);
-					// console.log("state exp =" + this.$store.state.dateEXP);
-					// console.log("state now =" + this.$store.state.dateNOW);
-					// console.log("valeur =" + this.$store.state.dateEXP > this.$store.state.dateNOW);
-					// console.log("isLoggedIn =" + this.isLoggedIn);
-					// console.log("isLoggedIn = " + this.isLoggedIn);
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
@@ -433,7 +426,7 @@ export default {
 						this.theInfo = "Email incorrect !!";
 						this.severity = "error";
 					}
-					console.log(err);
+					res.send(err);
 				});
 		},
 
@@ -469,10 +462,10 @@ export default {
 					})
 					.catch((err) => {
 						if (err.response.data.message === "jwt expired") {
-							console.log("jwt expired venant du back");
-							this.$store.dispatch("updateLog");
+							this.setInfo;
 							this.$router.push("/");
 						}
+						res.send(err);
 					});
 			}
 		},
@@ -508,7 +501,6 @@ export default {
 						this.severity = "success";
 					})
 					.catch((err) => {
-						console.log(err.response.data);
 						if (err.response.data === "notEmpty") {
 							this.theInfo = "Les champs non optionnels doivent être remplis.";
 							this.severity = "info";
@@ -524,6 +516,11 @@ export default {
 								".";
 							this.severity = "error";
 						}
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
 					});
 			}
 		},
@@ -562,7 +559,13 @@ export default {
 						this.$store.state.token = null;
 						this.$router.push("/");
 					})
-					.catch((erreur) => console.log(erreur));
+					.catch((err) => {
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
+					});
 			}
 		},
 	},

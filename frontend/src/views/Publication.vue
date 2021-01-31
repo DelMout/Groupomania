@@ -192,12 +192,12 @@ export default {
 											likes: respo.data.length,
 										});
 									})
-									.catch((erreur) => console.log(erreur));
+									.catch((err) => res.send(err));
 							})
-							.catch((err) => console.log(err));
+							.catch((err) => res.send(err));
 					}
 				})
-				.catch((erreur) => console.log(erreur));
+				.catch((err) => res.send(err));
 		},
 		//* SELECT my PUBLICATIONS
 		seeMinePublications: function() {
@@ -254,12 +254,18 @@ export default {
 												likes: respo.data.length,
 											});
 										})
-										.catch((err) => console.log(err));
+										.catch((err) => res.send(err));
 								})
-								.catch((erreur) => console.log(erreur));
+								.catch((err) => res.send(err));
 						}
 					})
-					.catch((erreur) => console.log(erreur));
+					.catch((err) => {
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
+					});
 			}
 		},
 		//* DELETE a PUBLICATION
@@ -302,7 +308,13 @@ export default {
 						this.seeMinePublications();
 						this.infoDelete = true;
 					})
-					.catch((err) => console.log(err));
+					.catch((err) => {
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
+					});
 			}
 		},
 		//* Close toast information publication deleted

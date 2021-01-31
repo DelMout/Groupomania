@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"; // for authentification
+import { mapActions, mapState, mapMutations } from "vuex"; // for authentification
 import axios from "axios";
 export default {
 	name: "Publier",
@@ -63,6 +63,7 @@ export default {
 		...mapState(["token", "logged"]),
 	},
 	methods: {
+		...mapMutations(["setInfo"]),
 		...mapActions(["checkConnect"]),
 		//* Select a photo
 		onFileChange: function(event) {
@@ -97,13 +98,7 @@ export default {
 					.then((resp) => {
 						console.log(resp.data);
 						console.log("Pub créée !!");
-						// this.toSend = false;
-						// this.severity = "success";
-						// this.message = true;
-						// this.$data.titre = "";
-						// this.$data.contenu = "";
 						this.$router.push("http://localhost:8080/publi");
-						// this.theInfo = "Votre publication a été créée !";
 					})
 					.catch((err) => {
 						if (err.response.data === "notEmpty") {
@@ -112,7 +107,11 @@ export default {
 							this.message = true;
 							this.theInfo = "Le titre et le contenu doivent être renseignés.";
 						}
-						console.log(err);
+						if (err.response.data.message === "jwt expired") {
+							this.setInfo;
+							this.$router.push("/");
+						}
+						res.send(err);
 					});
 			}
 		},

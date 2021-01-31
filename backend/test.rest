@@ -60,10 +60,9 @@ GET http://localhost:3001/api/pub/33
 GET http://localhost:3001/api/pub/user/64
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY0LCJpYXQiOjE2MTE0MDYwMTQsImV4cCI6MTYxMTQwOTYxNH0.RyD79lVjL0djbff5xP2kzsI8oDLIY0nXtOomjacXrm8 Signup.vue:297
 
-### select ses publications #token 63##
-GET http://localhost:3001/api/pub/user/63
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYzLCJpYXQiOjE2MTE0MTAyMDEsImV4cCI6MTYxMTQxMzgwMX0.Pdn4YQJhFIfv_uk85zbkhH79PURu3sey3p1tLmSfKNE
-
+### select ses publications #token 83##
+GET http://localhost:3001/api/pub/user/83
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjgzLCJpc0FkbWluIjowLCJpYXQiOjE2MTIwODcwNTUsImV4cCI6MTYxMjA4NzA5MX0.f9xa8ZDG947nEbxH3-v_Rpy55kTEKE2jR7gslm0MU_8
 ######
 GET http://localhost:3001/api/pub/
 ### add a like ###

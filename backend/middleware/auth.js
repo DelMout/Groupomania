@@ -6,14 +6,8 @@ module.exports = (req, res, next) => {
 		const decodedToken = jwt.verify(token, "un_long_chemin");
 		const userId = decodedToken.userId;
 		const isAdmin = decodedToken.isAdmin;
-		console.log("is aDmin =" + isAdmin);
 		const paramUserId = parseInt(req.params.userid);
 
-		// if (isAdmin === 0) {
-		// 	throw "Invalid user ID";
-		// } else {
-		// 	next();
-		// }
 		if (
 			(isAdmin === 0 && paramUserId && paramUserId !== userId) ||
 			(isAdmin === 1 && userId !== 81)
