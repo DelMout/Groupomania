@@ -44,8 +44,7 @@
 </template>
 
 <script>
-import { FileUpload } from "v-file-upload"; //! a retirer
-import { mapGetters, mapState } from "vuex"; // for authentification
+import { mapActions, mapState } from "vuex"; // for authentification
 import axios from "axios";
 export default {
 	name: "Publier",
@@ -61,13 +60,10 @@ export default {
 		};
 	},
 	computed: {
-		...mapState({ token: "token" }),
-		// ...mapGetters(["isLoggedIn"]),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
+		...mapState(["token", "logged"]),
 	},
 	methods: {
+		...mapActions(["checkConnect"]),
 		//* Select a photo
 		onFileChange: function(event) {
 			console.log(event.target.files[0]);
@@ -80,8 +76,8 @@ export default {
 
 		//* CREATE a PUBLICATION
 		createPub: function() {
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				console.log("token une fois dans create pub !" + this.$store.state.userId);

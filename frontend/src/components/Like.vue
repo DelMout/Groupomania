@@ -27,7 +27,7 @@
 </template>
 <script>
 import axios from "axios";
-import { mapGetters, mapState } from "vuex"; // for authentification
+import { mapActions, mapState } from "vuex"; // for authentification
 
 export default {
 	name: "Like",
@@ -40,12 +40,10 @@ export default {
 
 	props: ["pub"],
 	computed: {
-		...mapState({ token: "token" }),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
+		...mapState(["token", "logged"]),
 	},
 	methods: {
+		...mapActions(["checkConnect"]),
 		//* Close message if box user is not connected
 		closeAlert: function() {
 			this.noConnected = false;
@@ -55,8 +53,8 @@ export default {
 			if (!this.token) {
 				this.noConnected = true;
 			} else {
-				this.$store.commit("setLogIn");
-				if (!this.isLoggedIn && this.token) {
+				this.$store.dispatch("checkConnect");
+				if (!this.logged && this.token) {
 					this.$router.push("/");
 				} else {
 					console.log("pub.index = " + this.pub.index);

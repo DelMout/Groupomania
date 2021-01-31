@@ -88,8 +88,8 @@ DELETE http://localhost:3001/api/pub/22
 GET http://localhost:3001/api/auth/users
 
 ### get user by email ###
-GET http://localhost:3001/api/auth/find/jac@groupo
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjgxLCJpc0FkbWluIjoxLCJpYXQiOjE2MTE5Mjk3MDIsImV4cCI6MTYxMTkzMzMwMn0.qBx_N9WMO-LGJyD7SQAxzyU4QndkS0Rf7qTRIKNkSFU
+GET http://localhost:3001/api/auth/find/jac@groupo.fr
+
 ### search publications ###
 GET http://localhost:3001/api/pub/search/essai
 ### search comments ###

@@ -56,7 +56,7 @@ exports.login = (req, res) => {
 			const password = user.password;
 			if (bcrypt.compareSync(password_saisi, password)) {
 				let token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, "un_long_chemin", {
-					expiresIn: "0.01h",
+					expiresIn: "1h",
 				});
 				res.json({
 					userId: user.id,
@@ -220,10 +220,13 @@ exports.ident = (req, res) => {
 exports.findUser = (req, res) => {
 	user.findOne({ where: { email: req.params.email } })
 		.then((resp) => {
-			res.send(resp);
+			if (resp.prenom) {
+				res.status(200).send(resp);
+			} else {
+				res.status(404).send("no user with that email");
+			}
 		})
 		.catch((err) => {
-			console.log(err);
-			res.send(err);
+			res.status(404).send("no user with that email");
 		});
 };

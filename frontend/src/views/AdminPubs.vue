@@ -54,7 +54,7 @@
 	</div>
 </template>
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex";
+import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
 
 import moment from "moment";
 import axios from "axios";
@@ -71,18 +71,16 @@ export default {
 		};
 	},
 	computed: {
-		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
+		...mapState(["token", "userId", "isAdmin", "logged"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
+		...mapActions(["checkConnect"]),
 
 		//* FIND publications by word
 		findByWord: function() {
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				this.infoPub = "";
@@ -132,8 +130,8 @@ export default {
 			});
 		},
 		confDeletePub: function(pub) {
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				axios({

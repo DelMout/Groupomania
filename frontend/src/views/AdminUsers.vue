@@ -60,7 +60,7 @@
 	</div>
 </template>
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex";
+import { mapMutations, mapActions, mapState } from "vuex";
 import moment from "moment";
 import axios from "axios";
 
@@ -77,22 +77,18 @@ export default {
 		};
 	},
 	computed: {
-		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
-		// ...mapGetters(["isLoggedIn"]),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
+		...mapState(["token", "userId", "isAdmin", "logged"]),
 	},
 	created: function() {
 		this.seeAllUsers();
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
-
+		...mapActions(["checkConnect"]),
 		//* DISPLAY ALL USERS
 		seeAllUsers: function() {
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				this.noFound = false;
@@ -140,8 +136,8 @@ export default {
 			});
 		},
 		confDeleteUser: function(user) {
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				axios({
@@ -165,8 +161,8 @@ export default {
 			this.findUser = true;
 		},
 		findByEmail: function() {
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				this.noFound = false;
@@ -181,24 +177,22 @@ export default {
 				})
 					.then((resp) => {
 						console.log(resp);
-						if (resp.data === "") {
-							this.noFound = true;
-						} else {
-							this.users.push({
-								index: resp.data.id,
-								nom: resp.data.nom,
-								prenom: resp.data.prenom,
-								email: resp.data.email,
-								service: resp.data.service,
-								description: resp.data.description,
-								photo: resp.data.photo,
-								last_connect: moment(resp.data.last_connect).format("DD/MM/YYYY"),
-								demandDelete: 1,
-								info: "",
-							});
-						}
+						this.users.push({
+							index: resp.data.id,
+							nom: resp.data.nom,
+							prenom: resp.data.prenom,
+							email: resp.data.email,
+							service: resp.data.service,
+							description: resp.data.description,
+							photo: resp.data.photo,
+							last_connect: moment(resp.data.last_connect).format("DD/MM/YYYY"),
+							demandDelete: 1,
+							info: "",
+						});
+						// }
 					})
 					.catch((err) => {
+						this.noFound = true;
 						res.send(err);
 					});
 			}

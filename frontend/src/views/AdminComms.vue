@@ -75,7 +75,7 @@
 	</div>
 </template>
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex";
+import { mapMutations, mapActions, mapState } from "vuex";
 
 import axios from "axios";
 import Author from "../components/Author.vue";
@@ -91,20 +91,16 @@ export default {
 		};
 	},
 	computed: {
-		...mapState({ token: "token" }, { userId: "userId" }, { isAdmin: "isAdmin" }),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
-		// ...mapGetters(["isLoggedIn"]),
+		...mapState(["token", "userId", "isAdmin", "logged"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
-
+		...mapActions(["checkConnect"]),
 		//* FIND comments by word
 		findByWord: function() {
 			console.log("qordReq =" + this.wordReq);
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				this.infoComm = "";
@@ -151,8 +147,8 @@ export default {
 			});
 		},
 		confDeleteComm: function(comm) {
-			this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				axios({

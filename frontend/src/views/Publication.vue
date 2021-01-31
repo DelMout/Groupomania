@@ -82,7 +82,7 @@
 		<Button
 			class="p-m-2"
 			label="Voir vos publications"
-			v-if="mine && isLoggedIn"
+			v-if="mine && logged"
 			v-on:click="seeMinePublications"
 		/>
 	</div>
@@ -126,12 +126,8 @@ export default {
 		this.infoDelete = false;
 	},
 	computed: {
-		...mapState({ token: "token" }, { userId: "userId" }),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
-		// ...mapGetters(["isLoggedIn", "isNotExpired"]),
-		...mapActions(["updateInfo"]),
+		...mapState(["token", "userId", "logged"]),
+		...mapActions(["updateInfo", "checkConnect"]),
 	},
 	methods: {
 		//* SELECT MORE publications
@@ -148,7 +144,7 @@ export default {
 			this.theInfo = "Les publications GroupoRéseauMania";
 			this.seeDel = false;
 		},
-		//* SELECT 10 PUBLICATIONS
+		//* SELECT 5 PUBLICATIONS
 		seePublications: function() {
 			// this.qtyMore += 1;
 			this.seePub = false;
@@ -162,14 +158,14 @@ export default {
 					console.log(resp);
 					console.log(resp.data);
 					this.qtyPub = resp.data.length;
-					if (resp.data.length > parseInt(1 + 1 * this.qtyMore)) {
+					if (resp.data.length > parseInt(5 + 1 * this.qtyMore)) {
 						//! A modifier le '1' en 10
 						this.more = true;
-						this.qtyPub = parseInt(1 * this.qtyMore + 1);
+						this.qtyPub = parseInt(1 * this.qtyMore + 5);
 					} else {
 						this.more = false;
 					}
-					console.log("Nombre : " + parseInt(1 * this.qtyMore + 1));
+					console.log("Nombre : " + parseInt(1 * this.qtyMore + 5));
 					//* Get total of likes
 					for (let i = parseInt(1 * this.qtyMore); i < this.qtyPub; i++) {
 						axios
@@ -206,8 +202,8 @@ export default {
 		//* SELECT my PUBLICATIONS
 		seeMinePublications: function() {
 			this.infoDelete = false;
-			// this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				this.mine = false;
@@ -282,8 +278,8 @@ export default {
 			});
 		},
 		confDeletePub: function(pub) {
-			// this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				axios({

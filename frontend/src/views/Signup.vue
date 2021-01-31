@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1 v-if="!isLoggedIn">
+		<h1 v-if="!logged">
 			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
 		</h1>
 
@@ -47,7 +47,7 @@
 						</p>
 					</div>
 					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p class="p-float-label" v-if="!isLoggedIn || creat">
+						<p class="p-float-label" v-if="!logged || creat">
 							<InputText
 								class="p-mx-1"
 								id="email"
@@ -75,7 +75,7 @@
 						</p>
 					</div>
 					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p class="p-float-label" v-if="!isLoggedIn || mod || creat">
+						<p class="p-float-label" v-if="!logged || mod || creat">
 							<InputText
 								class="p-mx-1"
 								id="password"
@@ -145,7 +145,7 @@
 					<div class="p-col p-as-start p-offset-2 p-py-0">
 						<Button
 							label="Entrer dans le réseau social Groupomania !"
-							v-if="!isLoggedIn && !creat"
+							v-if="!logged && !creat"
 							@click="loginUser"
 						/>
 					</div>
@@ -164,7 +164,7 @@
 					<Button
 						label="Modifier mon compte"
 						class="p-m-2"
-						v-if="isLoggedIn && !mod"
+						v-if="logged && !mod"
 						@click="demandModifUser"
 					/>
 
@@ -172,12 +172,12 @@
 					<Button
 						label="Supprimer mon compte"
 						class="p-m-2"
-						v-if="isLoggedIn && !mod"
+						v-if="logged && !mod"
 						@click="demandDeleteUser($event)"
 					/>
 				</div>
 				<div class="p-offset-5 p-py-0">
-					<p v-if="!isLoggedIn && !creat" style="color:blue;">
+					<p v-if="!logged && !creat" style="color:blue;">
 						<span class="p-mx-3">Pas encore de compte ?</span>
 						<Button label="Créer un compte" @click="wantCreate" />
 					</p>
@@ -248,20 +248,15 @@ export default {
 		};
 	},
 	computed: {
-		...mapState(
-			{ token: "token" },
-			{ userId: "userId" },
-			{ isAdmin: "isAdmin" }
-			// { isLoggedIn: "isLoggedIn" }
-		),
+		...mapState(["token", "userId", "isAdmin", "logged"]),
 		// isLoggedIn() {
 		// 	return this.$store.state.isLoggedIn;
 		// },
-		...mapGetters(["isExpire", "isLoggedIn"]),
+		...mapGetters(["isExpire"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
-		...mapActions(["updateLog"]),
+		...mapActions(["updateLog", "checkConnect"]),
 		//* Hide or show password
 		visibility() {
 			if (this.type === "password") {
@@ -381,7 +376,7 @@ export default {
 					this.setUserId(userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
-					// this.$store.commit("setLogIn");
+					this.$store.dispatch("checkConnect");
 
 					this.theInfo = "Votre compte a été créé.";
 					this.severity = "success";
@@ -419,13 +414,14 @@ export default {
 					console.log("userid = " + this.$store.state.userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
+					this.$store.dispatch("checkConnect");
 					// this.setLogIn();
 					// this.$store.commit("setLogIn");
 					console.log("store.token =" + this.$store.state.token);
-					console.log("state exp =" + this.$store.state.dateEXP);
-					console.log("state now =" + this.$store.state.dateNOW);
-					console.log("valeur =" + this.$store.state.dateEXP > this.$store.state.dateNOW);
-					console.log("isLoggedIn =" + this.isLoggedIn);
+					// console.log("state exp =" + this.$store.state.dateEXP);
+					// console.log("state now =" + this.$store.state.dateNOW);
+					// console.log("valeur =" + this.$store.state.dateEXP > this.$store.state.dateNOW);
+					// console.log("isLoggedIn =" + this.isLoggedIn);
 					// console.log("isLoggedIn = " + this.isLoggedIn);
 					this.$router.push("http://localhost:8080/publi");
 				})
@@ -443,8 +439,8 @@ export default {
 
 		//* DEMAND modification  USER datas
 		demandModifUser: function() {
-			// this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				console.log(
@@ -483,8 +479,8 @@ export default {
 
 		//* MODIFY a USER
 		modifUser: function() {
-			// this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				this.theInfo = "";
@@ -546,8 +542,8 @@ export default {
 			});
 		},
 		deleteUser: function() {
-			// this.$store.commit("setLogIn");
-			if (!this.isLoggedIn) {
+			this.$store.dispatch("checkConnect");
+			if (!this.logged) {
 				this.$router.push("/");
 			} else {
 				console.log("g bien recu la requete pour delete!");

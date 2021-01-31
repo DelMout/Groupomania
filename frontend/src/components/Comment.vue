@@ -44,7 +44,7 @@
 <script>
 import Author from "@/components/Author";
 import axios from "axios";
-import { mapGetters, mapState } from "vuex"; // for authentification
+import { mapActions, mapState } from "vuex"; // for authentification
 export default {
 	name: "Comment",
 	data() {
@@ -60,14 +60,11 @@ export default {
 		Author,
 	},
 	computed: {
-		...mapState({ token: "token" }),
-		// ...mapGetters(["isLoggedIn"]),
-		isLoggedIn() {
-			return this.$store.state.isLoggedIn;
-		},
+		...mapState(["token", "logged"]),
 	},
 	props: ["pub"],
 	methods: {
+		...mapActions(["checkConnect"]),
 		//* See COMMENTS
 		seeComment: function(pub) {
 			this.seeComm = true;
@@ -91,8 +88,8 @@ export default {
 			if (!this.token) {
 				this.noConnected = true;
 			} else {
-				this.$store.commit("setLogIn");
-				if (!this.isLoggedIn) {
+				this.$store.dispatch("checkConnect");
+				if (!this.logged) {
 					this.$router.push("/");
 				} else {
 					axios({
