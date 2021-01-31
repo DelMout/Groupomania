@@ -1,13 +1,13 @@
 <template>
-	<div class="p-grid  vertical-container nested-grid">
+	<div id="author" class="p-grid  vertical-container nested-grid">
 		<div class="p-col p-mx-auto p-py-0">
 			<div class="p-col p-mb-1 p-py-0">
-				<i @mouseover="hover = true" @mouseleave="hover = false" style="color:grey;">
+				<i @mouseover="hover = true" @mouseleave="hover = false">
 					{{ prenom }} {{ nom }} - <span v-if="publie">a publié</span
 					><span v-else>a commenté</span> {{ dateFr(item.date) }}
 				</i>
 			</div>
-			<div class="p-col p-mx-auto p-shadow-4 " v-if="hover" style="color:grey;">
+			<div class="p-col p-mx-auto p-shadow-4 " v-if="hover">
 				<div class="p-grid ">
 					<div class="p-col-4 p-my-1 ">
 						<img
@@ -85,3 +85,8 @@ export default {
 	},
 };
 </script>
+<style>
+#author {
+	color: grey;
+}
+</style>

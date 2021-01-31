@@ -4,7 +4,7 @@
 		<div v-if="infoHome" class="p-grid p-jc-center">
 			<Message severity="warn">{{ infoHome }} </Message>
 		</div>
-		<img alt="Groupomania logo" src="../assets/iconGroupo.png" style="width:30rem;" />
+		<img alt="Groupomania logo" src="../assets/iconGroupo.png" />
 	</div>
 </template>
 
@@ -23,3 +23,19 @@ export default {
 	},
 };
 </script>
+<style>
+img {
+	width: 30rem;
+}
+/* MEDIA QUERIES */
+
+@media only screen and (max-width: 768px) {
+	/*tablettes et mobiles */
+	h1 {
+		font-size: 1.5rem;
+	}
+	img {
+		width: 20rem;
+	}
+}
+</style>

@@ -8,7 +8,7 @@
 				class="p-button-rounded p-button-help p-button-outlined p-m-2"
 			/>
 		</div>
-		<div class="p-toast ">
+		<div class="p-toast p-col-10 p-md-7 p-lg-3">
 			<div
 				class="p-shadow-3 p-py-1 p-grid p-jc-between"
 				style="background-color:orange;"

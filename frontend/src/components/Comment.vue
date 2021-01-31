@@ -1,16 +1,12 @@
 <template>
 	<div>
 		<div class="p-grid">
-			<a
-				class="p-col p-text-right"
-				@click="seeComment(pub)"
-				style="text-decoration:underline;"
-			>
+			<a class="p-col p-text-right" @click="seeComment(pub)">
 				<p v-if="pub.comm > 1">{{ pub.comm }} commentaires</p>
 				<p v-else>{{ pub.comm }} commentaire</p>
 			</a>
 		</div>
-		<div class=" p-pb-1 p-my-3" v-for="com in allComments" :key="com">
+		<div class="p-pb-1 p-my-3" v-for="com in allComments" :key="com">
 			<div class="p-grid ">
 				<div class="p-col-11 ">
 					<Author class="" :item="com" />
@@ -26,12 +22,10 @@
 		</div>
 		<div v-if="seeComm" class="p-grid p-ai-end vertical-container">
 			<div class="p-col-11 p-as-start p-float-label p-text-left">
-				<Textarea v-model="commentUser" :autoResize="true" rows="3" cols="40" />
+				<Textarea v-model="commentUser" :autoResize="true" rows="3" :cols="col" />
 
-				<label>Votre commentaire</label>
-			</div>
-			<div class="p-col-1">
-				<Button icon="pi pi-angle-double-right" class="p-m-1" @click="createComm" />
+				<label>Votre commentaire</label
+				><Button icon="pi pi-angle-double-right" class="" @click="createComm" />
 			</div>
 		</div>
 		<div class="p-grid">
@@ -54,6 +48,7 @@ export default {
 			seeComm: false,
 			commentUser: "",
 			noConnected: false,
+			col: 40,
 		};
 	},
 	components: {
@@ -63,6 +58,14 @@ export default {
 		...mapState(["token", "logged"]),
 	},
 	props: ["pub"],
+	created: function() {
+		if (window.matchMedia("(max-width:768px)").matches) {
+			this.col = 30;
+		}
+		if (window.matchMedia("(max-width:576px)").matches) {
+			this.col = 15;
+		}
+	},
 	methods: {
 		...mapActions(["checkConnect"]),
 		//* See COMMENTS
@@ -136,3 +139,8 @@ export default {
 	},
 };
 </script>
+<style>
+a {
+	text-decoration: underline;
+}
+</style>

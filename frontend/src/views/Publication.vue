@@ -2,7 +2,7 @@
 	<div>
 		<h1>{{ theInfo }}</h1>
 		<div class="p-grid p-jc-center p-mb-6">
-			<div class=" p-col-2 p-toast ">
+			<div class=" p-lg-2 p-md-6 p-col-10 p-toast ">
 				<div class="">
 					<div
 						class="p-shadow-3 p-py-1 p-grid p-jc-between p-text-left"
@@ -23,44 +23,36 @@
 
 		<!-- loop to display all publications -->
 		<div v-for="pub in publica" :key="pub.index" class=" p-grid vertical-container p-mt-3 ">
-			<div class="p-mx-auto ">
-				<div class=" p-card p-shadow-6 p-col p-grid p-p-5 p-m-2 " style="width:40rem;">
-					<Author class="p-col-10 p-offset-1" :item="pub" />
-					<h2 class="p-card-title p-col-10 p-offset-1 ">
-						{{ pub.titre }}
-					</h2>
-					<div class="p-card-content p-col-10 p-offset-1 ">
-						<p class="p-text-justify">{{ pub.contenu }}</p>
-						<img
-							v-if="pub.photo != null"
-							:src="pub.photo"
-							alt="publication picture"
-							style="max-width:40rem;max-height:40rem;"
-							title="pub-img"
-						/>
-					</div>
-					<div class="p-card-footer p-col-10 p-offset-1  ">
-						<div class="p-grid">
-							<!-- <div class=" "> -->
-							<Like class=" p-col-1" :pub="pub" />
-							<!-- </div> -->
-							<Comment class="p-col " :pub="pub" />
+			<div class="p-mx-auto p-col">
+				<div class="p-grid p-jc-center">
+					<div class=" p-card p-shadow-6  p-lg-4 p-md-8 p-col-12  p-p-lg-5 p-p-3 p-my-2 ">
+						<Author class="p-mx-auto" :item="pub" />
+						<h2 class="p-card-title p-mx-auto ">
+							{{ pub.titre }}
+						</h2>
+						<div class="p-card-content p-mx-auto">
+							<p class="p-text-justify">{{ pub.contenu }}</p>
+							<img
+								v-if="pub.photo != null"
+								:src="pub.photo"
+								alt="publication picture"
+								title="pub-img"
+							/>
 						</div>
+						<div class="p-card-footer p-mx-auto  ">
+							<div class="p-grid">
+								<Like class=" p-col-1" :pub="pub" />
+								<Comment class="p-col-11 " :pub="pub" />
+							</div>
 
-						<ConfirmPopup></ConfirmPopup>
-						<Button
-							label="Supprimer cette publication"
-							class="p-button-danger p-button-raised p-button-text"
-							v-if="seeDel"
-							@click="deletePub($event, pub)"
-						/>
-
-						<!-- <Button
-							label="Confirmer la suppression"
-							v-if="confDel"
-							style="color:red;"
-							v-on:click="confDeletePub"
-						/> -->
+							<ConfirmPopup></ConfirmPopup>
+							<Button
+								label="Supprimer cette publication"
+								class="p-button-danger p-button-raised p-button-text"
+								v-if="seeDel"
+								@click="deletePub($event, pub)"
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -327,5 +319,19 @@ export default {
 <style>
 .p-card {
 	background-color: beige;
+}
+.p-card-content {
+	max-width: 100%;
+}
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+	/*mobiles et tablettes*/
+}
+@media only screen and (max-width: 576px) {
+	/*mobiles */
 }
 </style>

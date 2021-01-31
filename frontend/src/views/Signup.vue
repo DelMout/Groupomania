@@ -4,158 +4,200 @@
 			Pour accéder au réseau social Groupomania, <br />renseigner les informations suivantes
 		</h1>
 
-		<div class="">
-			<!-- <InputText v-model="text" />
-			<Button label="Greet"></Button> -->
-
-			<h1 v-if="mod">Merci de renseigner le formulaire ci-dessous</h1>
+		<div>
+			<h1 v-if="mod">
+				Merci de renseigner le formulaire ci-dessous
+			</h1>
 			<div class="p-grid p-jc-center">
-				<div class="p-col-4">
+				<div class="p-lg-4 p-md-6 p-col-10">
 					<Message v-if="theInfo" :severity="severity" :life="7000" :sticky="false">{{
 						theInfo
 					}}</Message>
 				</div>
 			</div>
-			<div class="p-grid vertical-container p-text-left ">
-				<div class="p-col p-input-filled  " enctype="multipart/form-data">
-					<div class="p-col p-as-start p-offset-2  p-py-0">
-						<p class="   p-float-label" v-if="mod || creat">
-							<InputText
-								class="p-mx-1"
-								type="text"
-								id="firstname"
-								@keyup="checkData"
-								v-model="prenom"
-							/><label for="firstname">Prénom</label>
-							<InlineMessage v-if="prenomInfo" severity="error"
+			<div class=" p-text-left ">
+				<div class=" p-input-filled  " enctype="multipart/form-data">
+					<div class="p-grid p-jc-center  p-py-0">
+						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+							<p class=" p-float-label">
+								<InputText
+									class=""
+									type="text"
+									id="firstname"
+									@keyup="checkData"
+									v-model="prenom"
+								/><label for="firstname">Prénom</label>
+							</p>
+							<InlineMessage class="p-lg-6 p-12 " v-if="prenomInfo" severity="error"
 								>{{ prenomInfo }}
 							</InlineMessage>
-						</p>
+						</div>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p class=" p-float-label" v-if="mod || creat">
-							<InputText
-								class="p-mx-1"
-								id="lastname"
-								type="text"
-								@keyup="checkData"
-								v-model="nom"
-							/><label for="lastname">Nom</label
-							><InlineMessage v-if="nomInfo" severity="error"
+					<div class="p-grid p-jc-center p-py-0">
+						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+							<p class=" p-float-label">
+								<InputText
+									class=""
+									id="lastname"
+									type="text"
+									@keyup="checkData"
+									v-model="nom"
+								/><label for="lastname">Nom</label>
+							</p>
+							<InlineMessage class="p-lg-6 p-12 " v-if="nomInfo" severity="error"
 								>{{ nomInfo }}
 							</InlineMessage>
-						</p>
+						</div>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p class="p-float-label" v-if="!logged || creat">
-							<InputText
-								class="p-mx-1"
-								id="email"
-								type="text"
-								@keyup="checkData"
-								v-model="email"
-							/><label for="email">Email</label>
-							<InlineMessage v-if="creat && emailInfo" severity="error"
+					<div class="p-grid p-jc-center p-py-0">
+						<div
+							class=" p-lg-4 p-md-5 p-col-10 vertical-container"
+							v-if="!logged || creat"
+						>
+							<p class="p-float-label ">
+								<InputText
+									class=""
+									id="email"
+									type="text"
+									@keyup="checkData"
+									v-model="email"
+								/><label for="email">Email</label>
+							</p>
+							<InlineMessage
+								class="p-lg-6 p-12 "
+								v-if="creat && emailInfo"
+								severity="error"
 								>{{ emailInfo }}
 							</InlineMessage>
-						</p>
+						</div>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p class="p-float-label" v-if="mod || creat">
-							<InputText
-								class="p-mx-1"
-								id="service"
-								type="text"
-								@keyup="checkData"
-								v-model="service"
-							/><label for="service">Service</label
-							><InlineMessage v-if="serviceInfo" severity="error"
+					<div class="p-grid p-jc-center p-py-0">
+						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+							<p class="p-float-label">
+								<InputText
+									class="p-mx-1"
+									id="service"
+									type="text"
+									@keyup="checkData"
+									v-model="service"
+								/><label for="service">Service</label>
+							</p>
+							<InlineMessage class="p-lg-6 p-12 " v-if="serviceInfo" severity="error"
 								>{{ serviceInfo }}
 							</InlineMessage>
-						</p>
+						</div>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p class="p-float-label" v-if="!logged || mod || creat">
-							<InputText
-								class="p-mx-1"
-								id="password"
-								:type="type"
-								@keyup="checkData"
-								v-model="password"
-							/><label for="password">Mot de passe</label
-							><Button
-								class="p-mx-1 p-px-auto p-button-outlined p-button-help p-button-text "
-								@click="visibility"
-								:icon="hide"
-							>
-							</Button
-							><InlineMessage
+					<div class="p-grid p-jc-center p-py-0">
+						<div
+							class=" p-lg-4 p-md-5 p-col-10 vertical-container"
+							v-if="!logged || mod || creat"
+						>
+							<p class=" p-float-label">
+								<InputText
+									class=""
+									id="password"
+									:type="type"
+									@keyup="checkData"
+									v-model="password"
+								/><label for="password">Mot de passe</label>
+								<Button
+									class="p-ml-1 p-pl-auto p-button-outlined p-button-help p-button-text "
+									@click="visibility"
+									:icon="hide"
+								>
+								</Button>
+							</p>
+							<InlineMessage
+								class="p-lg-6 p-12 "
 								v-if="(mod && passwordInfo) || (creat && passwordInfo)"
 								severity="error"
 							>
 								{{ passwordInfo }}
 							</InlineMessage>
-							<InlineMessage v-if="(mod && min) || (creat && min)" severity="error">
+							<InlineMessage
+								class="p-lg-5 p-12 "
+								v-if="(mod && min) || (creat && min)"
+								severity="error"
+							>
 								{{ min }}
 							</InlineMessage>
-							<InlineMessage v-if="(mod && up) || (creat && up)" severity="error">
+							<InlineMessage
+								class="p-lg-5 p-12 "
+								v-if="(mod && up) || (creat && up)"
+								severity="error"
+							>
 								{{ up }}
 							</InlineMessage>
-							<InlineMessage v-if="(mod && low) || (creat && low)" severity="error">
+							<InlineMessage
+								class="p-lg-5 p-12"
+								v-if="(mod && low) || (creat && low)"
+								severity="error"
+							>
 								{{ low }}
 							</InlineMessage>
-							<InlineMessage v-if="(mod && num) || (creat && num)" severity="error">
+							<InlineMessage
+								class="p-lg-4 p-12"
+								v-if="(mod && num) || (creat && num)"
+								severity="error"
+							>
 								{{ num }}
 							</InlineMessage>
-							<InlineMessage class="p-mx-1" v-if="mod" severity="info"
+							<InlineMessage class="" v-if="mod" severity="info"
 								>Saisir un autre mot de passe, modifiera votre mot de
 								passe.</InlineMessage
 							>
-						</p>
+						</div>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p class="p-float-label" v-if="mod || creat">
-							<InputText
-								class="p-mx-1"
-								id="description"
-								type="text"
-								v-model="description"
-							/><label for="description">Description</label>
-						</p>
+					<div class="p-grid p-jc-center p-py-0">
+						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+							<p class=" p-float-label">
+								<InputText
+									class="p-mx-1"
+									id="description"
+									type="text"
+									v-model="description"
+								/><label for="description">Description</label>
+							</p>
+						</div>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0">
-						<p v-if="mod || creat">
-							Photo (optionnel) :<input
-								type="file"
-								name="image"
-								@change="onFileChange"
-							/>
-						</p>
+					<div class="p-grid p-jc-center p-py-0">
+						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+							<p class="">
+								Photo (optionnel) :<input
+									type="file"
+									name="image"
+									@change="onFileChange"
+								/>
+							</p>
+						</div>
 					</div>
 
-					<div class="p-col p-as-start p-offset-2 p-py-0" v-if="photo != null && mod">
-						<span>Votre photo actuelle : </span
-						><img style="width:200px;" :src="photo" alt="photo utilisateur" />
+					<div class="p-grid p-jc-center " v-if="photo != null && mod">
+						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container">
+							<span>Votre photo actuelle : </span
+							><img style="width:200px;" :src="photo" alt="photo utilisateur" />
+						</div>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0" v-if="photo === null && mod">
+					<div class="p-grid p-jc-center " v-if="photo === null && mod">
 						<InlineMessage severity="info"
 							>Vous n'avez pas de photo actuellement.</InlineMessage
 						>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0">
+					<div class="p-grid p-jc-center p-my-5">
 						<Button
+							class="p-md-4 p-col-6"
 							label="Entrer dans le réseau social Groupomania !"
 							v-if="!logged && !creat"
 							@click="loginUser"
 						/>
 					</div>
-					<div class="p-col p-as-start p-offset-2 p-py-0 ">
+					<div class="p-grid p-jc-center p-my-2">
 						<Button label="Valider" v-if="creat" v-on:click="createUser" /><br />
 					</div>
 				</div>
 			</div>
 			<div class="p-grid p-jc-center">
-				<div class="p-col-12 p-py-0">
+				<div class="p-col p-py-0">
 					<Button
 						label="Valider les modifications"
 						v-if="mod"
@@ -176,7 +218,9 @@
 						@click="demandDeleteUser($event)"
 					/>
 				</div>
-				<div class="p-offset-5 p-py-0">
+			</div>
+			<div class="p-grid">
+				<div class="p-col p-py-0">
 					<p v-if="!logged && !creat" style="color:blue;">
 						<span class="p-mx-3">Pas encore de compte ?</span>
 						<Button label="Créer un compte" @click="wantCreate" />
@@ -395,6 +439,10 @@ export default {
 
 		loginUser: function() {
 			this.theInfo = "";
+			//!! Pour simulation SUPPRIMER ces 2 lignes
+			this.email = "admin@groupomania.fr";
+			this.password = "AAAaaa1111";
+
 			axios
 				.post("http://localhost:3001/api/auth/login", {
 					email: this.email,
@@ -571,3 +619,33 @@ export default {
 	},
 };
 </script>
+<style>
+InlineMessage {
+	color: black;
+}
+p {
+	margin-bottom: 0px;
+}
+InlineMessage {
+	margin-top: 0px;
+}
+
+/* MEDIA QUERIES */
+
+@media only screen and (max-width: 768px) {
+	/*mobiles et tablettes*/
+	h1 {
+		font-size: 1rem;
+	}
+	/* #inscript {
+		font-size: 0.6rem;
+	} */
+}
+@media only screen and (max-width: 576px) {
+	/*mobiles */
+
+	h1 {
+		font-size: 0.9rem;
+	}
+}
+</style>
