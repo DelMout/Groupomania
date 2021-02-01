@@ -57,7 +57,6 @@ export default {
 				if (!this.logged && this.token) {
 					this.$router.push("/");
 				} else {
-					console.log("pub.index = " + this.pub.index);
 					axios({
 						method: "post",
 						url:

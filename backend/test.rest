@@ -19,8 +19,8 @@ POST http://localhost:3001/api/auth/login
 content-type: application/json
 
 {
-    "password": "AAAaaa11",
-    "email": "admin@groupomania.fr"
+    "password": "AAAaaa1111",
+    "email": "admin@grouponia.fr"
 }
 
 

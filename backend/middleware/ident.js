@@ -7,13 +7,13 @@ module.exports = (req, res, next) => {
 		.then((pub) => {
 			try {
 				const token = req.headers.authorization.split(" ")[1];
-				const decodedToken = jwt.verify(token, "un_long_chemin");
+				const decodedToken = jwt.verify(token, process.env.JWT_KEY);
 				const userConnectedId = decodedToken.userId;
 				const userAuthorId = pub.userId;
 				const isAdmin = decodedToken.isAdmin;
 				if (
 					(isAdmin === 0 && userConnectedId !== userAuthorId) ||
-					(isAdmin === 1 && userConnectedId !== 81)
+					(isAdmin === 1 && userConnectedId !== process.env.ID_ADMIN)
 				) {
 					throw "Connected user is not the publication author, or not admin.";
 				} else {

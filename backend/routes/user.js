@@ -23,12 +23,12 @@ router.get("/modif/:userid", auth, userCtrl.demandmodif);
 router.put("/modif/:userid", auth, multer, userCtrl.modif);
 
 // * Delete user
-router.delete("/delete/:userid", auth, multer, userCtrl.delete); //! remettre auth ! + Rajouter droit admin
+router.delete("/delete/:userid", auth, multer, userCtrl.delete);
 
 // * Identify user
 router.get("/ident/:userid", userCtrl.ident);
 
 // * Find user by email
-router.get("/find/:email", admin, userCtrl.findUser); //! Seulement pour Admin
+router.get("/find/:email", admin, userCtrl.findUser);
 
 module.exports = router;

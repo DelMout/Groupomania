@@ -234,10 +234,7 @@
 </template>
 
 <script>
-import moment from "moment"; //! Pour essais sur dates, à retirer par la suite !
-
-import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
-import jwt_decode from "jwt-decode";
+import { mapMutations, mapState, mapActions } from "vuex";
 import axios from "axios";
 export default {
 	name: "Signup",
@@ -295,14 +292,10 @@ export default {
 	},
 	computed: {
 		...mapState(["token", "userId", "isAdmin", "logged"]),
-		// isLoggedIn() {
-		// 	return this.$store.state.isLoggedIn;
-		// },
-		...mapGetters(["isExpire"]),
 	},
 	methods: {
 		...mapMutations(["setUserId", "setToken", "setAdmin"]),
-		...mapActions(["updateLog", "checkConnect"]),
+		...mapActions(["checkConnect"]),
 		//* Hide or show password
 		visibility() {
 			if (this.type === "password") {
@@ -397,7 +390,6 @@ export default {
 
 		//* Select a photo
 		onFileChange: function(event) {
-			console.log(event.target.files[0]);
 			this.image = event.target.files[0];
 		},
 		//* CREATE a new USER
@@ -417,7 +409,6 @@ export default {
 			axios
 				.post("http://localhost:3001/api/auth/signup", formData)
 				.then((resp) => {
-					console.log(resp.data);
 					const { userId, token, isAdmin } = resp.data;
 					this.setUserId(userId);
 					this.setToken(token);
@@ -427,7 +418,6 @@ export default {
 					this.theInfo = "Votre compte a été créé.";
 					this.severity = "success";
 					this.creat = false;
-					console.log("currentUserId = " + resp.data.userId);
 				})
 				.catch((err) => {
 					res.send(err);
@@ -452,20 +442,10 @@ export default {
 				})
 				.then((resp) => {
 					const { userId, token, isAdmin } = resp.data;
-					const decoded = jwt_decode(token);
-					const dateEXP = moment(new Date(decoded.exp * 1000)).format(
-						"DD MM YYYY k:mm:ss"
-					);
-					console.log(dateEXP);
-					console.log(token);
-					console.log(moment().format("DD MM YYYY k:mm:ss"));
-					console.log("valeur =" + dateEXP > moment().format("DD MM YYYY k:mm:ss"));
 					this.setUserId(userId);
-					console.log("userid = " + this.$store.state.userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
 					this.$store.dispatch("checkConnect");
-					console.log("store.token =" + this.$store.state.token);
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
@@ -486,9 +466,6 @@ export default {
 			if (!this.logged) {
 				this.$router.push("/");
 			} else {
-				console.log(
-					"g bien recu la requete pour DEMANDE de modif!" + this.$store.state.userId
-				);
 				this.theInfo = "";
 				this.mod = true;
 				this.type = "password";
@@ -501,7 +478,6 @@ export default {
 					},
 				})
 					.then((resp) => {
-						console.log(resp.data);
 						this.prenom = resp.data.prenom;
 						this.nom = resp.data.nom;
 						this.service = resp.data.service;
@@ -527,7 +503,6 @@ export default {
 				this.$router.push("/");
 			} else {
 				this.theInfo = "";
-				console.log("g bien recu la requete pour modif!" + this.$store.state.userId);
 				const formData = new FormData();
 				formData.append("image", this.$data.image);
 				formData.append("prenom", this.$data.prenom);
@@ -535,7 +510,6 @@ export default {
 				formData.append("service", this.$data.service);
 				formData.append("description", this.$data.description);
 				formData.append("password", this.$data.password);
-				console.log(this.$data.nom);
 				axios({
 					method: "put",
 					url: "http://localhost:3001/api/auth/modif/" + this.$store.state.userId,
@@ -545,7 +519,6 @@ export default {
 					},
 				})
 					.then((resp) => {
-						console.log(resp);
 						this.mod = false;
 						this.theInfo = "Vos modifications ont été prises en compte";
 						this.severity = "success";
@@ -593,7 +566,6 @@ export default {
 			if (!this.logged) {
 				this.$router.push("/");
 			} else {
-				console.log("g bien recu la requete pour delete!");
 				axios({
 					method: "delete",
 					url: "http://localhost:3001/api/auth/delete/" + this.$store.state.userId,
@@ -602,7 +574,6 @@ export default {
 					},
 				})
 					.then((resp) => {
-						console.log(resp);
 						this.$store.state.infoHome = "Votre compte a été supprimé !";
 						// this.hom = false;
 						this.$store.state.userId = null;

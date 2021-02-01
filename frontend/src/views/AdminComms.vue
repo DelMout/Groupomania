@@ -94,7 +94,6 @@ export default {
 		...mapActions(["checkConnect"]),
 		//* FIND comments by word
 		findByWord: function() {
-			console.log("qordReq =" + this.wordReq);
 			this.$store.dispatch("checkConnect");
 			if (!this.logged) {
 				this.$router.push("/");
@@ -135,7 +134,6 @@ export default {
 		//* DELETE a COMMENT
 		deleteComm: function(event, comm) {
 			// comm.demandDelete = false;
-			console.log(comm.index);
 			this.$confirm.require({
 				target: event.currentTarget,
 				message: "Merci de confirmer la suppression de ce commentaire.",

@@ -136,7 +136,6 @@ export default {
 					.get("http://localhost:3001/api/auth/users")
 					.then((resp) => {
 						this.qtyUsers = resp.data.length;
-						console.log(resp.data[2].nom);
 						for (let i = 0; i < this.qtyUsers; i++) {
 							this.users.push({
 								index: resp.data[i].id,
@@ -167,7 +166,6 @@ export default {
 		//* DELETE a USER
 		deleteUser: function(event, user) {
 			// user.demandDelete = 2;
-			console.log(user.index);
 			this.$confirm.require({
 				target: event.currentTarget,
 				message:
@@ -217,7 +215,6 @@ export default {
 			} else {
 				this.noFound = false;
 				this.users = [];
-				console.log("req =" + this.emailReq);
 				axios({
 					method: "get",
 					url: "http://localhost:3001/api/auth/find/" + this.emailReq,
@@ -226,7 +223,6 @@ export default {
 					},
 				})
 					.then((resp) => {
-						console.log(resp);
 						this.users.push({
 							index: resp.data.id,
 							nom: resp.data.nom,

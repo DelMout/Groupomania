@@ -23,7 +23,7 @@
 	</div>
 </template>
 <script>
-import { mapGetters, mapState, mapMutations, mapActions } from "vuex"; // for authentification
+import { mapState, mapMutations, mapActions } from "vuex"; // for authentification
 import store from "./store/index.js";
 export default {
 	name: "Home",

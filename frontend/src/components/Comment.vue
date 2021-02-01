@@ -83,7 +83,7 @@ export default {
 						});
 					}
 				})
-				.catch((err) => console.log(err));
+				.catch((err) => res.send(err));
 		},
 
 		//* Create a COMMENT
@@ -113,7 +113,6 @@ export default {
 							axios
 								.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
 								.then((resp) => {
-									console.log("length = " + resp.data.length);
 									for (let i = 0; i < resp.data.length; i++) {
 										this.allComments.push({
 											texte: resp.data[i].texte_com,

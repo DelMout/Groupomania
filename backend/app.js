@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -36,7 +37,7 @@ app.use(cors()); // Security CORS
 app.use(bodyParser.json());
 app.use(helmet());
 
-// **** REQUETE ****
+// **** ROUTES ****
 
 //  * User authentification
 app.use("/api/auth", userRoutes);

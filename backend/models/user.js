@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
 			},
 			password: {
 				type: DataTypes.STRING,
-				allowNull: false, // ! à crypter !
+				allowNull: false,
 				validate: {
 					notEmpty: true,
 				},

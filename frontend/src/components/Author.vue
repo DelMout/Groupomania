@@ -64,7 +64,6 @@ export default {
 		axios
 			.get("http://localhost:3001/api/auth/ident/" + this.item.userId)
 			.then((respon) => {
-				console.log(respon.data);
 				this.prenom = respon.data.prenom;
 				this.nom = respon.data.nom;
 				this.service = respon.data.service;
@@ -74,7 +73,6 @@ export default {
 				} else {
 					this.photo = "http://localhost:3001/images/photo_defaut.jpg";
 				}
-				console.log("lien photo = " + this.photo);
 				if (this.item.index >= 0) {
 					this.publie = true; // Corresponding to publication
 				} else {

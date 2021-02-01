@@ -61,7 +61,7 @@ exports.deleteComm = (req, res) => {
 					.destroy({ where: { id: req.params.comid } })
 					.then(() => res.status(200).send("comment deleted"))
 					.catch((err) => {
-						console.log(err);
+						res.send(err);
 					});
 			}
 		})

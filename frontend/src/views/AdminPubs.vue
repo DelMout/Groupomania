@@ -68,9 +68,8 @@
 	</div>
 </template>
 <script>
-import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
+import { mapMutations, mapState, mapActions } from "vuex";
 
-import moment from "moment";
 import axios from "axios";
 import Author from "../components/Author.vue";
 export default {
@@ -134,7 +133,6 @@ export default {
 		},
 		//* DELETE a PUBLICATION
 		deletePub(event, pub) {
-			console.log(pub.index);
 			this.indexDel = pub.index;
 			this.$confirm.require({
 				target: event.currentTarget,

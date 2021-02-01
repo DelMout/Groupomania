@@ -7,8 +7,6 @@ const schemaPassword = new passwordValidator();
 
 //* Schema Password
 schemaPassword.is().min(10).has().uppercase().has().lowercase().has().digits();
-// .has()
-// .not(/\$|=|'|\./); // Nonauthorized : =  '   $ .
 
 // * Create a new user
 exports.signup = (req, res) => {
@@ -32,9 +30,13 @@ exports.signup = (req, res) => {
 		newUser
 			.save()
 			.then((user) => {
-				let token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, "un_long_chemin", {
-					expiresIn: "1h",
-				});
+				let token = jwt.sign(
+					{ userId: user.id, isAdmin: user.isAdmin },
+					process.env.JWT_KEY,
+					{
+						expiresIn: "1h",
+					}
+				);
 				res.json({
 					userId: user.id,
 					token: token,
@@ -55,9 +57,13 @@ exports.login = (req, res) => {
 		.then((user) => {
 			const password = user.password;
 			if (bcrypt.compareSync(password_saisi, password)) {
-				let token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, "un_long_chemin", {
-					expiresIn: "1h",
-				});
+				let token = jwt.sign(
+					{ userId: user.id, isAdmin: user.isAdmin },
+					process.env.JWT_KEY,
+					{
+						expiresIn: "1h",
+					}
+				);
 				res.json({
 					userId: user.id,
 					token: token,
@@ -68,7 +74,6 @@ exports.login = (req, res) => {
 			}
 		})
 		.catch((err) => {
-			console.log(err);
 			res.status(401).send("Email not OK");
 		});
 };
@@ -81,7 +86,6 @@ exports.demandmodif = (req, res) => {
 			res.send(rep);
 		})
 		.catch((err) => {
-			console.log(err);
 			res.send(err);
 		});
 };
@@ -104,11 +108,9 @@ exports.modif = (req, res) => {
 								{ where: { id: req.params.userid } }
 							)
 								.then(() => {
-									console.log("user and image file modified");
 									res.send("user and image file modified");
 								})
 								.catch((err) => {
-									console.log(err);
 									res.send(err);
 								});
 						});
@@ -118,11 +120,9 @@ exports.modif = (req, res) => {
 							{ where: { id: req.params.userid } }
 						)
 							.then(() => {
-								console.log("user modified and image file saved");
 								res.send("user modified and image file saved");
 							})
 							.catch((err) => {
-								console.log(err);
 								res.send(err);
 							});
 					}
@@ -140,7 +140,6 @@ exports.modif = (req, res) => {
 				{ where: { id: req.params.userid } }
 			)
 				.then(() => {
-					console.log("user modified !");
 					res.send("user modified !");
 				})
 				.catch((err) => {
@@ -163,7 +162,6 @@ exports.delete = (req, res) => {
 							res.send("user and image file deleted");
 						})
 						.catch((err) => {
-							console.log(err);
 							res.send(err);
 						});
 				});
@@ -173,7 +171,6 @@ exports.delete = (req, res) => {
 						res.send("user deleted");
 					})
 					.catch((err) => {
-						console.log(err);
 						res.send(err);
 					});
 			}
@@ -186,7 +183,7 @@ exports.getAllUsers = (req, res) => {
 	user.findAll({
 		order: [["last_connect", "ASC"]],
 	}).then((obj) => {
-		res.send(obj); //!renvoie {"id":32}
+		res.send(obj);
 	});
 };
 
@@ -197,26 +194,11 @@ exports.ident = (req, res) => {
 			res.send(resp);
 		})
 		.catch((err) => {
-			console.log(err);
 			res.send(err);
 		});
 };
 
 // * Find user by email
-// exports.findUser = (req, res) => {
-// 	const findUser = await user.findOne({ where: { email: req.params.email } });
-// 	if(findUser){
-// 		async user.findOne({ where: { email: req.params.email } })
-// 		.then((resp) => {
-// 			res.send(resp);
-// 		})
-// 		.catch((err) => {
-// 			res.send(err);
-// 		});
-// 	}	else{
-// 		res.statsus(404).send("no user found");
-// 	}
-// };
 exports.findUser = (req, res) => {
 	user.findOne({ where: { email: req.params.email } })
 		.then((resp) => {

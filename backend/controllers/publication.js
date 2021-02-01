@@ -12,7 +12,7 @@ exports.getAllPub = (req, res) => {
 			res.send(pub);
 		})
 		.catch((err) => {
-			console.log(err);
+			res.send(err);
 		});
 };
 
@@ -38,19 +38,6 @@ exports.createPub = (req, res) => {
 		});
 };
 
-// * Select a publication
-// exports.getPub = (req, res) => {
-// 	//! a supprimer
-// 	publication
-// 		.findOne({ where: { id: req.params.pubid } })
-// 		.then((pub) => {
-// 			res.json(pub.id);
-// 		})
-// 		.catch((err) => {
-// 			console.log(err);
-// 		});
-// };
-
 // * Select publications by userId
 exports.getPubByUser = (req, res) => {
 	publication
@@ -62,7 +49,7 @@ exports.getPubByUser = (req, res) => {
 			res.send(pub);
 		})
 		.catch((err) => {
-			console.log(err);
+			res.send(err);
 		});
 };
 
@@ -78,7 +65,7 @@ exports.deletePub = (req, res) => {
 						.destroy({ where: { id: req.params.pubid } })
 						.then(() => res.send("publication and image file deleted"))
 						.catch((err) => {
-							console.log(err);
+							res.send(err);
 						});
 				});
 			} else {
@@ -86,12 +73,12 @@ exports.deletePub = (req, res) => {
 					.destroy({ where: { id: req.params.pubid } })
 					.then(() => res.send("publication deleted"))
 					.catch((err) => {
-						console.log(err);
+						res.send(err);
 					});
 			}
 		})
 		.catch((err) => {
-			console.log(err);
+			res.send(err);
 		});
 };
 

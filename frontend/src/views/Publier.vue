@@ -65,9 +65,6 @@ export default {
 		...mapState(["token", "logged"]),
 	},
 	created: function() {
-		// if (window.matchMedia("(max-width:768px)").matches) {
-		// 	this.col = 65;
-		// }
 		if (window.matchMedia("(max-width:576px)").matches) {
 			this.col = 30;
 		}
@@ -77,7 +74,6 @@ export default {
 		...mapActions(["checkConnect"]),
 		//* Select a photo
 		onFileChange: function(event) {
-			console.log(event.target.files[0]);
 			this.image = event.target.files[0];
 		},
 		//* When close alert message
@@ -91,8 +87,6 @@ export default {
 			if (!this.logged) {
 				this.$router.push("/");
 			} else {
-				console.log("token une fois dans create pub !" + this.$store.state.userId);
-				console.log(this.$store.state.token);
 				const formData = new FormData();
 				formData.append("image", this.$data.image);
 				formData.append("titre", this.$data.titre);
@@ -106,8 +100,6 @@ export default {
 					},
 				})
 					.then((resp) => {
-						console.log(resp.data);
-						console.log("Pub créée !!");
 						this.$router.push("http://localhost:8080/publi");
 					})
 					.catch((err) => {

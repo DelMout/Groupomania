@@ -16,7 +16,7 @@ exports.addLike = (req, res) => {
 						res.send(like);
 					})
 					.catch((err) => {
-						console.log(err);
+						res.send(err);
 					});
 			} else {
 				like.destroy({

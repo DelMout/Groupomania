@@ -85,7 +85,7 @@ import Like from "@/components/Like";
 import Comment from "@/components/Comment";
 import Author from "@/components/Author";
 import axios from "axios";
-import { mapGetters, mapState, mapActions } from "vuex"; // for authentification
+import { mapState, mapActions } from "vuex"; // for authentification
 
 export default {
 	name: "Publication",
@@ -119,7 +119,7 @@ export default {
 	},
 	computed: {
 		...mapState(["token", "userId", "logged"]),
-		...mapActions(["updateInfo", "checkConnect"]),
+		...mapActions(["checkConnect"]),
 	},
 	methods: {
 		//* SELECT MORE publications
@@ -142,13 +142,9 @@ export default {
 			this.seePub = false;
 			this.del = false;
 			this.seeDel = false;
-
-			console.log("qtyMore : " + this.qtyMore);
 			axios
 				.get("http://localhost:3001/api/pub")
 				.then((resp) => {
-					console.log(resp);
-					console.log(resp.data);
 					this.qtyPub = resp.data.length;
 					if (resp.data.length > parseInt(5 + 1 * this.qtyMore)) {
 						//! A modifier le '1' en 10
@@ -157,7 +153,6 @@ export default {
 					} else {
 						this.more = false;
 					}
-					console.log("Nombre : " + parseInt(1 * this.qtyMore + 5));
 					//* Get total of likes
 					for (let i = parseInt(1 * this.qtyMore); i < this.qtyPub; i++) {
 						axios
@@ -171,8 +166,6 @@ export default {
 											"/comm/"
 									)
 									.then((rep) => {
-										console.log("lon = " + respo.data.length);
-										console.log("comments = " + rep.data.length);
 										this.publica.push({
 											index: resp.data[i].id,
 											titre: resp.data[i].titre,
@@ -205,7 +198,6 @@ export default {
 				this.seePub = true;
 				this.del = false;
 				this.seeDel = true;
-				console.log("this.userid =" + this.$store.state.userId);
 
 				axios({
 					method: "get",
@@ -216,8 +208,6 @@ export default {
 				})
 					.then((resp) => {
 						this.qtyPub = resp.data.length;
-						console.log("qty :" + resp.data.length);
-						console.log("Publica :" + resp.data.length);
 						if (resp.data.length === 0) {
 							this.theInfo =
 								"Vous n'avez pas encore de publications GroupoRéseauMania !";
@@ -262,7 +252,6 @@ export default {
 		},
 		//* DELETE a PUBLICATION
 		deletePub: function(event, pub) {
-			console.log("indexPub =" + pub.index);
 			this.indexDel = pub.index;
 			this.$confirm.require({
 				target: event.currentTarget,
