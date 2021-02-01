@@ -1,19 +1,53 @@
 <template>
 	<div>
 		<p>Nombre utilisateurs dans la base : {{ this.qtyUsers }}.</p>
-		<Button class="p-m-2" label="Recherche d'un compte par email" @click="wantFindUser" />
+		<div class="p-grid p-jc-center p-my-3">
+			<!-- display for medium screen -->
+			<div class="p-lg-3 p-md-8 p-d-none p-d-md-inline">
+				<div class="p-grid p-jc-between">
+					<Button
+						class=""
+						label="Recherche d'un compte par email"
+						@click="wantFindUser"
+					/>
 
-		<Button class="p-m-2" label="Voir tous les comptes" @click="seeAllUsers" />
+					<Button class="" label="Voir tous les comptes" @click="seeAllUsers" />
+				</div>
+			</div>
+			<!-- display for small screen -->
+			<div class="p-lg-3 p-md-8 p-d-md-none p-d-sm-inline">
+				<div class="p-grid p-jc-center">
+					<Button
+						class=""
+						label="Recherche d'un compte par email"
+						@click="wantFindUser"
+					/>
 
-		<div v-if="findUser" class="p-grid p-jc-center">
-			<div class=" p-grid">
-				<div class="p-m-3 p-col-5 p-float-label">
+					<Button class="p-mt-2" label="Voir tous les comptes" @click="seeAllUsers" />
+				</div>
+			</div>
+		</div>
+		<!-- display for medium screen -->
+		<div v-if="findUser" class="p-grid p-jc-center p-text-left ">
+			<div class="p-lg-3 p-col-8 p-d-none p-d-md-inline">
+				<div class="p-grid  p-float-label">
 					<InputText id="email" type="text" v-model="emailReq" /><label for="email">
 						Email recherché</label
 					>
+					<Button class="p-ml-2" label="Valider la recherche" @click="findByEmail" />
 				</div>
-				<div class="p-m-3 p-col-5">
-					<Button label="Valider la recherche" @click="findByEmail" />
+			</div>
+		</div>
+		<!-- display for small screen -->
+		<div v-if="findUser" class="p-grid p-jc-center  p-d-md-none p-d-sm-inline">
+			<div class="p-col">
+				<div class="p-grid  ">
+					<div class="p-float-label">
+						<InputText id="email" type="text" v-model="emailReq" /><label for="email">
+							Email recherché</label
+						>
+					</div>
+					<Button class="p-mt-2" label="Valider la recherche" @click="findByEmail" />
 				</div>
 			</div>
 		</div>
@@ -23,36 +57,40 @@
 			>
 		</div>
 		<div class="p-grid vertical-container" v-for="user in users" :key="user.index">
-			<div class="p-mx-auto p-mt-3">
-				<div class="p-card p-shadow-6   p-p-5 p-m-2" style="width:25rem;">
-					<div class="p-card-content p-text-left">
-						<i
-							><span class="intitut">Dernière connexion : </span
-							>{{ user.last_connect }}</i
-						>
-						<p>
-							<span class="intitut"> Utilisateur : </span>{{ user.nom }}
-							{{ user.prenom }}
-						</p>
-						<p><span class="intitut">Email : </span>{{ user.email }}</p>
-						<p><span class="intitut">Service : </span>{{ user.service }}</p>
-						<p><span class="intitut">Description : </span>{{ user.description }}</p>
-						<img
-							v-if="user.photo"
-							style="width:100px;"
-							:src="user.photo"
-							alt="identity user"
-						/>
-					</div>
-					<div class="p-card-footer">
-						<Message v-if="user.info" severity="success">{{ user.info }}</Message>
-						<ConfirmPopup></ConfirmPopup>
-						<Button
-							class="p-button-danger p-button-raised p-button-text"
-							label="Supprimer le compte"
-							v-if="user.demandDelete === 1"
-							@click="deleteUser($event, user)"
-						/>
+			<div class="p-mx-auto p-col p-mt-3">
+				<div class="p-grid p-jc-center">
+					<div class="p-card p-shadow-6 p-col-12 p-md-6 p-lg-3 p-p-5 p-m-2">
+						<div class="p-card-content p-text-left">
+							<i
+								><span class="intitut">Dernière connexion : </span
+								>{{ user.last_connect }}</i
+							>
+							<p>
+								<span class="intitut"> Utilisateur : </span>{{ user.nom }}
+								{{ user.prenom }}
+							</p>
+							<p><span class="intitut">Email : </span>{{ user.email }}</p>
+							<p><span class="intitut">Service : </span>{{ user.service }}</p>
+							<p class="p-mb-2">
+								<span class="intitut ">Description : </span>{{ user.description }}
+							</p>
+							<img
+								v-if="user.photo"
+								style="width:100px;"
+								:src="user.photo"
+								alt="identity user"
+							/>
+						</div>
+						<div class="p-card-footer">
+							<Message v-if="user.info" severity="success">{{ user.info }}</Message>
+							<ConfirmPopup></ConfirmPopup>
+							<Button
+								class="p-button-danger p-button-raised p-button-text"
+								label="Supprimer le compte"
+								v-if="user.demandDelete === 1"
+								@click="deleteUser($event, user)"
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -218,6 +256,6 @@ export default {
 </script>
 <style>
 .intitut {
-	color: burlywood;
+	color: rgb(131, 113, 153);
 }
 </style>

@@ -31,7 +31,7 @@
 							{{ pub.titre }}
 						</h2>
 						<div class="p-card-content p-mx-auto">
-							<p class="p-text-justify">{{ pub.contenu }}</p>
+							<p class="p-text-justify p-mb-3">{{ pub.contenu }}</p>
 							<img
 								v-if="pub.photo != null"
 								:src="pub.photo"

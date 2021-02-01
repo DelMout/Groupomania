@@ -20,7 +20,7 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="seeComm" class="p-grid p-ai-end vertical-container">
+		<div v-if="seeComm" class="p-grid p-ai-end vertical-container p-mt-2">
 			<div class="p-col-11 p-as-start p-float-label p-text-left">
 				<Textarea v-model="commentUser" :autoResize="true" rows="3" :cols="col" />
 

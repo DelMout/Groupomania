@@ -92,14 +92,16 @@
 							class=" p-lg-4 p-md-5 p-col-10 vertical-container"
 							v-if="!logged || mod || creat"
 						>
-							<p class=" p-float-label">
-								<InputText
-									class=""
-									id="password"
-									:type="type"
-									@keyup="checkData"
-									v-model="password"
-								/><label for="password">Mot de passe</label>
+							<p class="">
+								<span class="p-float-label p-d-inline">
+									<InputText
+										class=""
+										id="password"
+										:type="type"
+										@keyup="checkData"
+										v-model="password"
+									/><label for="password">Mot de passe</label></span
+								>
 								<Button
 									class="p-ml-1 p-pl-auto p-button-outlined p-button-help p-button-text "
 									@click="visibility"
@@ -178,8 +180,8 @@
 							><img style="width:200px;" :src="photo" alt="photo utilisateur" />
 						</div>
 					</div>
-					<div class="p-grid p-jc-center " v-if="photo === null && mod">
-						<InlineMessage severity="info"
+					<div class="p-grid p-jc-center p-mt-2 " v-if="photo === null && mod">
+						<InlineMessage class="p-lg-4 p-md-5 p-col-10" severity="info"
 							>Vous n'avez pas de photo actuellement.</InlineMessage
 						>
 					</div>

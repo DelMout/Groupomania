@@ -1,19 +1,32 @@
 <template>
 	<div>
 		<div>
-			<p>Recherche de publications par mot (dans le titre ou le contenu).</p>
-			<div class="p-grid p-jc-center">
-				<div class=" p-grid">
-					<div class="p-m-3 p-col-5 p-float-label">
+			<p class="p-mb-4">Recherche de publications par mot (dans le titre ou le contenu).</p>
+			<!-- display for medium screen -->
+			<div class="p-grid p-jc-center p-text-left ">
+				<div class="p-lg-3 p-col-8 p-d-none p-d-md-inline">
+					<div class="p-grid  p-float-label">
 						<InputText id="word" type="text" v-model="wordReq" /><label for="word">
 							Mot recherché</label
 						>
-					</div>
-					<div class="p-m-3 p-col-5">
-						<Button label="Valider la recherche" @click="findByWord" />
+						<Button class="p-ml-2" label="Valider la recherche" @click="findByWord" />
 					</div>
 				</div>
 			</div>
+			<!-- display for small screen -->
+			<div class="p-grid p-jc-center  p-d-md-none p-d-sm-inline">
+				<div class="p-col">
+					<div class="p-grid  ">
+						<div class="p-float-label">
+							<InputText id="word" type="text" v-model="wordReq" /><label for="word">
+								Mot recherché</label
+							>
+						</div>
+						<Button class="p-mt-2" label="Valider la recherche" @click="findByWord" />
+					</div>
+				</div>
+			</div>
+
 			<div>Nombre de publications trouvées : {{ qtyPubs }}</div>
 			<div class="p-grid p-jc-center p-mt-3">
 				<Message v-if="infoPub" severity="info">{{ infoPub }}</Message>
@@ -21,32 +34,33 @@
 		</div>
 
 		<div v-for="pub in pubs" :key="pub.index" class=" p-grid vertical-container p-mt-3 ">
-			<div class="p-mx-auto ">
-				<div class=" p-card p-shadow-6 p-col p-grid p-p-5 p-m-2 " style="width:40rem;">
-					<Author class="p-col-10 p-offset-1" :item="pub" />
-					<h2 class="p-card-title p-col-10 p-offset-1 ">
-						{{ pub.titre }}
-					</h2>
-					<div class="p-card-content p-col-10 p-offset-1 ">
-						<p class="p-text-justify">{{ pub.contenu }}</p>
-						<img
-							v-if="pub.photo != null"
-							:src="pub.photo"
-							alt="publication picture"
-							style="max-width:40rem;max-height:40rem;"
-							title="pub-img"
-						/>
-					</div>
-					<div class="p-card-footer p-col-10 p-offset-1  ">
-						<Message v-if="pub.info" severity="success">{{ pub.info }}</Message>
+			<div class="p-mx-auto p-col ">
+				<div class="p-grid p-jc-center">
+					<div class=" p-card p-shadow-6 p-lg-4 p-md-8 p-col-12  p-grid p-p-5 p-m-2 ">
+						<Author class="p-col-10 p-offset-1" :item="pub" />
+						<h2 class="p-card-title p-col-10 p-offset-1 ">
+							{{ pub.titre }}
+						</h2>
+						<div class="p-card-content p-col-10 p-offset-1 ">
+							<p class="p-text-justify p-mb-3">{{ pub.contenu }}</p>
+							<img
+								v-if="pub.photo != null"
+								:src="pub.photo"
+								alt="publication picture"
+								title="pub-img"
+							/>
+						</div>
+						<div class="p-card-footer p-col-10 p-offset-1  ">
+							<Message v-if="pub.info" severity="success">{{ pub.info }}</Message>
 
-						<ConfirmPopup></ConfirmPopup>
-						<Button
-							label="Supprimer cette publication"
-							class="p-button-danger p-button-raised p-button-text"
-							v-if="pub.demandDelete"
-							@click="deletePub($event, pub)"
-						/>
+							<ConfirmPopup></ConfirmPopup>
+							<Button
+								label="Supprimer cette publication"
+								class="p-button-danger p-button-raised p-button-text"
+								v-if="pub.demandDelete"
+								@click="deletePub($event, pub)"
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -161,3 +175,15 @@ export default {
 	},
 };
 </script>
+<style>
+.p-card {
+	background-color: beige;
+}
+.p-card-content {
+	max-width: 100%;
+}
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+</style>
