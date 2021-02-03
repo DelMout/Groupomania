@@ -8,12 +8,8 @@
 				class="p-button-rounded p-button-help p-button-outlined p-m-2"
 			/>
 		</div>
-		<div class="p-toast p-col-10 p-md-7 p-lg-3">
-			<div
-				class="p-shadow-3 p-py-1 p-grid p-jc-between"
-				style="background-color:orange;"
-				v-if="noConnected"
-			>
+		<div v-if="noConnect" class="p-toast p-col-10 p-md-7 p-lg-3">
+			<div id="noLike" class="p-shadow-3 p-py-1 p-grid p-jc-between">
 				<div class="p-col-10">
 					<i class="pi pi-exclamation-triangle"></i>
 					<span> Vous devez être connecté.e pour "liker".</span>
@@ -33,7 +29,7 @@ export default {
 	name: "Like",
 	data() {
 		return {
-			noConnected: false,
+			noConnect: false,
 			like: "",
 		};
 	},
@@ -46,12 +42,12 @@ export default {
 		...mapActions(["checkConnect"]),
 		//* Close message if box user is not connected
 		closeAlert: function() {
-			this.noConnected = false;
+			this.noConnect = false;
 		},
 		//* Add a LIKE
 		liker: function(pub) {
 			if (!this.token) {
-				this.noConnected = true;
+				this.noConnect = true;
 			} else {
 				this.$store.dispatch("checkConnect");
 				if (!this.logged && this.token) {
@@ -80,7 +76,6 @@ export default {
 								this.setInfo;
 								this.$router.push("/");
 							}
-							res.send(err);
 						});
 				}
 			}
@@ -88,3 +83,8 @@ export default {
 	},
 };
 </script>
+<style>
+#noLike {
+	background-color: orange;
+}
+</style>

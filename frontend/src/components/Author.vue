@@ -61,25 +61,22 @@ export default {
 		},
 	},
 	created: function(item) {
-		axios
-			.get("http://localhost:3001/api/auth/ident/" + this.item.userId)
-			.then((respon) => {
-				this.prenom = respon.data.prenom;
-				this.nom = respon.data.nom;
-				this.service = respon.data.service;
-				this.description = respon.data.description;
-				if (respon.data.photo != null) {
-					this.photo = respon.data.photo;
-				} else {
-					this.photo = "http://localhost:3001/images/photo_defaut.jpg";
-				}
-				if (this.item.index >= 0) {
-					this.publie = true; // Corresponding to publication
-				} else {
-					this.publie = false; // Corresponding to comment
-				}
-			})
-			.catch((err) => res.send(err));
+		axios.get("http://localhost:3001/api/auth/ident/" + this.item.userId).then((respon) => {
+			this.prenom = respon.data.prenom;
+			this.nom = respon.data.nom;
+			this.service = respon.data.service;
+			this.description = respon.data.description;
+			if (respon.data.photo != null) {
+				this.photo = respon.data.photo;
+			} else {
+				this.photo = "http://localhost:3001/images/photo_defaut.jpg";
+			}
+			if (this.item.index >= 0) {
+				this.publie = true; // Corresponding to publication
+			} else {
+				this.publie = false; // Corresponding to comment
+			}
+		});
 	},
 };
 </script>

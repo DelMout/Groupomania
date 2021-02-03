@@ -33,6 +33,7 @@
 						<div class="p-card-content p-mx-auto">
 							<p class="p-text-justify p-mb-3">{{ pub.contenu }}</p>
 							<img
+								id="photoPub"
 								v-if="pub.photo != null"
 								:src="pub.photo"
 								alt="publication picture"
@@ -97,16 +98,12 @@ export default {
 	data() {
 		return {
 			theInfo: "Les publications du réseau Groupomania",
-			log: true,
 			qtyPub: 0,
 			qtyMore: 0,
-			onePub: false,
 			publica: [],
 			more: false,
 			mine: true,
-			select: false,
 			seePub: false,
-			confDel: false,
 			seeDel: false,
 			photo: "",
 			infoDelete: false,
@@ -138,51 +135,41 @@ export default {
 		},
 		//* SELECT 5 PUBLICATIONS
 		seePublications: function() {
-			// this.qtyMore += 1;
 			this.seePub = false;
 			this.del = false;
 			this.seeDel = false;
-			axios
-				.get("http://localhost:3001/api/pub")
-				.then((resp) => {
-					this.qtyPub = resp.data.length;
-					if (resp.data.length > parseInt(5 + 1 * this.qtyMore)) {
-						//! A modifier le '1' en 10
-						this.more = true;
-						this.qtyPub = parseInt(1 * this.qtyMore + 5);
-					} else {
-						this.more = false;
-					}
-					//* Get total of likes
-					for (let i = parseInt(1 * this.qtyMore); i < this.qtyPub; i++) {
-						axios
-							.get("http://localhost:3001/api/pub/" + resp.data[i].id + "/like/")
-							.then((respo) => {
-								//* get total of comments
-								axios
-									.get(
-										"http://localhost:3001/api/pub/" +
-											resp.data[i].id +
-											"/comm/"
-									)
-									.then((rep) => {
-										this.publica.push({
-											index: resp.data[i].id,
-											titre: resp.data[i].titre,
-											contenu: resp.data[i].texte_pub,
-											date: resp.data[i].date_crea_pub,
-											userId: resp.data[i].userId,
-											photo: resp.data[i].photo,
-											comm: rep.data.length,
-											likes: respo.data.length,
-										});
-									})
-									.catch((err) => res.send(err));
-							})
-							.catch((err) => res.send(err));
-					}
-				})
-				.catch((err) => res.send(err));
+			axios.get("http://localhost:3001/api/pub").then((resp) => {
+				this.qtyPub = resp.data.length;
+				if (resp.data.length > parseInt(5 + 5 * this.qtyMore)) {
+					//! A modifier le '1' en 10
+					this.more = true;
+					this.qtyPub = parseInt(5 * this.qtyMore + 5);
+				} else {
+					this.more = false;
+				}
+				//* Get total of likes
+				for (let i = parseInt(5 * this.qtyMore); i < this.qtyPub; i++) {
+					axios
+						.get("http://localhost:3001/api/pub/" + resp.data[i].id + "/like/")
+						.then((respo) => {
+							//* get total of comments
+							axios
+								.get("http://localhost:3001/api/pub/" + resp.data[i].id + "/comm/")
+								.then((rep) => {
+									this.publica.push({
+										index: resp.data[i].id,
+										titre: resp.data[i].titre,
+										contenu: resp.data[i].texte_pub,
+										date: resp.data[i].date_crea_pub,
+										userId: resp.data[i].userId,
+										photo: resp.data[i].photo,
+										comm: rep.data.length,
+										likes: respo.data.length,
+									});
+								});
+						});
+				}
+			});
 		},
 		//* SELECT my PUBLICATIONS
 		seeMinePublications: function() {
@@ -235,10 +222,8 @@ export default {
 												comm: rep.data.length,
 												likes: respo.data.length,
 											});
-										})
-										.catch((err) => res.send(err));
-								})
-								.catch((err) => res.send(err));
+										});
+								});
 						}
 					})
 					.catch((err) => {
@@ -246,7 +231,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -281,8 +265,6 @@ export default {
 					},
 				})
 					.then((resp) => {
-						// this.theInfo = "Votre publication a été supprimée.";
-						this.confDel = false;
 						this.seePub = true;
 						this.mine = true;
 						this.publica = [];
@@ -294,7 +276,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -312,7 +293,7 @@ export default {
 .p-card-content {
 	max-width: 100%;
 }
-img {
+#photoPub {
 	max-width: 100%;
 	max-height: 100%;
 }

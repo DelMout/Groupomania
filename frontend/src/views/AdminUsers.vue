@@ -108,7 +108,6 @@ export default {
 		return {
 			users: [],
 			qtyUsers: "",
-			chose: "",
 			findUser: false,
 			emailReq: "",
 			noFound: false,
@@ -158,14 +157,12 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
 
 		//* DELETE a USER
 		deleteUser: function(event, user) {
-			// user.demandDelete = 2;
 			this.$confirm.require({
 				target: event.currentTarget,
 				message:
@@ -198,7 +195,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -243,7 +239,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},

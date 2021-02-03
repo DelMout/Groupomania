@@ -17,7 +17,11 @@
 					<TabMenu :model="items" />
 				</div>
 			</div>
-			{{ logged }}
+			<div v-if="logged">
+				<p>
+					<i>Vous êtes connecté.e avec l'adresse email {{ email }}</i>
+				</p>
+			</div>
 			<router-view />
 		</div>
 	</div>
@@ -75,21 +79,22 @@ export default {
 		};
 	},
 	computed: {
-		...mapState(["isAdmin", "logged"]),
+		...mapState(["isAdmin", "logged", "email"]),
 		infoHome() {
 			return store.getters.infoHome;
 		},
-		isLoggedIn() {
-			return store.getters.isLoggedIn;
-		},
-		loggedIn() {
-			return store.getters.loggedIn;
-		},
-		isLife() {
-			return store.getters.isLife;
+	},
+
+	methods: {
+		...mapMutations(["setUserId", "setToken", "setAdmin"]),
+		...mapActions(["checkConnect"]),
+
+		toggle(event) {
+			this.$refs.menu.toggle(event);
 		},
 	},
 	beforeMount: function() {
+		this.$store.dispatch("checkConnect");
 		if (this.logged) {
 			if (this.isAdmin === 1) {
 				this.items = this.admin;
@@ -101,6 +106,7 @@ export default {
 		}
 	},
 	updated: function() {
+		this.$store.dispatch("checkConnect");
 		if (this.logged) {
 			if (this.isAdmin === 1) {
 				this.items = this.admin;
@@ -110,15 +116,6 @@ export default {
 		} else {
 			this.items = this.noLog;
 		}
-	},
-
-	methods: {
-		...mapMutations(["setUserId", "setToken", "setAdmin"]),
-		...mapActions(["checkConnect"]),
-
-		toggle(event) {
-			this.$refs.menu.toggle(event);
-		},
 	},
 };
 </script>
@@ -130,7 +127,6 @@ export default {
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: grey;
-	/* background-color: rgb(241, 241, 189); */
 }
 
 #nav {

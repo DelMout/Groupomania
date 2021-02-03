@@ -113,7 +113,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},

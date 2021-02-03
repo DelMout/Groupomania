@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
 				const isAdmin = decodedToken.isAdmin;
 				if (
 					(isAdmin === 0 && userConnectedId !== userAuthorId) ||
-					(isAdmin === 1 && userConnectedId !== process.env.ID_ADMIN)
+					(isAdmin === 1 && userConnectedId !== parseInt(process.env.ID_ADMIN))
 				) {
 					throw "Connected user is not the publication author, or not admin.";
 				} else {

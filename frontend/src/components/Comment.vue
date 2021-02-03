@@ -72,18 +72,15 @@ export default {
 		seeComment: function(pub) {
 			this.seeComm = true;
 			this.allComments = [];
-			axios
-				.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
-				.then((resp) => {
-					for (let i = 0; i < this.pub.comm; i++) {
-						this.allComments.push({
-							texte: resp.data[i].texte_com,
-							date: resp.data[i].date_crea_com,
-							userId: resp.data[i].userId,
-						});
-					}
-				})
-				.catch((err) => res.send(err));
+			axios.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/").then((resp) => {
+				for (let i = 0; i < this.pub.comm; i++) {
+					this.allComments.push({
+						texte: resp.data[i].texte_com,
+						date: resp.data[i].date_crea_com,
+						userId: resp.data[i].userId,
+					});
+				}
+			});
 		},
 
 		//* Create a COMMENT
@@ -108,7 +105,6 @@ export default {
 						},
 					})
 						.then((resp) => {
-							// see allComments
 							this.allComments = [];
 							axios
 								.get("http://localhost:3001/api/pub/" + this.pub.index + "/comm/")
@@ -122,15 +118,13 @@ export default {
 									}
 									this.commentUser = "";
 									this.pub.comm += 1;
-								})
-								.catch((err) => res.send(err));
+								});
 						})
 						.catch((err) => {
 							if (err.response.data.message === "jwt expired") {
 								this.setInfo;
 								this.$router.push("/");
 							}
-							res.send(err);
 						});
 				}
 			}

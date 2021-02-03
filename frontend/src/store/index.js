@@ -9,6 +9,7 @@ export default createStore({
 		isAdmin: 0,
 		logged: false,
 		infoHome: "",
+		email: "",
 	},
 	mutations: {
 		setUserId(state, userId) {
@@ -28,6 +29,9 @@ export default createStore({
 		},
 		IS_FALSE(state) {
 			state.logged = false;
+		},
+		setEmail(state, email) {
+			state.email = email;
 		},
 	},
 

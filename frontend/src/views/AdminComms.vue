@@ -26,19 +26,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- A effacer -->
-			<!-- <div class="p-grid p-jc-center">
-				<div class=" p-grid">
-					<div class="p-m-3 p-col-5 p-float-label">
-						<InputText id="word" type="text" v-model="wordReq" /><label for="word">
-							Mot recherché</label
-						>
-					</div>
-					<div class="p-m-3 p-col-5">
-						<Button label="Valider la recherche" @click="findByWord" />
-					</div>
-				</div>
-			</div> -->
 			<div>Nombre de commentaires trouvés : {{ qtyComms }}</div>
 			<div class="p-grid p-jc-center p-mt-3">
 				<Message v-if="infoComm" severity="info">{{ infoComm }}</Message>
@@ -127,13 +114,11 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
 		//* DELETE a COMMENT
 		deleteComm: function(event, comm) {
-			// comm.demandDelete = false;
 			this.$confirm.require({
 				target: event.currentTarget,
 				message: "Merci de confirmer la suppression de ce commentaire.",
@@ -165,7 +150,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},

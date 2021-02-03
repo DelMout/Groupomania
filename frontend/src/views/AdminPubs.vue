@@ -44,6 +44,7 @@
 						<div class="p-card-content p-col-10 p-offset-1 ">
 							<p class="p-text-justify p-mb-3">{{ pub.contenu }}</p>
 							<img
+								id="photoAdm"
 								v-if="pub.photo != null"
 								:src="pub.photo"
 								alt="publication picture"
@@ -127,7 +128,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -166,7 +166,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -180,7 +179,7 @@ export default {
 .p-card-content {
 	max-width: 100%;
 }
-img {
+#photoAdm {
 	max-width: 100%;
 	max-height: 100%;
 }

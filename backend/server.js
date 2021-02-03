@@ -9,7 +9,7 @@ const db = require("./models");
 const server = http.createServer(app);
 
 db.sequelize.sync().then((req) => {
-	server.listen(process.env.PORT_API, () => {
+	server.listen(3001, () => {
 		console.log("server running !");
 	});
 });

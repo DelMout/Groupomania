@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
 
 		if (
 			(isAdmin === 0 && paramUserId && paramUserId !== userId) ||
-			(isAdmin === 1 && userId !== process.env.ID_ADMIN)
+			(isAdmin === 1 && userId !== parseInt(process.env.ID_ADMIN))
 		) {
 			throw "Invalid user ID";
 		} else {

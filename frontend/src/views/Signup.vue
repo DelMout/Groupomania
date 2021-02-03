@@ -18,7 +18,7 @@
 			<div class=" p-text-left ">
 				<div class=" p-input-filled  " enctype="multipart/form-data">
 					<div class="p-grid p-jc-center  p-py-0">
-						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+						<div class=" p-lg-4 p-md-5 p-col-11 vertical-container" v-if="mod || creat">
 							<p class=" p-float-label">
 								<InputText
 									class=""
@@ -34,7 +34,7 @@
 						</div>
 					</div>
 					<div class="p-grid p-jc-center p-py-0">
-						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+						<div class=" p-lg-4 p-md-5 p-col-11 vertical-container" v-if="mod || creat">
 							<p class=" p-float-label">
 								<InputText
 									class=""
@@ -51,7 +51,7 @@
 					</div>
 					<div class="p-grid p-jc-center p-py-0">
 						<div
-							class=" p-lg-4 p-md-5 p-col-10 vertical-container"
+							class=" p-lg-4 p-md-5 p-col-11 vertical-container"
 							v-if="!logged || creat"
 						>
 							<p class="p-float-label ">
@@ -72,10 +72,10 @@
 						</div>
 					</div>
 					<div class="p-grid p-jc-center p-py-0">
-						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+						<div class=" p-lg-4 p-md-5 p-col-11 vertical-container" v-if="mod || creat">
 							<p class="p-float-label">
 								<InputText
-									class="p-mx-1"
+									class=""
 									id="service"
 									type="text"
 									@keyup="checkData"
@@ -89,25 +89,24 @@
 					</div>
 					<div class="p-grid p-jc-center p-py-0">
 						<div
-							class=" p-lg-4 p-md-5 p-col-10 vertical-container"
+							class=" p-lg-4 p-md-5 p-col-11 vertical-container"
 							v-if="!logged || mod || creat"
 						>
 							<p class="">
-								<span class="p-float-label p-d-inline">
+								<span class="p-float-label  p-p-0">
 									<InputText
 										class=""
 										id="password"
 										:type="type"
 										@keyup="checkData"
-										v-model="password"
-									/><label for="password">Mot de passe</label></span
-								>
-								<Button
-									class="p-ml-1 p-pl-auto p-button-outlined p-button-help p-button-text "
-									@click="visibility"
-									:icon="hide"
-								>
-								</Button>
+										v-model="password"/><label for="password"
+										>Mot de passe</label
+									><Button
+										class=" p-ml-1 p-pl-auto p-button-outlined p-button-help p-button-text "
+										@click="visibility"
+										:icon="hide"
+									></Button
+								></span>
 							</p>
 							<InlineMessage
 								class="p-lg-6 p-12 "
@@ -163,7 +162,7 @@
 						</div>
 					</div>
 					<div class="p-grid p-jc-center p-py-0">
-						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container" v-if="mod || creat">
+						<div class=" p-lg-4 p-md-5 p-col-11 vertical-container" v-if="mod || creat">
 							<p class="">
 								Photo (optionnel) :<input
 									type="file"
@@ -175,9 +174,9 @@
 					</div>
 
 					<div class="p-grid p-jc-center " v-if="photo != null && mod">
-						<div class=" p-lg-4 p-md-5 p-col-10 vertical-container">
+						<div class=" p-lg-4 p-md-5 p-col-11 vertical-container">
 							<span>Votre photo actuelle : </span
-							><img style="width:200px;" :src="photo" alt="photo utilisateur" />
+							><img id="photoUser" :src="photo" alt="photo utilisateur" />
 						</div>
 					</div>
 					<div class="p-grid p-jc-center p-mt-2 " v-if="photo === null && mod">
@@ -185,26 +184,21 @@
 							>Vous n'avez pas de photo actuellement.</InlineMessage
 						>
 					</div>
-					<div class="p-grid p-jc-center p-my-5">
+					<div v-if="!logged && !creat" class="p-grid p-jc-center p-my-5">
 						<Button
 							class="p-md-4 p-col-6"
 							label="Entrer dans le réseau social Groupomania !"
-							v-if="!logged && !creat"
 							@click="loginUser"
 						/>
 					</div>
-					<div class="p-grid p-jc-center p-my-2">
-						<Button label="Valider" v-if="creat" v-on:click="createUser" /><br />
+					<div v-if="creat" class="p-grid p-jc-center p-my-2">
+						<Button label="Valider" @click="createUser" /><br />
 					</div>
 				</div>
 			</div>
 			<div class="p-grid p-jc-center">
-				<div class="p-col p-py-0">
-					<Button
-						label="Valider les modifications"
-						v-if="mod"
-						v-on:click="modifUser"
-					/><br />
+				<div class="p-col p-py-0 p-my-2 ">
+					<Button label="Valider les modifications" v-if="mod" @click="modifUser" /><br />
 					<Button
 						label="Modifier mon compte"
 						class="p-m-2"
@@ -253,12 +247,8 @@ export default {
 			image: null,
 			creat: false, //phase user creation
 			mod: false, //phase modification user
-			indexDel: "",
-			// password: "",
 			type: "password",
 			hide: "pi pi-eye",
-			// selectedFile: null,
-			// file: "",
 			paramUser: {
 				prenom: "prénom",
 				nom: "nom",
@@ -294,7 +284,7 @@ export default {
 		...mapState(["token", "userId", "isAdmin", "logged"]),
 	},
 	methods: {
-		...mapMutations(["setUserId", "setToken", "setAdmin"]),
+		...mapMutations(["setUserId", "setToken", "setAdmin", "setEmail"]),
 		...mapActions(["checkConnect"]),
 		//* Hide or show password
 		visibility() {
@@ -398,6 +388,7 @@ export default {
 		},
 		createUser: function() {
 			this.theInfo = "";
+			this.setEmail(this.email);
 			const formData = new FormData();
 			formData.append("image", this.$data.image);
 			formData.append("prenom", this.$data.prenom);
@@ -414,13 +405,11 @@ export default {
 					this.setToken(token);
 					this.setAdmin(isAdmin);
 					this.$store.dispatch("checkConnect");
-
 					this.theInfo = "Votre compte a été créé.";
 					this.severity = "success";
 					this.creat = false;
 				})
 				.catch((err) => {
-					res.send(err);
 					this.theInfo =
 						"Votre compte n'a pas pu être créé. Merci de corriger les paramètres demandés dans le formulaire.";
 					this.severity = "error";
@@ -431,10 +420,6 @@ export default {
 
 		loginUser: function() {
 			this.theInfo = "";
-			//!! Pour simulation SUPPRIMER ces 2 lignes
-			this.email = "admin@groupomania.fr";
-			this.password = "AAAaaa1111";
-
 			axios
 				.post("http://localhost:3001/api/auth/login", {
 					email: this.email,
@@ -445,6 +430,7 @@ export default {
 					this.setUserId(userId);
 					this.setToken(token);
 					this.setAdmin(isAdmin);
+					this.setEmail(this.email);
 					this.$store.dispatch("checkConnect");
 					this.$router.push("http://localhost:8080/publi");
 				})
@@ -456,7 +442,6 @@ export default {
 						this.theInfo = "Email incorrect !!";
 						this.severity = "error";
 					}
-					res.send(err);
 				});
 		},
 
@@ -484,14 +469,12 @@ export default {
 						this.description = resp.data.description;
 						this.photo = resp.data.photo;
 						this.checkData();
-						// this.mod = false;
 					})
 					.catch((err) => {
 						if (err.response.data.message === "jwt expired") {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -543,7 +526,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -575,7 +557,6 @@ export default {
 				})
 					.then((resp) => {
 						this.$store.state.infoHome = "Votre compte a été supprimé !";
-						// this.hom = false;
 						this.$store.state.userId = null;
 						this.$store.state.token = null;
 						this.$router.push("/");
@@ -585,7 +566,6 @@ export default {
 							this.setInfo;
 							this.$router.push("/");
 						}
-						res.send(err);
 					});
 			}
 		},
@@ -602,6 +582,9 @@ p {
 InlineMessage {
 	margin-top: 0px;
 }
+#photoUser {
+	width: 200px;
+}
 
 /* MEDIA QUERIES */
 
@@ -610,9 +593,6 @@ InlineMessage {
 	h1 {
 		font-size: 1rem;
 	}
-	/* #inscript {
-		font-size: 0.6rem;
-	} */
 }
 @media only screen and (max-width: 576px) {
 	/*mobiles */
