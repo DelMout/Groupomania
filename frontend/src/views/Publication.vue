@@ -130,7 +130,7 @@ export default {
 			this.qtyMore = 0;
 			this.mine = true;
 			this.seePublications();
-			this.theInfo = "Les publications GroupoRéseauMania";
+			this.theInfo = "Les publications du Réseau Groupomania";
 			this.seeDel = false;
 		},
 		//* SELECT 5 PUBLICATIONS
@@ -180,7 +180,7 @@ export default {
 			} else {
 				this.mine = false;
 				this.more = false;
-				this.theInfo = "Vos publications du Réseau Social Groupomania";
+				this.theInfo = "Vos publications du Réseau Groupomania";
 				this.publica = [];
 				this.seePub = true;
 				this.del = false;
@@ -197,7 +197,7 @@ export default {
 						this.qtyPub = resp.data.length;
 						if (resp.data.length === 0) {
 							this.theInfo =
-								"Vous n'avez pas encore de publications GroupoRéseauMania !";
+								"Vous n'avez pas encore de publications sur le Réseau Groupomania !";
 						}
 						for (let i = 0; i < this.qtyPub; i++) {
 							//* Get total of likes
