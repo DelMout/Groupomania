@@ -5,3 +5,6 @@ node_modules
 
 * Do not export .env
 .env
+
+*Do not export test rest
+test.rest
