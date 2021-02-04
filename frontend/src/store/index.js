@@ -1,5 +1,4 @@
 import { createStore } from "vuex";
-import moment from "moment";
 import jwt_decode from "jwt-decode";
 
 export default createStore({
@@ -40,10 +39,10 @@ export default createStore({
 			return jwt_decode(state.token);
 		},
 		dateExp(state, getters) {
-			return moment(new Date(getters.decoded.exp * 1000)).format("DD MM YYYY k:mm:ss");
+			return new Date(getters.decoded.exp * 1000);
 		},
 		dateNow(state) {
-			return moment().format("DD MM YYYY k:mm:ss");
+			return Date.now();
 		},
 	},
 	actions: {

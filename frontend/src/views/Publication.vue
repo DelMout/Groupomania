@@ -141,7 +141,6 @@ export default {
 			axios.get("http://localhost:3001/api/pub").then((resp) => {
 				this.qtyPub = resp.data.length;
 				if (resp.data.length > parseInt(5 + 5 * this.qtyMore)) {
-					//! A modifier le '1' en 10
 					this.more = true;
 					this.qtyPub = parseInt(5 * this.qtyMore + 5);
 				} else {

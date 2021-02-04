@@ -432,6 +432,7 @@ export default {
 					this.setAdmin(isAdmin);
 					this.setEmail(this.email);
 					this.$store.dispatch("checkConnect");
+
 					this.$router.push("http://localhost:8080/publi");
 				})
 				.catch((err) => {
