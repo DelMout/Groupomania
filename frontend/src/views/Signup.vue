@@ -401,8 +401,8 @@ export default {
 				.post("http://localhost:3001/api/auth/signup", formData)
 				.then((resp) => {
 					const { userId, token, isAdmin } = resp.data;
-					this.setUserId(userId);
-					this.setToken(token);
+					localStorage.setItem("token", token);
+					localStorage.setItem("userId", userId);
 					this.setAdmin(isAdmin);
 					this.$store.dispatch("checkConnect");
 					this.theInfo = "Votre compte a été créé.";
@@ -427,10 +427,9 @@ export default {
 				})
 				.then((resp) => {
 					const { userId, token, isAdmin } = resp.data;
-					this.setUserId(userId);
-					this.setToken(token);
+					localStorage.setItem("token", token);
+					localStorage.setItem("userId", userId);
 					this.setAdmin(isAdmin);
-					this.setEmail(this.email);
 					this.$store.dispatch("checkConnect");
 
 					this.$router.push("http://localhost:8080/publi");

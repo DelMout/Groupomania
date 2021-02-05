@@ -46,7 +46,7 @@
 							<ConfirmPopup></ConfirmPopup>
 							<Button
 								label="Supprimer ce commentaire"
-								class="p-button-danger p-button-raised p-button-text"
+								class="p-button-danger p-button-raised"
 								v-if="comm.demandDelete"
 								@click="deleteComm($event, comm)"
 							/>

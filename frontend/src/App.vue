@@ -19,7 +19,7 @@
 			</div>
 			<div v-if="logged">
 				<p>
-					<i>Vous êtes connecté.e avec l'adresse email {{ email }}</i>
+					<i>Vous êtes actuellement connecté.e.</i>
 				</p>
 			</div>
 			<router-view />
@@ -52,8 +52,7 @@ export default {
 					label: "Se déconnecter",
 					icon: "pi pi-power-off",
 					command: () => {
-						this.setToken(null);
-						this.setUserId(null);
+						localStorage.clear();
 					},
 					to: "/",
 				},
@@ -70,8 +69,7 @@ export default {
 					label: "Se déconnecter",
 					icon: "pi pi-power-off",
 					command: () => {
-						this.setToken(null);
-						this.setUserId(null);
+						localStorage.clear();
 					},
 					to: "/",
 				},
@@ -79,7 +77,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapState(["isAdmin", "logged", "email"]),
+		...mapState(["isAdmin", "logged"]),
 		infoHome() {
 			return store.getters.infoHome;
 		},
@@ -126,7 +124,7 @@ export default {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
-	color: grey;
+	color: #303030;
 }
 
 #nav {
@@ -135,7 +133,7 @@ export default {
 
 #nav a {
 	font-weight: bold;
-	color: grey;
+	color: #303030;
 }
 
 #nav a.router-link-exact-active {

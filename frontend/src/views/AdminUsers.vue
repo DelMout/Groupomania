@@ -85,7 +85,7 @@
 							<Message v-if="user.info" severity="success">{{ user.info }}</Message>
 							<ConfirmPopup></ConfirmPopup>
 							<Button
-								class="p-button-danger p-button-raised p-button-text"
+								class="p-button-danger p-button-raised"
 								label="Supprimer le compte"
 								v-if="user.demandDelete === 1"
 								@click="deleteUser($event, user)"
@@ -247,6 +247,7 @@ export default {
 </script>
 <style>
 .intitut {
-	color: rgb(131, 113, 153);
+	color: #303030;
+	font-weight: bold;
 }
 </style>

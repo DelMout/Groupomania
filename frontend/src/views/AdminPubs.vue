@@ -57,7 +57,7 @@
 							<ConfirmPopup></ConfirmPopup>
 							<Button
 								label="Supprimer cette publication"
-								class="p-button-danger p-button-raised p-button-text"
+								class="p-button-danger p-button-raised"
 								v-if="pub.demandDelete"
 								@click="deletePub($event, pub)"
 							/>

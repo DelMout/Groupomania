@@ -8,7 +8,6 @@ export default createStore({
 		isAdmin: 0,
 		logged: false,
 		infoHome: "",
-		email: "",
 	},
 	mutations: {
 		setUserId(state, userId) {
@@ -29,9 +28,6 @@ export default createStore({
 		IS_FALSE(state) {
 			state.logged = false;
 		},
-		setEmail(state, email) {
-			state.email = email;
-		},
 	},
 
 	getters: {
@@ -47,12 +43,15 @@ export default createStore({
 	},
 	actions: {
 		checkConnect(context) {
+			context.commit("setToken", localStorage.getItem("token"));
+			context.commit("setUserId", localStorage.getItem("userId"));
 			if (context.state.token) {
 				if (this.getters.dateExp > this.getters.dateNow) {
 					context.commit("IS_TRUE");
 				} else {
 					context.commit("IS_FALSE");
 					context.commit("setInfo");
+					localStorage.clear();
 				}
 			} else {
 				context.commit("IS_FALSE");
