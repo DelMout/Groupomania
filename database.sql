@@ -1,4 +1,4 @@
--- Read instructions on READ.ME for seting up the database on MySQL server
+-- Read instructions on README for setting up the database on MySQL server
 
 CREATE DATABASE groupo CHARACTER SET 'utf8mb4';
 USE groupo;
